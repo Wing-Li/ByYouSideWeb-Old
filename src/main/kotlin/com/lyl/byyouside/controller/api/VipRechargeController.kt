@@ -3,7 +3,7 @@ package com.lyl.byyouside.controller.api
 import com.lyl.byyouside.config.StatusCode
 import com.lyl.byyouside.controller.base.ApiBaseController
 import com.lyl.byyouside.model.base.BaseCallBack
-import com.lyl.byyouside.model.user.UserRepository
+import com.lyl.byyouside.model.user.UserInfoRepository
 import com.lyl.byyouside.model.vip.VipRecharge
 import com.lyl.byyouside.model.vip.VipRechargeRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,7 +17,7 @@ import java.util.*
 @RestController
 class VipRechargeController @Autowired constructor(
     private val vipRechargeRepository: VipRechargeRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserInfoRepository
 ) : ApiBaseController() {
 
     /**

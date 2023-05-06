@@ -3,8 +3,8 @@ package com.lyl.byyouside.controller.api
 import com.lyl.byyouside.config.StatusCode
 import com.lyl.byyouside.controller.base.ApiBaseController
 import com.lyl.byyouside.model.base.BaseCallBack
-import com.lyl.byyouside.model.user.User
-import com.lyl.byyouside.model.user.UserRepository
+import com.lyl.byyouside.model.user.UserInfo
+import com.lyl.byyouside.model.user.UserInfoRepository
 import com.lyl.byyouside.utils.MyUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
@@ -12,7 +12,7 @@ import java.util.*
 
 @RestController
 class UserController @Autowired constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserInfoRepository
 ) : ApiBaseController() {
 
     /**
@@ -43,19 +43,19 @@ class UserController @Autowired constructor(
         }
 
         // 用户名 不能重复
-        val checkUser = userRepository.findByUserName(userName)
-        if (checkUser == null) {
+        val existsUser = userRepository.existsByUserName(userName)
+        if (existsUser) {
             return failCallBack(StatusCode.USER_NAME_10004, StatusCode.USER_NAME_10004_TEXT)
         }
 
         return try {
-            val user = User(
+            val user = UserInfo(
                 userName = userName,
                 password = password,
                 nickName = nickName,
                 gender = gender
             )
-            val save: User = userRepository.save(user)
+            val save: UserInfo = userRepository.save(user)
             successCallBack(userAdapter(save))
         } catch (e: Exception) {
             failCallBack(StatusCode.USER_NAME_10000, StatusCode.USER_NAME_10000_TEXT)
@@ -77,16 +77,16 @@ class UserController @Autowired constructor(
         province: String?,
         city: String?
     ): BaseCallBack<Any> {
-        val user: User = userRepository.findById(userId).get()
+        val user: UserInfo = userRepository.findById(userId).get()
 
         nickName?.let { user.nickName = it }
-        icon?.let { user.icon = icon }
-        introduction?.let { user.introduction = introduction }
-        birthday?.let { user.birthday = birthday }
-        phone?.let { user.phone = phone }
-        email?.let { user.email = email }
-        province?.let { user.province = province }
-        city?.let { user.city = city }
+        icon?.let { user.icon = it }
+        introduction?.let { user.introduction = it }
+        birthday?.let { user.birthday = it }
+        phone?.let { user.phone = it }
+        email?.let { user.email = it }
+        province?.let { user.province = it }
+        city?.let { user.city = it }
 
         userRepository.save(user)
         return successCallBack(userAdapter(user))
@@ -137,7 +137,7 @@ class UserController @Autowired constructor(
     fun getUser(userId: Long): BaseCallBack<Any> {
         val user = userRepository.findById(userId)
         return if (user.isPresent) {
-            val user: User = user.get()
+            val user: UserInfo = user.get()
             val closeDay = userCloseDay(user)
             if (closeDay > 0) {
                 // 账号被封

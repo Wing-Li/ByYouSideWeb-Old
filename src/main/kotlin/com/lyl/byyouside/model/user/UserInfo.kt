@@ -5,17 +5,22 @@ import jakarta.persistence.*
 import org.hibernate.annotations.UpdateTimestamp
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
-import java.io.Serializable
 import java.util.*
 
 /**
  * 用户表
+ *
+ * 'user' 是 H2 的关键字，不能使用 user 作为表名
+ *
  */
 @Entity
 @EntityListeners(AuditingEntityListener::class)
-data class User(
+data class UserInfo(
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(generator = "user_seq", strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "user_seq", sequenceName = "USER_SEQ", allocationSize = 1, initialValue = 10000)
+    @Column(unique = true)
     var id: Long? = null,
 
 
@@ -56,9 +61,9 @@ data class User(
         joinColumns = [JoinColumn(name = "my_user_id")],
         inverseJoinColumns = [JoinColumn(name = "to_user_id")]
     )
-    var friends: MutableList<User> = mutableListOf()
+    var friends: MutableList<UserInfo> = mutableListOf()
 
-) : Serializable {
+) {
 
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     var vipLimitDate: Date? = null // 会员过期时间
@@ -74,12 +79,12 @@ data class User(
     var updateTime: Date = Date()
 
 
-    fun addFriend(friend: User) {
+    fun addFriend(friend: UserInfo) {
         friends.add(friend)
         friend.friends.add(this)
     }
 
-    fun removeFriend(friend: User) {
+    fun removeFriend(friend: UserInfo) {
         friends.remove(friend)
         friend.friends.remove(this)
     }

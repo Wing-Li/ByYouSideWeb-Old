@@ -1,7 +1,7 @@
 package com.lyl.byyouside.model.friend
 
 import com.fasterxml.jackson.annotation.JsonFormat
-import com.lyl.byyouside.model.user.User
+import com.lyl.byyouside.model.user.UserInfo
 import jakarta.persistence.*
 import org.hibernate.annotations.UpdateTimestamp
 import org.springframework.data.annotation.CreatedDate
@@ -20,11 +20,11 @@ data class Friend(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "my_user_id")
-    var myUser: User? = null,
+    var myUser: UserInfo? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "to_user_id")
-    var toUser: User? = null,
+    var toUser: UserInfo? = null,
 
     ) {
 

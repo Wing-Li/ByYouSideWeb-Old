@@ -1,7 +1,7 @@
 package com.lyl.byyouside.controller.base
 
 import com.lyl.byyouside.model.base.BaseCallBack
-import com.lyl.byyouside.model.user.User
+import com.lyl.byyouside.model.user.UserInfo
 import com.lyl.byyouside.utils.MyUtils
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.bind.annotation.RequestMapping
@@ -38,7 +38,7 @@ open class ApiBaseController {
     /**
      * 将用户信息返回给 客户端时，需要处理的一些逻辑
      */
-    protected fun userAdapter(user: User): User {
+    protected fun userAdapter(user: UserInfo): UserInfo {
         if (!MyUtils.isEmpty(user.icon)) {
             // 设置头像
             user.icon = imageHost + user.icon
@@ -49,7 +49,7 @@ open class ApiBaseController {
     /**
      * 账号被封的天数
      */
-    protected fun userCloseDay(user: User): Long {
+    protected fun userCloseDay(user: UserInfo): Long {
         if (user.closeDate != null && user.closeDate!! > 0) {
             return MyUtils.formatTimestampToDay(user.closeDate!!)
         }

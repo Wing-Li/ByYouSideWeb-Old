@@ -5,7 +5,7 @@ import com.lyl.byyouside.controller.base.ApiBaseController
 import com.lyl.byyouside.model.base.BaseCallBack
 import com.lyl.byyouside.model.friend.Friend
 import com.lyl.byyouside.model.friend.FriendRepository
-import com.lyl.byyouside.model.user.UserRepository
+import com.lyl.byyouside.model.user.UserInfoRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RestController
@@ -16,7 +16,7 @@ import java.lang.Exception
 class FriendController : ApiBaseController() {
 
     @Autowired
-    private lateinit var userRepository: UserRepository
+    private lateinit var userRepository: UserInfoRepository
 
     @Autowired
     private lateinit var friendRepository: FriendRepository
