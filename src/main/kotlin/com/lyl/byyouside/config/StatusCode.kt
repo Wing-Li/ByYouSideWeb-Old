@@ -1,0 +1,57 @@
+package com.lyl.byyouside.config
+
+object StatusCode {
+    const val USER_NAME_10000 = 10000
+    const val USER_NAME_10000_TEXT = "网络异常，请稍后再试"
+
+    // 比较公用的
+    const val BASE_TITLE_EMPYT = 20000
+    const val BASE_TITLE_EMPYT_TEXT = "标题不能为空"
+    const val BASE_CONTENT_EMPYT = 20001
+    const val BASE_CONTENT_EMPYT_TEXT = "内容不能为空"
+    const val BASE_REQUEST_EMPYT = 20003
+    const val BASE_REQUEST_EMPYT_TEXT = "请求的内容不存在"
+
+    // 创建用户
+    const val USER_NAME_10001 = 10001
+    const val USER_NAME_10001_TEXT = "用户名必须在2到32位字符之间"
+    const val USER_NAME_10002 = 10002
+    const val USER_NAME_10002_TEXT = "密码必须在8到32位字符之间"
+    const val USER_NAME_10003 = 10003
+    const val USER_NAME_10003_TEXT = "昵称不能超过16个字符"
+    const val USER_NAME_10004 = 10004
+    const val USER_NAME_10004_TEXT = "用户名已经存在"
+
+    // 更新用户
+    const val USER_NAME_11001 = 11001
+    const val USER_NAME_11001_TEXT = "没有此用户"
+    const val USER_NAME_11002 = 11002
+    const val USER_NAME_11002_TEXT = "密码错误"
+    const val USER_NAME_11003 = 11003
+    const val USER_NAME_11003_TEXT = "用户名密码不能为空"
+
+    // 修改密码 12
+    // 查询用户 13
+    const val USER_NAME_13001 = 11001
+    const val USER_NAME_13001_TEXT = "您的账户被限制登录(天)："
+
+    // 查询用户列表 14
+    // 会员充值 15
+    const val USER_NAME_15001 = 15001
+    const val USER_NAME_15001_TEXT = "没有此用户，请确认用户信息"
+    const val USER_NAME_15002 = 15002
+    const val USER_NAME_15002_TEXT = "金额不能小于0元"
+
+    // 绑定密友 16
+    const val USER_NAME_16000 = 16000
+    const val USER_NAME_16000_TEXT = "绑定失败"
+    const val USER_NAME_16001 = 16001
+    const val USER_NAME_16001_TEXT = "您的用户信息有误"
+    const val USER_NAME_16002 = 16002
+    const val USER_NAME_16002_TEXT = "对方用户信息有误"
+
+    // 查询版本 17
+    const val USER_NAME_17000 = 17000
+    const val USER_NAME_17000_TEXT = "目前没有新版本发布"
+
+}
