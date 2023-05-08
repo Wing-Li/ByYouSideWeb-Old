@@ -29,12 +29,10 @@ data class Friend(
     ) {
 
     @CreatedDate
-    @Column(nullable = false)
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     var createTime: Date = Date()
 
     @UpdateTimestamp
-    @Column(nullable = false)
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     var updateTime: Date = Date()
 

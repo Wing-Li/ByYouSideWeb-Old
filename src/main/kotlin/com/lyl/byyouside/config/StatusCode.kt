@@ -49,6 +49,8 @@ object StatusCode {
     const val USER_NAME_16001_TEXT = "您的用户信息有误"
     const val USER_NAME_16002 = 16002
     const val USER_NAME_16002_TEXT = "对方用户信息有误"
+    const val USER_NAME_16003 = 16003
+    const val USER_NAME_16003_TEXT = "你们已经是密友关系"
 
     // 查询版本 17
     const val USER_NAME_17000 = 17000

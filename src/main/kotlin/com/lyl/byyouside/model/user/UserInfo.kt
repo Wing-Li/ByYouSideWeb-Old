@@ -54,15 +54,6 @@ data class UserInfo(
 
     var closeDate: Long? = 0, // 封号时间
 
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "friend",
-        joinColumns = [JoinColumn(name = "my_user_id")],
-        inverseJoinColumns = [JoinColumn(name = "to_user_id")]
-    )
-    var friends: MutableList<UserInfo> = mutableListOf()
-
 ) {
 
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
@@ -77,16 +68,5 @@ data class UserInfo(
     @Column(nullable = false)
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     var updateTime: Date = Date()
-
-
-    fun addFriend(friend: UserInfo) {
-        friends.add(friend)
-        friend.friends.add(this)
-    }
-
-    fun removeFriend(friend: UserInfo) {
-        friends.remove(friend)
-        friend.friends.remove(this)
-    }
 
 }

@@ -7,6 +7,7 @@ import com.lyl.byyouside.model.friend.Friend
 import com.lyl.byyouside.model.friend.FriendRepository
 import com.lyl.byyouside.model.user.UserInfoRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RestController
 import java.lang.Exception
@@ -25,35 +26,50 @@ class FriendController : ApiBaseController() {
      * 绑定好友
      */
     @PostMapping(value = ["/bindFriend"])
+    @Transactional
     fun bindFriend(
         myId: Long,
         toId: Long,
     ): BaseCallBack<Any> {
         val myUser = userRepository.findById(myId)
-        if (myUser.isPresent) {
+        if (!myUser.isPresent) {
             return failCallBack(StatusCode.USER_NAME_16001, StatusCode.USER_NAME_16001_TEXT)
         }
 
         val toUser = userRepository.findById(toId)
-        if (toUser.isPresent) {
+        if (!toUser.isPresent) {
             return failCallBack(StatusCode.USER_NAME_16002, StatusCode.USER_NAME_16002_TEXT)
         }
 
+        val isBind = friendRepository.existsByMyUser_IdAndToUser_Id(myId, toId)
+        if (isBind) {
+            return failCallBack(StatusCode.USER_NAME_16003, StatusCode.USER_NAME_16003_TEXT)
+        }
+
+        val myUserData = myUser.get()
+        val toUserData = toUser.get()
+
+        val friendData = Friend(
+            myUser = myUserData,
+            toUser = toUserData,
+        )
+
+        val friendDB = friendRepository.save(friendData)
+
+        return successCallBack(friendDB)
+    }
+
+    /**
+     * 获取全部用户
+     */
+    @PostMapping(value = ["/getAllFriend"])
+    fun getAllFriend(
+    ): BaseCallBack<Any> {
+
         return try {
-            val myUserData = myUser.get()
-            val toUserData = toUser.get()
+            val friendList = friendRepository.findAll()
 
-            val friendData = Friend(
-                myUser = myUserData,
-                toUser = toUserData,
-            )
-
-            val friendDB = friendRepository.save(friendData)
-
-            myUserData.addFriend(toUserData)
-            userRepository.save(myUserData)
-
-            successCallBack(friendDB)
+            successCallBack(friendList)
         } catch (e: Exception) {
             failCallBack(StatusCode.USER_NAME_16000, StatusCode.USER_NAME_16000_TEXT)
         }
@@ -68,7 +84,7 @@ class FriendController : ApiBaseController() {
     ): BaseCallBack<Any> {
 
         return try {
-            val friendList = friendRepository.findFriendsByMyUser_Id(userId)
+            val friendList = friendRepository.findFriendsByMyUser_IdOrToUser_IdOrderByUpdateTimeDesc(userId, userId)
 
             successCallBack(friendList)
         } catch (e: Exception) {

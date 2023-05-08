@@ -100,7 +100,10 @@ class UserController @Autowired constructor(
      * @return 用户信息
      */
     @PostMapping(value = ["/login"])
-    fun login(userName: String?, password: String): BaseCallBack<Any> {
+    fun login(
+        userName: String,
+        password: String
+    ): BaseCallBack<Any> {
         if (!MyUtils.isEmpty(userName) && !MyUtils.isEmpty(password)) {
             val user = userRepository.findByUserNameOrPhone(userName, userName)
             return if (user != null) {
