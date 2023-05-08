@@ -50,7 +50,7 @@ data class UserInfo(
     var province: String = "",
     var city: String = "",
 
-    var vipGrade: Int? = 0,
+    var vipLevel: Int = 0,
 
     var closeDate: Long? = 0, // 封号时间
 

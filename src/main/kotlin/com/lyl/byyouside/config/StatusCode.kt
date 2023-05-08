@@ -41,6 +41,8 @@ object StatusCode {
     const val USER_NAME_15001_TEXT = "没有此用户，请确认用户信息"
     const val USER_NAME_15002 = 15002
     const val USER_NAME_15002_TEXT = "金额不能小于0元"
+    const val USER_NAME_15003 = 15003
+    const val USER_NAME_15003_TEXT = "此类型VIP不存在，请联系管理员"
 
     // 绑定密友 16
     const val USER_NAME_16000 = 16000

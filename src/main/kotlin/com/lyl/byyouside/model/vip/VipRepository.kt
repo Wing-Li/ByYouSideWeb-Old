@@ -4,8 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface VipRechargeRepository : JpaRepository<VipRecharge, Long> {
+interface VipRepository : JpaRepository<Vip, Long> {
 
-    fun findVipRechargesByUserIdOrderByCreateTimeDesc(userId: Long): List<VipRecharge>
-
+    fun existsByLevelIn(levels: List<Int>): Boolean
 }

@@ -8,33 +8,26 @@ import java.math.BigDecimal
 import java.util.*
 
 /**
- * 会员充值记录表
+ * VIP 类型
  */
 @Entity
 @EntityListeners(AuditingEntityListener::class)
-data class VipRecharge(
+data class Vip(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    var id: Long? = null,
-
-
-    @Column(nullable = false)
-    var userId: Long = 0,
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "vip_id", nullable = false)
-    var vip: Vip? = null,
-
-    var fromRecharge: Int = 0, // 3,是官方送的
+    val id: Long? = null,
 
     @Column(nullable = false)
-    var actualPrice: BigDecimal = BigDecimal.ZERO,
+    var level: Int = 1, //等级
 
-    ) {
+    @Column(nullable = false)
+    var duration: Int = 1, // 单位：月
 
+    @Column(nullable = false)
+    var price: BigDecimal = BigDecimal.ZERO, // 价格
+
+) {
     @CreatedDate
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    @Column(nullable = false)
     var createTime: Date = Date()
-
 }
