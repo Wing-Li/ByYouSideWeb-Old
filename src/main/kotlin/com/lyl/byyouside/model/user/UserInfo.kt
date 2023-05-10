@@ -39,18 +39,18 @@ data class UserInfo(
     var gender: Int = 0,
 
     @Column(length = 200)
-    var introduction: String = "",
+    var introduction: String? = "",
 
-    var birthday: String = "",
+    var birthday: String? = "",
 
     @Column(length = 11)
     var phone: String = "",
-    var email: String = "",
+    var email: String? = "",
 
-    var province: String = "",
-    var city: String = "",
+    var province: String? = "",
+    var city: String? = "",
 
-    var vipLevel: Int = 0,
+    var vipLevel: Int? = 0,
 
     var closeDate: Long? = 0, // 封号时间
 

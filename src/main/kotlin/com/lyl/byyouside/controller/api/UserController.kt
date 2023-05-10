@@ -19,7 +19,7 @@ class UserController @Autowired constructor(
      * 创建用户
      *
      * @param userName 账户名
-     * @param password 密码
+     * @param passWord 密码
      * @param nickName 昵称
      * @param gender 性别
      * @return 返回用户信息
@@ -27,7 +27,7 @@ class UserController @Autowired constructor(
     @PostMapping(value = ["/registerUser"])
     fun registerUser(
         userName: String,
-        password: String,
+        passWord: String,
         nickName: String,
         gender: Int
     ): BaseCallBack<Any> {
@@ -35,7 +35,7 @@ class UserController @Autowired constructor(
         if (MyUtils.isEmpty(userName) || userName.length > 32 || userName.length < 2) {
             return failCallBack(StatusCode.USER_NAME_10001, StatusCode.USER_NAME_10001_TEXT)
         }
-        if (MyUtils.isEmpty(password) || password.length > 32 || password.length < 8) {
+        if (MyUtils.isEmpty(passWord) || passWord.length > 32 || passWord.length < 8) {
             return failCallBack(StatusCode.USER_NAME_10002, StatusCode.USER_NAME_10002_TEXT)
         }
         if (MyUtils.isEmpty(nickName) || nickName.length > 16) {
@@ -51,7 +51,7 @@ class UserController @Autowired constructor(
         return try {
             val user = UserInfo(
                 userName = userName,
-                password = password,
+                password = passWord,
                 nickName = nickName,
                 gender = gender
             )
@@ -96,22 +96,22 @@ class UserController @Autowired constructor(
      * 登录
      *
      * @param userName 用户号 或  手机号
-     * @param password 密码
+     * @param passWord 密码
      * @return 用户信息
      */
     @PostMapping(value = ["/login"])
     fun login(
         userName: String,
-        password: String
+        passWord: String
     ): BaseCallBack<Any> {
-        if (!MyUtils.isEmpty(userName) && !MyUtils.isEmpty(password)) {
+        if (!MyUtils.isEmpty(userName) && !MyUtils.isEmpty(passWord)) {
             val user = userRepository.findByUserNameOrPhone(userName, userName)
             return if (user != null) {
                 val closeDay = userCloseDay(user)
                 if (closeDay > 0) {
                     // 账号被封
                     failCallBack(StatusCode.USER_NAME_13001, StatusCode.USER_NAME_13001_TEXT + closeDay)
-                } else if (password == user.password) {
+                } else if (passWord == user.password) {
                     // 登录成功
                     successCallBack(userAdapter(user))
                 } else {
