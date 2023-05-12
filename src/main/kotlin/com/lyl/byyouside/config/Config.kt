@@ -11,13 +11,15 @@ import org.springframework.stereotype.Component
 @ConfigurationProperties(prefix = "com.lyl")
 class Config {
 
-    public var title: String? = null
+    companion object {
+        var title: String? = null
 
-    public var description: String? = null
+        var description: String? = null
 
-    public var baseUrl: String? = null
+        var baseUrl: String? = null
 
-    public var imageHost: String? = null
+        var imageHost: String? = null
+    }
 
 
     @Bean

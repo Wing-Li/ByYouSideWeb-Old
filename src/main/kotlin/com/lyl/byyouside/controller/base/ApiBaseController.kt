@@ -1,5 +1,6 @@
 package com.lyl.byyouside.controller.base
 
+import com.lyl.byyouside.config.Config
 import com.lyl.byyouside.model.base.BaseCallBack
 import com.lyl.byyouside.model.user.UserInfo
 import com.lyl.byyouside.utils.MyUtils
@@ -11,9 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping
  */
 @RequestMapping("/api")
 open class ApiBaseController {
-
-    @Value("\${com.lyl.imageHost}")
-    private val imageHost: String? = null
 
     /**
      * 请求数据成功
@@ -41,7 +39,7 @@ open class ApiBaseController {
     protected fun userAdapter(user: UserInfo): UserInfo {
         if (!MyUtils.isEmpty(user.icon)) {
             // 设置头像
-            user.icon = imageHost + user.icon
+            user.icon = Config.imageHost + user.icon
         }
         return user
     }
