@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 @RestControllerAdvice
 class ExceptionController {
     companion object {
-        private var log: Logger = LoggerFactory.getLogger(ExceptionController::class.java)
+        private val log: Logger = LoggerFactory.getLogger(ExceptionController::class.java)
     }
 
     /**
