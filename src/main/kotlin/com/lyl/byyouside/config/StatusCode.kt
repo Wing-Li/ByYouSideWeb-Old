@@ -58,4 +58,9 @@ object StatusCode {
     const val USER_NAME_17000 = 17000
     const val USER_NAME_17000_TEXT = "目前没有新版本发布"
 
+    // 配置 18
+    const val USER_NAME_18001 = 18001
+    const val USER_NAME_18001_TEXT = "H5还没有基本配置，请联系管理员"
+    const val USER_NAME_18002 = 18002
+    const val USER_NAME_18002_TEXT = "App还没有基本配置，请联系管理员"
 }
