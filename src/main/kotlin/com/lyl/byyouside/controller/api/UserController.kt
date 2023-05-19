@@ -72,17 +72,34 @@ class UserController @Autowired constructor(
     ): BaseCallBack<Any> {
         val user: UserInfo = userRepository.findById(userId).get()
 
-        if (MyUtils.isEmpty(nickName) || nickName?.matches(Regex(Config.REGEX_NICAKNAME)) == false) {
-            return failCallBack(StatusCode.USER_NAME_10003, StatusCode.USER_NAME_10003_TEXT)
+        if (!MyUtils.isEmpty(nickName)) {
+            if (nickName?.matches(Regex(Config.REGEX_NICAKNAME)) == false) {
+                return failCallBack(StatusCode.USER_NAME_10003, StatusCode.USER_NAME_10003_TEXT)
+            } else {
+                nickName?.let { user.nickName = it }
+            }
         }
 
-        nickName?.let { user.nickName = it }
+        if (!MyUtils.isEmpty(introduction)) {
+            if ((introduction?.length ?: 0) > 200) {
+                return failCallBack(StatusCode.USER_NAME_10006, StatusCode.USER_NAME_10006_TEXT)
+            } else {
+                introduction?.let { user.introduction = it }
+            }
+        }
+
+        if (!MyUtils.isEmpty(email)) {
+            if (email?.matches(Regex(Config.REGEX_EMAIL)) == false) {
+                return failCallBack(StatusCode.USER_NAME_10005, StatusCode.USER_NAME_10005_TEXT)
+            } else {
+                email?.let { user.email = it }
+            }
+        }
+
         gender?.let { user.gender = it }
         icon?.let { user.icon = it }
-        introduction?.let { user.introduction = it }
         birthday?.let { user.birthday = it }
         phone?.let { user.phone = it }
-        email?.let { user.email = it }
         province?.let { user.province = it }
         city?.let { user.city = it }
 
