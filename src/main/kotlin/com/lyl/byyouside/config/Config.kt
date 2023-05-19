@@ -21,9 +21,9 @@ class Config {
         var imageHost: String? = null
 
         // 正则
-        val REGEX_USERNAME = "^[a-zA-Z0-9_]{4,20}\$"
-        val REGEX_EMAIL = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,}\$"
-        val REGEX_NICAKNAME = "^[a-zA-Z0-9_-\\\\u4e00-\\\\u9fa5]{4,16}\$"
+        val REGEX_USERNAME = "^[a-zA-Z0-9_]{4,20}$"
+        val REGEX_EMAIL = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+        val REGEX_NICAKNAME = "^[a-zA-Z0-9_-\\u4e00-\\u9fa5]{4,16}$"
     }
 
 

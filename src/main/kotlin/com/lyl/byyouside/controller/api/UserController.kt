@@ -18,12 +18,6 @@ class UserController @Autowired constructor(
 
     /**
      * 创建用户
-     *
-     * @param userName 账户名
-     * @param passWord 密码
-     * @param nickName 昵称
-     * @param gender 性别
-     * @return 返回用户信息
      */
     @PostMapping(value = ["/registerUser"])
     fun registerUser(
