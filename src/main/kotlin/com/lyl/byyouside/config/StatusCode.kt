@@ -14,13 +14,15 @@ object StatusCode {
 
     // 创建用户
     const val USER_NAME_10001 = 10001
-    const val USER_NAME_10001_TEXT = "用户名必须在2到32位字符之间"
+    const val USER_NAME_10001_TEXT = "用户名必须是4-20位的字母/数字/下划线组合"
     const val USER_NAME_10002 = 10002
-    const val USER_NAME_10002_TEXT = "密码必须在8到32位字符之间"
+    const val USER_NAME_10002_TEXT = "密码必须在6-32位字符之间"
     const val USER_NAME_10003 = 10003
-    const val USER_NAME_10003_TEXT = "昵称不能超过16个字符"
+    const val USER_NAME_10003_TEXT = "昵称需为4-16位的中文/字母/数字/下划线/横线组合"
     const val USER_NAME_10004 = 10004
     const val USER_NAME_10004_TEXT = "用户名已经存在"
+    const val USER_NAME_10005 = 10005
+    const val USER_NAME_10005_TEXT = "请检查邮箱是否正确"
 
     // 更新用户
     const val USER_NAME_11001 = 11001

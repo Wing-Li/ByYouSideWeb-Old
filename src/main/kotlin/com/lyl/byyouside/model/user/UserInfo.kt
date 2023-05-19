@@ -30,12 +30,11 @@ data class UserInfo(
     @Column(nullable = false)
     var password: String = "",
 
-    @Column(nullable = false, length = 20)
+    @Column(length = 20)
     var nickName: String = "",
 
     var icon: String = "",
 
-    @Column(nullable = false)
     var gender: Int = 0,
 
     @Column(length = 200)
@@ -45,7 +44,7 @@ data class UserInfo(
 
     @Column(length = 11)
     var phone: String = "",
-    var email: String? = "",
+    var email: String = "",
 
     var province: String? = "",
     var city: String? = "",

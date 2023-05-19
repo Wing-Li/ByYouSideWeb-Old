@@ -1,5 +1,6 @@
 package com.lyl.byyouside.controller.api
 
+import com.lyl.byyouside.config.Config
 import com.lyl.byyouside.config.StatusCode
 import com.lyl.byyouside.controller.base.ApiBaseController
 import com.lyl.byyouside.model.base.BaseCallBack
@@ -28,18 +29,16 @@ class UserController @Autowired constructor(
     fun registerUser(
         userName: String,
         passWord: String,
-        nickName: String,
-        gender: Int
+        email: String
     ): BaseCallBack<Any> {
-        // 检查 用户名、密码、昵称、性别 是否符合规范
-        if (MyUtils.isEmpty(userName) || userName.length > 32 || userName.length < 2) {
+        if (MyUtils.isEmpty(userName) || !userName.matches(Regex(Config.REGEX_USERNAME))) {
             return failCallBack(StatusCode.USER_NAME_10001, StatusCode.USER_NAME_10001_TEXT)
         }
-        if (MyUtils.isEmpty(passWord) || passWord.length > 32 || passWord.length < 8) {
+        if (MyUtils.isEmpty(passWord) || passWord.length > 32 || passWord.length < 6) {
             return failCallBack(StatusCode.USER_NAME_10002, StatusCode.USER_NAME_10002_TEXT)
         }
-        if (MyUtils.isEmpty(nickName) || nickName.length > 16) {
-            return failCallBack(StatusCode.USER_NAME_10003, StatusCode.USER_NAME_10003_TEXT)
+        if (MyUtils.isEmpty(email) || !email.matches(Regex(Config.REGEX_EMAIL))) {
+            return failCallBack(StatusCode.USER_NAME_10005, StatusCode.USER_NAME_10005_TEXT)
         }
 
         // 用户名 不能重复
@@ -52,8 +51,7 @@ class UserController @Autowired constructor(
             val user = UserInfo(
                 userName = userName,
                 password = passWord,
-                nickName = nickName,
-                gender = gender
+                email = email,
             )
             val save: UserInfo = userRepository.save(user)
             successCallBack(userAdapter(save))
@@ -69,6 +67,7 @@ class UserController @Autowired constructor(
     fun updateUser(
         userId: Long,
         nickName: String?,
+        gender: Int?,
         icon: String?,
         introduction: String?,
         birthday: String?,
@@ -79,7 +78,12 @@ class UserController @Autowired constructor(
     ): BaseCallBack<Any> {
         val user: UserInfo = userRepository.findById(userId).get()
 
+        if (MyUtils.isEmpty(nickName) || nickName?.matches(Regex(Config.REGEX_NICAKNAME)) == false) {
+            return failCallBack(StatusCode.USER_NAME_10003, StatusCode.USER_NAME_10003_TEXT)
+        }
+
         nickName?.let { user.nickName = it }
+        gender?.let { user.gender = it }
         icon?.let { user.icon = it }
         introduction?.let { user.introduction = it }
         birthday?.let { user.birthday = it }
