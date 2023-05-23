@@ -37,10 +37,6 @@ open class ApiBaseController {
      * 将用户信息返回给 客户端时，需要处理的一些逻辑
      */
     protected fun userAdapter(user: UserInfo): UserInfo {
-        if (!MyUtils.isEmpty(user.icon)) {
-            // 设置头像
-            user.icon = Config.imageHost + user.icon
-        }
         return user
     }
 

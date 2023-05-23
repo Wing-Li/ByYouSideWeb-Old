@@ -18,7 +18,6 @@ class Config {
 
         var baseUrl: String? = null
 
-        var imageHost: String? = null
 
         // 正则
         val REGEX_USERNAME = "^[a-zA-Z0-9_]{4,20}$"
