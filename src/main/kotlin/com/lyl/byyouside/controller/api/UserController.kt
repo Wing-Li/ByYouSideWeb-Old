@@ -156,7 +156,7 @@ class UserController @Autowired constructor(
     /**
      * 获取用户信息
      */
-    @PostMapping("user/getUser")
+    @PostMapping("/user/getUser")
     fun getUser(userId: Long): BaseCallBack<Any> {
         val userDB = userRepository.findById(userId)
         return if (userDB.isPresent) {
