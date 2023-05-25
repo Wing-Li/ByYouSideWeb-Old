@@ -45,7 +45,7 @@ class VersionController() : ApiBaseController() {
         return if (version != null) {
             successCallBack(version)
         } else {
-            failCallBack(StatusCode.USER_NAME_17000, StatusCode.USER_NAME_17000_TEXT)
+            failCallBack(StatusCode.ERROR_17000, StatusCode.ERROR_17000_TEXT)
         }
     }
 }

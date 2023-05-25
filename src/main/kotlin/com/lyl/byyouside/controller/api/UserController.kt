@@ -10,6 +10,7 @@ import com.lyl.byyouside.utils.MyUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 import java.util.*
+import kotlin.jvm.optionals.getOrNull
 
 @RestController
 class UserController @Autowired constructor(
@@ -26,19 +27,19 @@ class UserController @Autowired constructor(
         email: String
     ): BaseCallBack<Any> {
         if (MyUtils.isEmpty(userName) || !userName.matches(Regex(Config.REGEX_USERNAME))) {
-            return failCallBack(StatusCode.USER_NAME_10001, StatusCode.USER_NAME_10001_TEXT)
+            return failCallBack(StatusCode.ERROR_10001, StatusCode.ERROR_10001_TEXT)
         }
         if (MyUtils.isEmpty(passWord) || passWord.length > 32 || passWord.length < 6) {
-            return failCallBack(StatusCode.USER_NAME_10002, StatusCode.USER_NAME_10002_TEXT)
+            return failCallBack(StatusCode.ERROR_10002, StatusCode.ERROR_10002_TEXT)
         }
         if (MyUtils.isEmpty(email) || !email.matches(Regex(Config.REGEX_EMAIL))) {
-            return failCallBack(StatusCode.USER_NAME_10005, StatusCode.USER_NAME_10005_TEXT)
+            return failCallBack(StatusCode.ERROR_10005, StatusCode.ERROR_10005_TEXT)
         }
 
         // 用户名 不能重复
         val existsUser = userRepository.existsByUserName(userName)
         if (existsUser) {
-            return failCallBack(StatusCode.USER_NAME_10004, StatusCode.USER_NAME_10004_TEXT)
+            return failCallBack(StatusCode.ERROR_10004, StatusCode.ERROR_10004_TEXT)
         }
 
         return try {
@@ -50,7 +51,7 @@ class UserController @Autowired constructor(
             val save: UserInfo = userRepository.save(user)
             successCallBack(userAdapter(save))
         } catch (e: Exception) {
-            failCallBack(StatusCode.USER_NAME_10000, StatusCode.USER_NAME_10000_TEXT)
+            failCallBack(StatusCode.ERROR_10000, StatusCode.ERROR_10000_TEXT)
         }
     }
 
@@ -70,41 +71,46 @@ class UserController @Autowired constructor(
         province: String?,
         city: String?
     ): BaseCallBack<Any> {
-        val user: UserInfo = userRepository.findById(userId).get()
+        val user = userRepository.findById(userId).getOrNull()
+        userAuth(user)?.let { return it }
 
-        if (!MyUtils.isEmpty(nickName)) {
-            if (nickName?.matches(Regex(Config.REGEX_NICAKNAME)) == false) {
-                return failCallBack(StatusCode.USER_NAME_10003, StatusCode.USER_NAME_10003_TEXT)
-            } else {
-                nickName?.let { user.nickName = it }
+        user?.let {
+            if (!MyUtils.isEmpty(nickName)) {
+                if (nickName?.matches(Regex(Config.REGEX_NICAKNAME)) == false) {
+                    return failCallBack(StatusCode.ERROR_10003, StatusCode.ERROR_10003_TEXT)
+                } else {
+                    nickName?.let { user.nickName = it }
+                }
             }
+
+            if (!MyUtils.isEmpty(introduction)) {
+                if ((introduction?.length ?: 0) > 200) {
+                    return failCallBack(StatusCode.ERROR_10006, StatusCode.ERROR_10006_TEXT)
+                } else {
+                    introduction?.let { user.introduction = it }
+                }
+            }
+
+            if (!MyUtils.isEmpty(email)) {
+                if (email?.matches(Regex(Config.REGEX_EMAIL)) == false) {
+                    return failCallBack(StatusCode.ERROR_10005, StatusCode.ERROR_10005_TEXT)
+                } else {
+                    email?.let { user.email = it }
+                }
+            }
+
+            gender?.let { user.gender = it }
+            icon?.let { user.icon = it }
+            birthday?.let { user.birthday = it }
+            phone?.let { user.phone = it }
+            province?.let { user.province = it }
+            city?.let { user.city = it }
+
+            val save = userRepository.save(user)
+            return successCallBack(userAdapter(save))
         }
 
-        if (!MyUtils.isEmpty(introduction)) {
-            if ((introduction?.length ?: 0) > 200) {
-                return failCallBack(StatusCode.USER_NAME_10006, StatusCode.USER_NAME_10006_TEXT)
-            } else {
-                introduction?.let { user.introduction = it }
-            }
-        }
-
-        if (!MyUtils.isEmpty(email)) {
-            if (email?.matches(Regex(Config.REGEX_EMAIL)) == false) {
-                return failCallBack(StatusCode.USER_NAME_10005, StatusCode.USER_NAME_10005_TEXT)
-            } else {
-                email?.let { user.email = it }
-            }
-        }
-
-        gender?.let { user.gender = it }
-        icon?.let { user.icon = it }
-        birthday?.let { user.birthday = it }
-        phone?.let { user.phone = it }
-        province?.let { user.province = it }
-        city?.let { user.city = it }
-
-        userRepository.save(user)
-        return successCallBack(userAdapter(user))
+        return successCallBack("")
     }
 
     /**
@@ -122,22 +128,21 @@ class UserController @Autowired constructor(
         if (!MyUtils.isEmpty(userName) && !MyUtils.isEmpty(passWord)) {
             val user = userRepository.findByUserNameOrPhone(userName, userName)
             return if (user != null) {
-                val closeDay = userCloseDay(user)
-                if (closeDay > 0) {
+                if ((user.closeDate ?: 0) > 0) {
                     // 账号被封
-                    failCallBack(StatusCode.USER_NAME_13001, StatusCode.USER_NAME_13001_TEXT + closeDay)
+                    failCallBack(StatusCode.ERROR_13001, StatusCode.ERROR_13001_TEXT + user.closeDate)
                 } else if (passWord == user.password) {
                     // 登录成功
                     successCallBack(userAdapter(user))
                 } else {
                     // 密码不对
-                    failCallBack(StatusCode.USER_NAME_11002, StatusCode.USER_NAME_11002_TEXT)
+                    failCallBack(StatusCode.ERROR_11002, StatusCode.ERROR_11002_TEXT)
                 }
             } else {
-                failCallBack(StatusCode.USER_NAME_11001, StatusCode.USER_NAME_11001_TEXT)
+                failCallBack(StatusCode.ERROR_11001, StatusCode.ERROR_11001_TEXT)
             }
         }
-        return failCallBack(StatusCode.USER_NAME_11003, StatusCode.USER_NAME_11003_TEXT)
+        return failCallBack(StatusCode.ERROR_11003, StatusCode.ERROR_11003_TEXT)
     }
 
     /**
@@ -153,13 +158,12 @@ class UserController @Autowired constructor(
      */
     @PostMapping("/getUser")
     fun getUser(userId: Long): BaseCallBack<Any> {
-        val user = userRepository.findById(userId)
-        return if (user.isPresent) {
-            val user: UserInfo = user.get()
-            val closeDay = userCloseDay(user)
-            if (closeDay > 0) {
+        val userDB = userRepository.findById(userId)
+        return if (userDB.isPresent) {
+            val user: UserInfo = userDB.get()
+            if ((user.closeDate ?: 0) > 0) {
                 // 账号被封
-                failCallBack(StatusCode.USER_NAME_13001, StatusCode.USER_NAME_13001_TEXT + closeDay)
+                failCallBack(StatusCode.ERROR_13001, StatusCode.ERROR_13001_TEXT + user.closeDate)
             } else {
                 // 获取成功
 
@@ -177,7 +181,7 @@ class UserController @Autowired constructor(
                 successCallBack(userAdapter(user))
             }
         } else {
-            failCallBack(StatusCode.USER_NAME_11001, StatusCode.USER_NAME_11001_TEXT)
+            failCallBack(StatusCode.ERROR_11001, StatusCode.ERROR_11001_TEXT)
         }
     }
 }

@@ -37,6 +37,7 @@ dependencies {
 tasks.withType(KotlinCompile) {
     kotlinOptions {
         freeCompilerArgs = ['-Xjsr305=strict']
+        freeCompilerArgs += ["-opt-in=kotlin.ExperimentalStdlibApi"]
         jvmTarget = '17'
     }
 }

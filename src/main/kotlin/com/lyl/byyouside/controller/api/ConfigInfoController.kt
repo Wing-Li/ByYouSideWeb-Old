@@ -58,10 +58,10 @@ class ConfigInfoController : ApiBaseController() {
                 val map: Map<String, Any> = JSONObject.parse(latestConfig.h5Config) as? HashMap<String, Any> ?: HashMap()
                 successCallBack(map)
             } else {
-                failCallBack(StatusCode.USER_NAME_18001, StatusCode.USER_NAME_18001_TEXT)
+                failCallBack(StatusCode.ERROR_18001, StatusCode.ERROR_18001_TEXT)
             }
         } catch (e: Exception) {
-            failCallBack(StatusCode.USER_NAME_18001, StatusCode.USER_NAME_18001_TEXT)
+            failCallBack(StatusCode.ERROR_18001, StatusCode.ERROR_18001_TEXT)
         }
     }
 
@@ -73,10 +73,10 @@ class ConfigInfoController : ApiBaseController() {
                 val map: Map<String, Any> = JSONObject.parse(latestConfig.h5Config) as? HashMap<String, Any> ?: HashMap()
                 successCallBack(map)
             } else {
-                failCallBack(StatusCode.USER_NAME_18002, StatusCode.USER_NAME_18002_TEXT)
+                failCallBack(StatusCode.ERROR_18002, StatusCode.ERROR_18002_TEXT)
             }
         } catch (e: Exception) {
-            failCallBack(StatusCode.USER_NAME_18002, StatusCode.USER_NAME_18002_TEXT)
+            failCallBack(StatusCode.ERROR_18002, StatusCode.ERROR_18002_TEXT)
         }
     }
 

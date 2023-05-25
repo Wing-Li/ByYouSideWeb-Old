@@ -1,6 +1,7 @@
 package com.lyl.byyouside.controller.base
 
 import com.lyl.byyouside.config.Config
+import com.lyl.byyouside.config.StatusCode
 import com.lyl.byyouside.model.base.BaseCallBack
 import com.lyl.byyouside.model.user.UserInfo
 import com.lyl.byyouside.utils.MyUtils
@@ -41,12 +42,16 @@ open class ApiBaseController {
     }
 
     /**
-     * 账号被封的天数
+     * 获取用户之后的权鉴
      */
-    protected fun userCloseDay(user: UserInfo): Long {
-        if (user.closeDate != null && user.closeDate!! > 0) {
-            return MyUtils.formatTimestampToDay(user.closeDate!!)
+    protected fun userAuth(user: UserInfo?): BaseCallBack<Any>? {
+        if (user == null) {
+            return failCallBack(StatusCode.ERROR_16001, StatusCode.ERROR_16001_TEXT)
         }
-        return 0
+        if ((user.closeDate ?: 0) > 0) {
+            return failCallBack(StatusCode.ERROR_13001, StatusCode.ERROR_13001_TEXT + user.closeDate)
+        }
+        return null;
     }
+
 }

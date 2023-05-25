@@ -46,14 +46,14 @@ class VipRechargeController @Autowired constructor(
         val user = userRepository.findById(userId)
         if (!user.isPresent) {
             // 用户不存在
-            return failCallBack(StatusCode.USER_NAME_15001, StatusCode.USER_NAME_15001_TEXT)
+            return failCallBack(StatusCode.ERROR_15001, StatusCode.ERROR_15001_TEXT)
         }
 
         // from = 3,是官方送的
         if (from != 3) {
             if (money < BigDecimal.ZERO) {
                 // 金额小于0
-                return failCallBack(StatusCode.USER_NAME_15002, StatusCode.USER_NAME_15002_TEXT)
+                return failCallBack(StatusCode.ERROR_15002, StatusCode.ERROR_15002_TEXT)
             }
         }
 
@@ -61,7 +61,7 @@ class VipRechargeController @Autowired constructor(
 
         if (!vipDB.isPresent) {
             // VIP不存在
-            return failCallBack(StatusCode.USER_NAME_15003, StatusCode.USER_NAME_15003_TEXT)
+            return failCallBack(StatusCode.ERROR_15003, StatusCode.ERROR_15003_TEXT)
         }
         val vip = vipDB.get()
 

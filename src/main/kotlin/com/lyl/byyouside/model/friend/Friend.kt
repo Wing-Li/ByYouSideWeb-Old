@@ -26,6 +26,20 @@ data class Friend(
     @JoinColumn(name = "to_user_id")
     var toUser: UserInfo? = null,
 
+    /**
+     * 昵称备注
+     */
+    var friendAlias: String = "",
+
+    /**
+     * -2: 拒绝且不再添加
+     * -1: 拒绝
+     * 0: 等待；
+     * 1: 同意
+     */
+    @Column(nullable = false)
+    var status: Int = 0,
+
     ) {
 
     @CreatedDate

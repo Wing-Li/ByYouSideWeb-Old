@@ -51,9 +51,12 @@ data class UserInfo(
 
     var vipLevel: Int? = 0,
 
-    var closeDate: Long? = 0, // 封号时间
+    /**
+     * 封号时间, 封号天数
+     */
+    var closeDate: Int? = 0,
 
-) {
+    ) {
 
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     var vipLimitDate: Date? = null // 会员过期时间
