@@ -1,5 +1,6 @@
 package com.lyl.byyouside.controller.api
 
+import com.lyl.byyouside.config.Config
 import com.lyl.byyouside.config.StatusCode
 import com.lyl.byyouside.controller.base.ApiBaseController
 import com.lyl.byyouside.model.base.BaseCallBack
@@ -7,6 +8,7 @@ import com.lyl.byyouside.model.friend.Friend
 import com.lyl.byyouside.model.friend.FriendRepository
 import com.lyl.byyouside.model.user.UserInfo
 import com.lyl.byyouside.model.user.UserInfoRepository
+import com.lyl.byyouside.utils.MyUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.PostMapping
@@ -47,7 +49,7 @@ class FriendController : ApiBaseController() {
         val myUser: UserInfo? = userRepository.findById(myId).getOrNull()
         userAuth(myUser)?.let { return it }
 
-        val toUser = userRepository.findById(toId).getOrNull()
+        val toUser: UserInfo? = userRepository.findById(toId).getOrNull()
         userAuth(toUser)?.let { return it }
 
         val friendData = Friend(
@@ -76,6 +78,7 @@ class FriendController : ApiBaseController() {
         val toUser = userRepository.findById(toId).getOrNull()
         userAuth(toUser)?.let { return it }
 
+        // 他 -> 我
         val toFriend = friendRepository.findById(friendId).getOrNull()
         if (toFriend == null) {
             return failCallBack(StatusCode.ERROR_16008, StatusCode.ERROR_16008_TEXT)
@@ -138,13 +141,23 @@ class FriendController : ApiBaseController() {
     fun deleteFriend(
         friendId: Long, // 密友ID
     ): BaseCallBack<Any> {
-        val friendDB = friendRepository.findById(friendId)
-        if (!friendDB.isPresent) {
-            return failCallBack(StatusCode.ERROR_16008, StatusCode.ERROR_16008_TEXT)
-        }
-        val friend = friendDB.get()
+        var myUserId = 0L
+        var toUserId = 0L
 
-        friendRepository.delete(friend);
+        // 删除自己记录
+        val myFriendDB = friendRepository.findById(friendId)
+        if (myFriendDB.isPresent) {
+            val myFriend = myFriendDB.get()
+            myUserId = myFriend.myUser?.id ?: 0
+            toUserId = myFriend.toUser?.id ?: 0
+            friendRepository.delete(myFriend)
+        }
+
+        // 删除对方记录
+        val toFriend = friendRepository.findByMyUser_IdAndToUser_Id(toUserId, myUserId)
+        if (toFriend != null) {
+            friendRepository.delete(toFriend)
+        }
 
         return successCallBack("删除简单，朋友难得。千万不要因为一些小事，失去一个要好的朋友！")
     }
@@ -162,6 +175,10 @@ class FriendController : ApiBaseController() {
             return failCallBack(StatusCode.ERROR_16008, StatusCode.ERROR_16008_TEXT)
         }
         val friend = friendDB.get()
+
+        if (MyUtils.isEmpty(friendAlias) || !friendAlias.matches(Regex(Config.REGEX_NICAKNAME))) {
+            return failCallBack(StatusCode.ERROR_10003, StatusCode.ERROR_10003_TEXT)
+        }
         friend.friendAlias = friendAlias
 
         friendRepository.save(friend);
@@ -172,11 +189,13 @@ class FriendController : ApiBaseController() {
     /**
      * 获取我的好友
      */
-    @PostMapping(value = ["/getMyFriend"])
+    @PostMapping(value = ["/friend/getMyFriend"])
     fun getMyFriend(
-        userId: Long
+        userId: Long,
+        status: Int?, // -2: 拒绝且不再添加 -1: 拒绝 0: 等待； 1: 同意
     ): BaseCallBack<Any> {
-        val friendList = friendRepository.findFriendsByMyUser_IdOrderByUpdateTimeDesc(userId)
+        val friendStatus = status ?: 1
+        val friendList: List<Friend> = friendRepository.findFriendsByMyUser_IdAndStatusOrderByUpdateTimeDesc(userId, friendStatus)
 
         return successCallBack(friendList)
     }
