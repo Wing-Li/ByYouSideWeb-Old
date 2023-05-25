@@ -20,7 +20,7 @@ class UserController @Autowired constructor(
     /**
      * 创建用户
      */
-    @PostMapping(value = ["/registerUser"])
+    @PostMapping(value = ["/user/register"])
     fun registerUser(
         userName: String,
         passWord: String,
@@ -58,7 +58,7 @@ class UserController @Autowired constructor(
     /**
      * 更新数据库字段，只要某个字段传了值，就更新数据库
      */
-    @PostMapping(value = ["/updateUser"])
+    @PostMapping(value = ["/user/update"])
     fun updateUser(
         userId: Long,
         nickName: String?,
@@ -120,7 +120,7 @@ class UserController @Autowired constructor(
      * @param passWord 密码
      * @return 用户信息
      */
-    @PostMapping(value = ["/login"])
+    @PostMapping(value = ["/user/login"])
     fun login(
         userName: String,
         passWord: String
@@ -148,7 +148,7 @@ class UserController @Autowired constructor(
     /**
      * 获取所有用户
      */
-    @PostMapping("/getAllUser")
+    @PostMapping("/user/getAll")
     fun getAllUser(): BaseCallBack<Any> {
         return successCallBack(userRepository.findAll())
     }
@@ -156,7 +156,7 @@ class UserController @Autowired constructor(
     /**
      * 获取用户信息
      */
-    @PostMapping("/getUser")
+    @PostMapping("user/getUser")
     fun getUser(userId: Long): BaseCallBack<Any> {
         val userDB = userRepository.findById(userId)
         return if (userDB.isPresent) {

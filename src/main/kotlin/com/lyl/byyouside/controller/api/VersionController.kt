@@ -18,7 +18,7 @@ class VersionController() : ApiBaseController() {
     @Autowired
     private lateinit var versionRepository: VersionRepository
 
-    @PostMapping(value = ["/version/addVersion"])
+    @PostMapping(value = ["/version/add"])
     fun addVersion(
         androidVersionNumber: String,
         iosVersionNumber: String,
@@ -38,7 +38,7 @@ class VersionController() : ApiBaseController() {
         return successCallBack(versionDB)
     }
 
-    @GetMapping(value = ["/version/getLastVersion"])
+    @GetMapping(value = ["/version/getLast"])
     fun getLastVersion(): BaseCallBack<Any> {
         val version = versionRepository.findByOrderByReleaseDateDesc()
 

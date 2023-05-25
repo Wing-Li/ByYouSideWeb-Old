@@ -19,6 +19,7 @@ import java.util.*
  * 会员充值记录
  */
 @RestController
+@Transactional
 class VipRechargeController @Autowired constructor(
     private val vipRepository: VipRepository,
     private val vipRechargeRepository: VipRechargeRepository,
@@ -35,8 +36,7 @@ class VipRechargeController @Autowired constructor(
      * @param from     充值来源  1：用户充值； 3：官方赠送
      * @return
      */
-    @PostMapping("/addVipRecharge")
-    @Transactional
+    @PostMapping("/vip/addRecharge")
     fun addVipRecharge(
         userId: Long,
         vipId: Long,
@@ -95,13 +95,13 @@ class VipRechargeController @Autowired constructor(
         return successCallBack(userAdapter(resultUser))
     }
 
-    @GetMapping(value = ["/getVipRechargeAll"])
+    @GetMapping(value = ["/vip/getRechargeAll"])
     fun getVipRechargeAll(): BaseCallBack<Any> {
         val vipRecharges = vipRechargeRepository.findAll()
         return successCallBack(vipRecharges)
     }
 
-    @GetMapping(value = ["/getVipRechargeByUserId"])
+    @GetMapping(value = ["/vip/getRechargeByUserId"])
     fun getVipRechargeByUserId(
         userId: Long
     ): BaseCallBack<Any> {
@@ -109,7 +109,7 @@ class VipRechargeController @Autowired constructor(
         return successCallBack(vipRecharges)
     }
 
-    @GetMapping(value = ["/getVipType"])
+    @GetMapping(value = ["/vip/getType"])
     fun getVipType(): BaseCallBack<Any> {
         val vips = vipRepository.findAll()
         return successCallBack(vips)

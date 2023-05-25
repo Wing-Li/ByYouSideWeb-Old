@@ -27,7 +27,7 @@ class AnnouncementController @Autowired constructor(
      * @param content    内容
      * @return
      */
-    @PostMapping("addAnnouncement")
+    @PostMapping("announcement/add")
     fun addAnnouncement(
         title: String?,
         authorName: String?,
@@ -54,7 +54,7 @@ class AnnouncementController @Autowired constructor(
     /**
      * 获取所有的公告
      */
-    @GetMapping("getAllAnnouncement")
+    @GetMapping("announcement/getAll")
     fun getAllAnnouncement(): BaseCallBack<Any> {
         val all = announcementRepository.findAll()
         return successCallBack(all)
@@ -63,7 +63,7 @@ class AnnouncementController @Autowired constructor(
     /**
      * 获取最后一条公告
      */
-    @GetMapping("getLastAnnouncement")
+    @GetMapping("announcement/getLast")
     fun getLastAnnouncement(): BaseCallBack<Any> {
         val announcement = announcementRepository.findTopByOrderByCreateTimeDesc()
         return if (announcement != null) {
