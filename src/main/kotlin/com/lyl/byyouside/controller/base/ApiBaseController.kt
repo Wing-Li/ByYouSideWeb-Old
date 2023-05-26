@@ -29,7 +29,7 @@ open class ApiBaseController {
      * @return
      */
     fun failCallBack(code: Int, msg: String): BaseCallBack<Any> {
-        return BaseCallBack(code, msg, Any())
+        return BaseCallBack(code, msg, null)
     }
 
     //============================= 基础操作 ===========================================
