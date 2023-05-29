@@ -6,8 +6,10 @@ import org.springframework.stereotype.Repository
 @Repository
 interface FriendRepository : JpaRepository<Friend, Long> {
 
+    fun findFriendsByMyUser_IdOrderByUpdateTimeDesc(myUserId: Long): List<Friend>
     fun findFriendsByMyUser_IdAndStatusOrderByUpdateTimeDesc(myUserId: Long, status: Int): List<Friend>
 
+    fun findFriendsByToUser_IdOrderByUpdateTimeDesc(toUserId: Long): List<Friend>
     fun findFriendsByToUser_IdAndStatusOrderByUpdateTimeDesc(toUserId: Long, status: Int): List<Friend>
 
     fun findByMyUser_IdAndToUser_Id(myUserId: Long, toUserId: Long): Friend?

@@ -194,8 +194,12 @@ class FriendController : ApiBaseController() {
         userId: Long,
         status: Int?, // -2: 拒绝且不再添加 -1: 拒绝 0: 等待； 1: 同意
     ): BaseCallBack<Any> {
-        val friendStatus = status ?: 1
-        val friendList: List<Friend> = friendRepository.findFriendsByMyUser_IdAndStatusOrderByUpdateTimeDesc(userId, friendStatus)
+        val friendList: List<Friend> =
+            if (status == null) {
+                friendRepository.findFriendsByMyUser_IdOrderByUpdateTimeDesc(userId)
+            } else {
+                friendRepository.findFriendsByMyUser_IdAndStatusOrderByUpdateTimeDesc(userId, status)
+            }
 
         return successCallBack(friendList)
     }
@@ -208,8 +212,12 @@ class FriendController : ApiBaseController() {
         userId: Long,
         status: Int?, // -2: 拒绝且不再添加 -1: 拒绝 0: 等待； 1: 同意
     ): BaseCallBack<Any> {
-        val friendStatus = status ?: 1
-        val friendList: List<Friend> = friendRepository.findFriendsByToUser_IdAndStatusOrderByUpdateTimeDesc(userId, friendStatus)
+        val friendList: List<Friend> =
+            if (status == null) {
+                friendRepository.findFriendsByToUser_IdOrderByUpdateTimeDesc(userId)
+            } else {
+                friendRepository.findFriendsByToUser_IdAndStatusOrderByUpdateTimeDesc(userId, status)
+            }
 
         return successCallBack(friendList)
     }
