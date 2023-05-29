@@ -199,4 +199,18 @@ class FriendController : ApiBaseController() {
 
         return successCallBack(friendList)
     }
+
+    /**
+     * 获取请求我的好友，谁加了我
+     */
+    @PostMapping(value = ["/friend/getRequestMeFriend"])
+    fun getRequestMeFriend(
+        userId: Long,
+        status: Int?, // -2: 拒绝且不再添加 -1: 拒绝 0: 等待； 1: 同意
+    ): BaseCallBack<Any> {
+        val friendStatus = status ?: 1
+        val friendList: List<Friend> = friendRepository.findFriendsByToUser_IdAndStatusOrderByUpdateTimeDesc(userId, friendStatus)
+
+        return successCallBack(friendList)
+    }
 }
