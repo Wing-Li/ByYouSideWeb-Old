@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RestController
+import java.util.Arrays
 import kotlin.jvm.optionals.getOrNull
 
 
@@ -192,13 +193,13 @@ class FriendController : ApiBaseController() {
     @PostMapping(value = ["/friend/getMyFriend"])
     fun getMyFriend(
         userId: Long,
-        status: Int?, // -2: 拒绝且不再添加 -1: 拒绝 0: 等待； 1: 同意
+        status: List<Int>?, // -2: 拒绝且不再添加 -1: 拒绝 0: 等待； 1: 同意
     ): BaseCallBack<Any> {
         val friendList: List<Friend> =
-            if (status == null) {
-                friendRepository.findFriendsByMyUser_IdOrderByUpdateTimeDesc(userId)
+            if (status == null) { // 不传，则 获取我的好友
+                friendRepository.findFriendsByMyUser_IdAndStatusInOrderByUpdateTimeDesc(userId, listOf(1))
             } else {
-                friendRepository.findFriendsByMyUser_IdAndStatusOrderByUpdateTimeDesc(userId, status)
+                friendRepository.findFriendsByMyUser_IdAndStatusInOrderByUpdateTimeDesc(userId, status)
             }
 
         return successCallBack(friendList)
@@ -210,13 +211,13 @@ class FriendController : ApiBaseController() {
     @PostMapping(value = ["/friend/getRequestMeFriend"])
     fun getRequestMeFriend(
         userId: Long,
-        status: Int?, // -2: 拒绝且不再添加 -1: 拒绝 0: 等待； 1: 同意
+        status: List<Int>?, // -2: 拒绝且不再添加 -1: 拒绝 0: 等待； 1: 同意
     ): BaseCallBack<Any> {
         val friendList: List<Friend> =
-            if (status == null) {
-                friendRepository.findFriendsByToUser_IdOrderByUpdateTimeDesc(userId)
+            if (status == null) { // 不传，则 获取未同意的好友请求
+                friendRepository.findFriendsByToUser_IdAndStatusInOrderByUpdateTimeDesc(userId, listOf(-2, -1, 0))
             } else {
-                friendRepository.findFriendsByToUser_IdAndStatusOrderByUpdateTimeDesc(userId, status)
+                friendRepository.findFriendsByToUser_IdAndStatusInOrderByUpdateTimeDesc(userId, status)
             }
 
         return successCallBack(friendList)
