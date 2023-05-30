@@ -12,6 +12,7 @@ import com.lyl.byyouside.utils.MyUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.util.Arrays
 import kotlin.jvm.optionals.getOrNull
@@ -193,7 +194,7 @@ class FriendController : ApiBaseController() {
     @PostMapping(value = ["/friend/getMyFriend"])
     fun getMyFriend(
         userId: Long,
-        status: List<Int>?, // -2: 拒绝且不再添加 -1: 拒绝 0: 等待； 1: 同意
+        @RequestParam status: List<Int>?, // -2: 拒绝且不再添加 -1: 拒绝 0: 等待； 1: 同意
     ): BaseCallBack<Any> {
         val friendList: List<Friend> =
             if (status == null) { // 不传，则 获取我的好友
@@ -211,7 +212,7 @@ class FriendController : ApiBaseController() {
     @PostMapping(value = ["/friend/getRequestMeFriend"])
     fun getRequestMeFriend(
         userId: Long,
-        status: List<Int>?, // -2: 拒绝且不再添加 -1: 拒绝 0: 等待； 1: 同意
+        @RequestParam status: List<Int>?, // -2: 拒绝且不再添加 -1: 拒绝 0: 等待； 1: 同意
     ): BaseCallBack<Any> {
         val friendList: List<Friend> =
             if (status == null) { // 不传，则 获取未同意的好友请求
