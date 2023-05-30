@@ -36,6 +36,7 @@ class FriendController : ApiBaseController() {
         myId: Long, // 请求方
         toId: Long, // 被请求的人
     ): BaseCallBack<Any> {
+        // 检查自己和对方的关系
         val friend = friendRepository.findByMyUser_IdAndToUser_Id(myId, toId)
         if (friend != null) {
             when (friend.status) {
@@ -48,21 +49,37 @@ class FriendController : ApiBaseController() {
             }
         }
 
-        val myUser: UserInfo? = userRepository.findById(myId).getOrNull()
-        userAuth(myUser)?.let { return it }
+        // 检查对方是否请求过自己
+        val toRequestFriend = friendRepository.findByMyUser_IdAndToUser_Id(toId, myId)
+        if (toRequestFriend != null) {
+            toRequestFriend.status = 1;
+            friendRepository.save(toRequestFriend)
 
-        val toUser: UserInfo? = userRepository.findById(toId).getOrNull()
-        userAuth(toUser)?.let { return it }
+            // 对方已经添加过自己。此条请求，直接将双方加为好友
+            val myFriendData = Friend(
+                myUser = toRequestFriend.toUser,
+                toUser = toRequestFriend.myUser,
+                status = 1,
+            )
+            val myFriendDB = friendRepository.save(myFriendData)
+            return successCallBack(myFriendDB)
 
-        val friendData = Friend(
-            myUser = myUser,
-            toUser = toUser,
-            status = 0,
-        )
+        } else {
+            // 没有请求过，则创建请求记录
+            val myUser: UserInfo? = userRepository.findById(myId).getOrNull()
+            userAuth(myUser)?.let { return it }
 
-        val friendDB = friendRepository.save(friendData)
+            val toUser: UserInfo? = userRepository.findById(toId).getOrNull()
+            userAuth(toUser)?.let { return it }
 
-        return successCallBack(friendDB)
+            val friendData = Friend(
+                myUser = myUser,
+                toUser = toUser,
+                status = 0,
+            )
+            val friendDB = friendRepository.save(friendData)
+            return successCallBack(friendDB)
+        }
     }
 
     /**
@@ -83,14 +100,17 @@ class FriendController : ApiBaseController() {
         // 他 -> 我
         val toFriend = friendRepository.findById(friendId).getOrNull()
         if (toFriend == null) {
+            // 好友关系不存在
             return failCallBack(StatusCode.ERROR_16008, StatusCode.ERROR_16008_TEXT)
         }
 
         if (toFriend.toUser?.id != myId) {
+            // 信息出错，请重新登录账号
             return failCallBack(StatusCode.ERROR_16007, StatusCode.ERROR_16007_TEXT)
         }
 
         if (toFriend.status == 1) {
+            // 你们已经是密友关系
             return failCallBack(StatusCode.ERROR_16003, StatusCode.ERROR_16003_TEXT)
         }
 
