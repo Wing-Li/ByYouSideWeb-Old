@@ -56,7 +56,7 @@ object StatusCode {
     const val ERROR_16004 = 16004
     const val ERROR_16004_TEXT = "您的好友账户被限制登录(天)："
     const val ERROR_16003 = 16003
-    const val ERROR_16003_TEXT = "你们已经是密友关系"
+    const val ERROR_16003_TEXT = "你们已经是密友关系，无法重复操作"
     const val ERROR_16005 = 16005
     const val ERROR_16005_TEXT = "已经请求过了"
     const val ERROR_16006 = 16006
@@ -65,6 +65,8 @@ object StatusCode {
     const val ERROR_16007_TEXT = "信息出错，请重新登录账号"
     const val ERROR_16008 = 16008
     const val ERROR_16008_TEXT = "好友关系不存在"
+    const val ERROR_16009 = 16009
+    const val ERROR_16009_TEXT = "你们已经是好友，无法重复操作"
 
     // 查询版本 17
     const val ERROR_17000 = 17000

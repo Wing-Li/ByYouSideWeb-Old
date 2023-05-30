@@ -140,7 +140,11 @@ class FriendController : ApiBaseController() {
     ): BaseCallBack<Any> {
         val toFriend = friendRepository.findById(friendId).getOrNull()
         if (toFriend == null) {
+            // 好友关系不存在
             return failCallBack(StatusCode.ERROR_16008, StatusCode.ERROR_16008_TEXT)
+        }
+        if (toFriend.status == 1) {
+            return failCallBack(StatusCode.ERROR_16009, StatusCode.ERROR_16009_TEXT)
         }
         if (toFriend.toUser?.id != myId) {
             return failCallBack(StatusCode.ERROR_16007, StatusCode.ERROR_16007_TEXT)
