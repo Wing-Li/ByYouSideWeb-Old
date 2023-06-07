@@ -1,11 +1,9 @@
 package com.lyl.byyouside.controller.base
 
-import com.lyl.byyouside.config.Config
 import com.lyl.byyouside.config.StatusCode
 import com.lyl.byyouside.model.base.BaseCallBack
 import com.lyl.byyouside.model.user.UserInfo
-import com.lyl.byyouside.utils.MyUtils
-import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.domain.Page
 import org.springframework.web.bind.annotation.RequestMapping
 
 /**
@@ -19,6 +17,17 @@ open class ApiBaseController {
      */
     fun successCallBack(t: Any): BaseCallBack<Any> {
         return BaseCallBack(200, "请求成功", t)
+    }
+
+    fun <T> successListCallBack(page: Page<T>): BaseCallBack<MutableList<T>> {
+        val callBack = BaseCallBack(200, "请求成功", page.content)
+        callBack.totalPages = page.totalPages
+        callBack.currentPage = page.pageable.pageNumber + 1 // 页数从1开始，代码是从0开始
+        callBack.totalElements = page.totalElements
+        callBack.size = page.size
+        callBack.isListLast = page.isLast
+
+        return callBack
     }
 
     /**

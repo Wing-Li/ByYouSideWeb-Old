@@ -56,6 +56,12 @@ data class UserInfo(
      */
     var closeDate: Int? = 0,
 
+    // 设备信息更新时，顺便更新用户表里的数据，方便获取
+    var locationAddress: String? = "",
+    var locationLongitude: Double? = 0.0,
+    var locationLatitude: Double? = 0.0,
+    var locationTime: Date? = null,
+
     ) {
 
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
