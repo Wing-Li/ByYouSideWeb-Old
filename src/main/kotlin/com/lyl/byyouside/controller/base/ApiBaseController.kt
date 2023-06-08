@@ -4,6 +4,7 @@ import com.lyl.byyouside.config.StatusCode
 import com.lyl.byyouside.model.base.BaseCallBack
 import com.lyl.byyouside.model.user.UserInfo
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
 import org.springframework.web.bind.annotation.RequestMapping
 
 /**
@@ -13,12 +14,16 @@ import org.springframework.web.bind.annotation.RequestMapping
 open class ApiBaseController {
 
     /**
-     * 请求数据成功
+     * 分页请求，基础配置
      */
-    fun successCallBack(t: Any): BaseCallBack<Any> {
-        return BaseCallBack(200, "请求成功", t)
+    fun getBasePageRequest(page: Int, size: Int?): PageRequest {
+        // page 从 1 开始
+        return PageRequest.of(page - 1, size ?: 20)
     }
 
+    /**
+     * 分页请求，结果返回
+     */
     fun <T> successListCallBack(page: Page<T>): BaseCallBack<MutableList<T>> {
         val callBack = BaseCallBack(200, "请求成功", page.content)
         callBack.totalPages = page.totalPages
@@ -28,6 +33,13 @@ open class ApiBaseController {
         callBack.isListLast = page.isLast
 
         return callBack
+    }
+
+    /**
+     * 请求数据成功
+     */
+    fun successCallBack(t: Any): BaseCallBack<Any> {
+        return BaseCallBack(200, "请求成功", t)
     }
 
     /**

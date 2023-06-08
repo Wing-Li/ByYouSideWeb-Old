@@ -55,9 +55,13 @@ class AnnouncementController @Autowired constructor(
      * 获取所有的公告
      */
     @GetMapping("/announcement/getAll")
-    fun getAllAnnouncement(): BaseCallBack<Any> {
-        val all = announcementRepository.findAll()
-        return successCallBack(all)
+    fun getAllAnnouncement(
+        page: Int, // page 从 1 开始
+        size: Int?,
+    ): BaseCallBack<MutableList<Announcement>> {
+        val pageRequest = getBasePageRequest(page, size)
+        val page = announcementRepository.findAll(pageRequest)
+        return successListCallBack(page)
     }
 
     /**

@@ -10,11 +10,11 @@ import com.lyl.byyouside.model.user.UserInfo
 import com.lyl.byyouside.model.user.UserInfoRepository
 import com.lyl.byyouside.utils.MyUtils
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Page
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import java.util.Arrays
 import kotlin.jvm.optionals.getOrNull
 
 
@@ -219,15 +219,18 @@ class FriendController : ApiBaseController() {
     fun getMyFriend(
         userId: Long,
         @RequestParam status: List<Int>?, // -2: 拒绝且不再添加 -1: 拒绝 0: 等待； 1: 同意
-    ): BaseCallBack<Any> {
-        val friendList: List<Friend> =
+        page: Int, // page 从 1 开始
+        size: Int?,
+    ): BaseCallBack<MutableList<Friend>> {
+        val pageRequest = getBasePageRequest(page, size)
+        val friendPage: Page<Friend> =
             if (status == null) { // 不传，则 获取我的好友
-                friendRepository.findFriendsByMyUser_IdAndStatusInOrderByUpdateTimeDesc(userId, listOf(1))
+                friendRepository.findFriendsByMyUser_IdAndStatusInOrderByUpdateTimeDesc(userId, listOf(1), pageRequest)
             } else {
-                friendRepository.findFriendsByMyUser_IdAndStatusInOrderByUpdateTimeDesc(userId, status)
+                friendRepository.findFriendsByMyUser_IdAndStatusInOrderByUpdateTimeDesc(userId, status, pageRequest)
             }
 
-        return successCallBack(friendList)
+        return successListCallBack(friendPage)
     }
 
     /**
@@ -237,14 +240,17 @@ class FriendController : ApiBaseController() {
     fun getRequestMeFriend(
         userId: Long,
         @RequestParam status: List<Int>?, // -2: 拒绝且不再添加 -1: 拒绝 0: 等待； 1: 同意
-    ): BaseCallBack<Any> {
-        val friendList: List<Friend> =
+        page: Int, // page 从 1 开始
+        size: Int?,
+    ): BaseCallBack<MutableList<Friend>> {
+        val pageRequest = getBasePageRequest(page, size)
+        val friendPage: Page<Friend> =
             if (status == null) { // 不传，则 获取未同意的好友请求
-                friendRepository.findFriendsByToUser_IdAndStatusInOrderByUpdateTimeDesc(userId, listOf(-2, -1, 0))
+                friendRepository.findFriendsByToUser_IdAndStatusInOrderByUpdateTimeDesc(userId, listOf(-2, -1, 0), pageRequest)
             } else {
-                friendRepository.findFriendsByToUser_IdAndStatusInOrderByUpdateTimeDesc(userId, status)
+                friendRepository.findFriendsByToUser_IdAndStatusInOrderByUpdateTimeDesc(userId, status, pageRequest)
             }
 
-        return successCallBack(friendList)
+        return successListCallBack(friendPage)
     }
 }

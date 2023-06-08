@@ -6,18 +6,12 @@ import com.lyl.byyouside.model.base.BaseCallBack
 import com.lyl.byyouside.model.device.DeviceInfo
 import com.lyl.byyouside.model.device.DeviceInfoRepository
 import com.lyl.byyouside.model.user.UserInfoRepository
-import com.lyl.byyouside.model.vip.VipRecharge
-import com.lyl.byyouside.model.vip.VipRechargeRepository
-import com.lyl.byyouside.model.vip.VipRepository
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.domain.PageRequest
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RestController
-import java.math.BigDecimal
 import java.util.*
-import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
 /**
  * 伴友设备信息
@@ -102,8 +96,8 @@ class DeviceInfoController @Autowired constructor(
         page: Int, // page 从 1 开始
         size: Int?,
     ): BaseCallBack<MutableList<DeviceInfo>> {
-        val pageRequest = PageRequest.of(page - 1, size ?: 20)
-        val deviceInfoList = deviceInfoRepository.findDeviceInfosByUser_IdOrderByCreateTimeDesc(userId, pageRequest)
-        return successListCallBack(deviceInfoList)
+        val pageRequest = getBasePageRequest(page, size)
+        val deviceInfoPage = deviceInfoRepository.findDeviceInfosByUser_IdOrderByCreateTimeDesc(userId, pageRequest)
+        return successListCallBack(deviceInfoPage)
     }
 }

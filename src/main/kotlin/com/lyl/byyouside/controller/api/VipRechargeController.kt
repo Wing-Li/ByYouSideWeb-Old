@@ -103,10 +103,13 @@ class VipRechargeController @Autowired constructor(
 
     @GetMapping(value = ["/vip/getRechargeByUserId"])
     fun getVipRechargeByUserId(
-        userId: Long
-    ): BaseCallBack<Any> {
-        val vipRecharges = vipRechargeRepository.findVipRechargesByUserIdOrderByCreateTimeDesc(userId)
-        return successCallBack(vipRecharges)
+        userId: Long,
+        page: Int, // page 从 1 开始
+        size: Int?,
+    ): BaseCallBack<MutableList<VipRecharge>> {
+        val pageRequest = getBasePageRequest(page, size)
+        val vipRecharges = vipRechargeRepository.findVipRechargesByUserIdOrderByCreateTimeDesc(userId, pageRequest)
+        return successListCallBack(vipRecharges)
     }
 
     @GetMapping(value = ["/vip/getType"])
