@@ -36,7 +36,9 @@ class DeviceInfoController @Autowired constructor(
         batteryLevel: String?,
         volumeLevel: String?,
         bluetoothStatus: String?,
+        bluetoothName: String?,
         wifiStatus: String?,
+        wifiName: String?,
         gpsStatus: String?,
         locationFrom: String?,
         locationAddress: String?,
@@ -62,7 +64,9 @@ class DeviceInfoController @Autowired constructor(
         batteryLevel?.let { deviceInfo.batteryLevel = it }
         volumeLevel?.let { deviceInfo.volumeLevel = it }
         bluetoothStatus?.let { deviceInfo.bluetoothStatus = it }
+        bluetoothName?.let { deviceInfo.bluetoothName = it }
         wifiStatus?.let { deviceInfo.wifiStatus = it }
+        wifiName?.let { deviceInfo.wifiName = it }
         gpsStatus?.let { deviceInfo.gpsStatus = it }
         locationFrom?.let { deviceInfo.locationFrom = it }
         locationAddress?.let {
@@ -85,13 +89,13 @@ class DeviceInfoController @Autowired constructor(
     }
 
     @GetMapping(value = ["/device/getAll"])
-    fun getVipRechargeAll(): BaseCallBack<Any> {
+    fun getDeviceAll(): BaseCallBack<Any> {
         val findAll = deviceInfoRepository.findAll()
         return successCallBack(findAll)
     }
 
     @GetMapping(value = ["/device/getByUserId"])
-    fun getVipRechargeByUserId(
+    fun getDeviceByUserId(
         userId: Long,
         page: Int, // page 从 1 开始
         size: Int?,
@@ -99,5 +103,17 @@ class DeviceInfoController @Autowired constructor(
         val pageRequest = getBasePageRequest(page, size)
         val deviceInfoPage = deviceInfoRepository.findDeviceInfosByUser_IdOrderByCreateTimeDesc(userId, pageRequest)
         return successListCallBack(deviceInfoPage)
+    }
+
+    @GetMapping(value = ["/device/getLastByUserId"])
+    fun getDeviceLastByUserId(
+        userId: Long,
+    ): BaseCallBack<Any> {
+        val deviceInfo = deviceInfoRepository.findFirstByUser_IdOrderByCreateTimeDesc(userId)
+        if (deviceInfo == null) {
+            return failCallBack(StatusCode.ERROR_19000, StatusCode.ERROR_19000_TEXT)
+        } else {
+            return successCallBack(deviceInfo)
+        }
     }
 }

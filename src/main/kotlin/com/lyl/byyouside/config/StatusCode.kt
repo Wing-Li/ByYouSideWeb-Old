@@ -77,4 +77,8 @@ object StatusCode {
     const val ERROR_18001_TEXT = "H5还没有基本配置，请联系管理员"
     const val ERROR_18002 = 18002
     const val ERROR_18002_TEXT = "App还没有基本配置，请联系管理员"
+
+    // 设备信息 19
+    const val ERROR_19000 = 19000
+    const val ERROR_19000_TEXT = "该用户还没有上传过信息"
 }

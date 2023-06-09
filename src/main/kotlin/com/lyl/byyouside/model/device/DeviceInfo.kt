@@ -32,7 +32,10 @@ data class DeviceInfo(
     var volumeLevel: String = "",
 
     var bluetoothStatus: String = "",
+    var bluetoothName: String = "",
+
     var wifiStatus: String = "",
+    var wifiName: String = "",
 
     var gpsStatus: String = "",
     var locationFrom: String = "",
