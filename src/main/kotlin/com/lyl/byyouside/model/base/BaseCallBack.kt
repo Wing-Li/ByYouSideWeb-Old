@@ -1,5 +1,8 @@
 package com.lyl.byyouside.model.base
 
+import com.fasterxml.jackson.annotation.JsonInclude
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 class BaseCallBack<T>(
     var code: Int,
     var message: String,

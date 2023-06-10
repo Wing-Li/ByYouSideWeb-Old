@@ -127,11 +127,10 @@ class UserController @Autowired constructor(
     ): BaseCallBack<Any> {
         if (!MyUtils.isEmpty(userName) && !MyUtils.isEmpty(passWord)) {
             val user = userRepository.findByUserNameOrPhone(userName, userName)
+            userAuth(user)?.let { return it }
+
             return if (user != null) {
-                if ((user.closeDate ?: 0) > 0) {
-                    // 账号被封
-                    failCallBack(StatusCode.ERROR_13001, StatusCode.ERROR_13001_TEXT + user.closeDate)
-                } else if (passWord == user.password) {
+                if (passWord == user.password) {
                     // 登录成功
                     successCallBack(userAdapter(user))
                 } else {
@@ -159,13 +158,10 @@ class UserController @Autowired constructor(
     @PostMapping("/user/getUser")
     fun getUser(userId: Long): BaseCallBack<Any> {
         val userDB = userRepository.findById(userId)
+
         return if (userDB.isPresent) {
             val user: UserInfo = userDB.get()
-            if ((user.closeDate ?: 0) > 0) {
-                // 账号被封
-                failCallBack(StatusCode.ERROR_13001, StatusCode.ERROR_13001_TEXT + user.closeDate)
-            } else {
-                // 获取成功
+            userAuth(user)?.let { return it }
 
 //                // 如果当前是会员，检查会员是否过期
 //                if (user.getVipGrade() >= 2) {
@@ -178,7 +174,32 @@ class UserController @Autowired constructor(
 //                    }
 //                }
 
-                successCallBack(userAdapter(user))
+            successCallBack(userAdapter(user))
+        } else {
+            failCallBack(StatusCode.ERROR_11001, StatusCode.ERROR_11001_TEXT)
+        }
+    }
+
+    /**
+     * 注销用户
+     */
+    @PostMapping("/user/destroy")
+    fun destroyUser(
+        userId: Long,
+        destroyReason: String,
+    ): BaseCallBack<Any> {
+        val userDB = userRepository.findById(userId)
+        return if (userDB.isPresent) {
+            val user: UserInfo = userDB.get()
+            if (user.isDestroy == true) {
+                return failCallBack(StatusCode.ERROR_13004, StatusCode.ERROR_13004_TEXT)
+            } else {
+                user.isDestroy = true
+                user.destroyDate = Date()
+                user.destroyReason = destroyReason
+
+                val save = userRepository.save(user)
+                successCallBack(userAdapter(save))
             }
         } else {
             failCallBack(StatusCode.ERROR_11001, StatusCode.ERROR_11001_TEXT)

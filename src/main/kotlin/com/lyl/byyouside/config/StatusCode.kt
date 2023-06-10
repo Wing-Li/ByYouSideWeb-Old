@@ -38,6 +38,12 @@ object StatusCode {
     // 查询用户 13
     const val ERROR_13001 = 11001
     const val ERROR_13001_TEXT = "您的账户被限制登录(天)："
+    const val ERROR_13002 = 11002
+    const val ERROR_13002_TEXT = "您的账户已申请注销，登录将会取消申请，确定要登录吗？(可以重复申请注销)"
+    const val ERROR_13003 = 11003
+    const val ERROR_13003_TEXT = "您的账户已注销！"
+    const val ERROR_13004 = 11004
+    const val ERROR_13004_TEXT = "您已经申请注销，请勿重复申请！"
 
     // 查询用户列表 14
     // 会员充值 15

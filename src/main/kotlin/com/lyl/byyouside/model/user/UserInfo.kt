@@ -1,6 +1,7 @@
 package com.lyl.byyouside.model.user
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import org.hibernate.annotations.UpdateTimestamp
 import org.springframework.data.annotation.CreatedDate
@@ -27,6 +28,7 @@ data class UserInfo(
     @Column(unique = true, nullable = false, length = 20)
     var userName: String = "",
 
+    @JsonIgnore
     @Column(nullable = false)
     var password: String = "",
 
@@ -55,6 +57,12 @@ data class UserInfo(
      * 封号时间, 封号天数
      */
     var closeDate: Int? = 0,
+
+    // 用户注销
+    var isDestroy: Boolean? = null,
+    var destroyDate: Date? = null,
+    @JsonIgnore
+    var destroyReason: String? = null,
 
     // 设备信息更新时，顺便更新用户表里的数据，方便获取
     var locationAddress: String? = "",
