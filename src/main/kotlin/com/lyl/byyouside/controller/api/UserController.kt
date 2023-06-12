@@ -1,5 +1,6 @@
 package com.lyl.byyouside.controller.api
 
+import cn.hutool.core.util.RandomUtil
 import com.lyl.byyouside.config.Config
 import com.lyl.byyouside.config.ContextHolder
 import com.lyl.byyouside.config.StatusCode
@@ -7,6 +8,7 @@ import com.lyl.byyouside.controller.base.ApiBaseController
 import com.lyl.byyouside.model.base.BaseCallBack
 import com.lyl.byyouside.model.user.UserInfo
 import com.lyl.byyouside.model.user.UserInfoRepository
+import com.lyl.byyouside.utils.EmailUtils
 import com.lyl.byyouside.utils.JwtUtils
 import com.lyl.byyouside.utils.MyUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -154,6 +156,26 @@ class UserController @Autowired constructor(
         }
 
         return successCallBack("")
+    }
+
+    /**
+     * 获取所有用户
+     */
+    @PostMapping("/user/code")
+    fun getCode(
+        email: String
+    ): BaseCallBack<Any> {
+        if (MyUtils.isEmpty(email)) {
+            return failCallBack(StatusCode.ERROR_10007, StatusCode.ERROR_10007_TEXT)
+        }
+        if (!email.matches(Regex(Config.REGEX_EMAIL))) {
+            return failCallBack(StatusCode.ERROR_10008, StatusCode.ERROR_10008_TEXT)
+        }
+
+        val verifyCode: String = RandomUtil.randomNumbers(4)
+        EmailUtils.sendCodeHtml(verifyCode, email)
+
+        return successCallBack("发送成功")
     }
 
     /**

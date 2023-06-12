@@ -25,6 +25,10 @@ object StatusCode {
     const val ERROR_10005_TEXT = "请检查邮箱是否正确"
     const val ERROR_10006 = 10006
     const val ERROR_10006_TEXT = "简介不能超过200个字"
+    const val ERROR_10007 = 10007
+    const val ERROR_10007_TEXT = "请填写邮箱"
+    const val ERROR_10008 = 10008
+    const val ERROR_10008_TEXT = "邮箱格式错误"
 
     // 更新用户
     const val ERROR_11001 = 11001
