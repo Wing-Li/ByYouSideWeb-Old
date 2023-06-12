@@ -64,22 +64,6 @@ class UserController @Autowired constructor(
     }
 
     /**
-     * 重置密码
-     */
-    @PostMapping(value = ["/user/rePassword"])
-    fun rePassword(
-    ): BaseCallBack<Any> {
-        val userInfos = userRepository.findAll()
-        userInfos.forEach {
-            val passwordEncoder: PasswordEncoder = BCryptPasswordEncoder()
-            it.password = passwordEncoder.encode(it.password)
-        }
-        userRepository.saveAll(userInfos)
-
-        return successCallBack("设置成功")
-    }
-
-    /**
      * 登录
      *
      * @param userName 用户号 或  手机号

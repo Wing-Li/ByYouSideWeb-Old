@@ -27,7 +27,12 @@ class UserTokenInterceptor : HandlerInterceptor {
         private val SAFE_URL_LIST = Arrays.asList(
             "/api/user/register",
             "/api/user/login",
-            "/api/user/rePassword",
+            "/api/user/cancelDestroy",
+
+            "/api/config/h5",
+            "/api/config/app",
+
+            "/api/version/getLast",
         )
     }
 
