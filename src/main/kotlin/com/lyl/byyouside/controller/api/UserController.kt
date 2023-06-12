@@ -239,8 +239,9 @@ class UserController @Autowired constructor(
      * 取消 注销用户
      */
     @PostMapping("/user/cancelDestroy")
-    fun cancelDestroyUser(): BaseCallBack<Any> {
-        val userId = ContextHolder.userId
+    fun cancelDestroyUser(
+        userId: Long
+    ): BaseCallBack<Any> {
         val userDB = userRepository.findById(userId)
         return if (userDB.isPresent) {
             val user: UserInfo = userDB.get()
