@@ -70,7 +70,7 @@ open class ApiBaseController {
             return failCallBack(StatusCode.ERROR_16001, StatusCode.ERROR_16001_TEXT)
         }
         if (user.isDestroy == true) { // 用户注销
-            return if (user.destroyDate != null && (System.currentTimeMillis() - (user.destroyDate?.time ?: 0)) > 7 * 24 * 60 * 60 * 1000) {
+            return if (user.destroyDate != null && (System.currentTimeMillis() - (user.destroyDate?.time ?: 0)) > 14 * 24 * 60 * 60 * 1000) {
                 failCallBack(StatusCode.ERROR_13003, StatusCode.ERROR_13003_TEXT)
             } else {
                 failCallBack(StatusCode.ERROR_13002, StatusCode.ERROR_13002_TEXT)

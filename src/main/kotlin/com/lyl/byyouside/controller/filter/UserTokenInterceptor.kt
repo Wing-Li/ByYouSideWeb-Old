@@ -1,13 +1,20 @@
 package com.lyl.byyouside.controller.filter
 
 import com.lyl.byyouside.config.ContextHolder
+import com.lyl.byyouside.config.StatusCode
+import com.lyl.byyouside.model.user.UserInfoRepository
 import com.lyl.byyouside.utils.JwtUtils
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.servlet.HandlerInterceptor
 import java.util.*
 
 class UserTokenInterceptor : HandlerInterceptor {
+
+    @Autowired
+    private lateinit var userRepository: UserInfoRepository
+
     companion object {
         /**
          * 请求头
@@ -47,6 +54,11 @@ class UserTokenInterceptor : HandlerInterceptor {
         val userId = headerMap["userId"].toString().toLong()
         val expireTime = headerMap["expireTime"].toString().toLong() // 验证过期时间
 
+        val userCheck = userCheck(userId)
+        if (userCheck?.isNotEmpty() == true) {
+            throw RuntimeException(userCheck)
+        }
+
         ContextHolder.userId = userId
 
         return true
@@ -54,6 +66,29 @@ class UserTokenInterceptor : HandlerInterceptor {
 
     override fun afterCompletion(request: HttpServletRequest, response: HttpServletResponse, handler: Any, ex: Exception?) {
         ContextHolder.shutdown()
+    }
+
+    /**
+     * 检验用户是否正常
+     */
+    private fun userCheck(userId: Long): String? {
+        val userInfo = userRepository.findById(userId)
+        if (!userInfo.isPresent) {
+            return "用户信息异常，请重新登陆"
+        }
+        val user = userInfo.get()
+        if (user.isDestroy == true) { // 用户注销
+            return if (user.destroyDate != null && (System.currentTimeMillis() - (user.destroyDate?.time ?: 0)) > 14 * 24 * 60 * 60 * 1000) {
+                StatusCode.ERROR_13003_TEXT // "您的账户已注销!"
+            } else {
+                StatusCode.ERROR_13002_TEXT // "您的账户已申请注销，重新登录将会取消申请!（可以重复申请）"
+            }
+        }
+        if ((user.closeDate ?: 0) > 0) { // 您的账户被限制登录(天)：5
+            return StatusCode.ERROR_13001_TEXT + user.closeDate
+        }
+
+        return null
     }
 
 }

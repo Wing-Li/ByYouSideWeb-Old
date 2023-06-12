@@ -64,7 +64,7 @@ class UserController @Autowired constructor(
     }
 
     /**
-     * 创建用户
+     * 重置密码
      */
     @PostMapping(value = ["/user/rePassword"])
     fun rePassword(

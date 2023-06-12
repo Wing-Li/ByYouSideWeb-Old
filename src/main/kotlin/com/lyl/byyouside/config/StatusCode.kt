@@ -56,7 +56,7 @@ object StatusCode {
 
     // 绑定密友 16
     const val ERROR_16001 = 16001
-    const val ERROR_16001_TEXT = "您的用户信息有误"
+    const val ERROR_16001_TEXT = "用户信息异常，请重新登陆"
     const val ERROR_16002 = 16002
     const val ERROR_16002_TEXT = "对方用户信息有误"
     const val ERROR_16004 = 16004
