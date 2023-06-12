@@ -24,7 +24,7 @@ class UserTokenInterceptor : HandlerInterceptor {
         /**
          * 安全的url，不需要令牌
          */
-        private val SAFE_URL_LIST = Arrays.asList(
+        private val SAFE_URL_LIST = listOf(
             "/api/user/register",
             "/api/user/login",
             "/api/user/cancelDestroy",
