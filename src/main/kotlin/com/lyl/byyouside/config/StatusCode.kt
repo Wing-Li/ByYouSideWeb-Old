@@ -39,7 +39,7 @@ object StatusCode {
     const val ERROR_13001 = 11001
     const val ERROR_13001_TEXT = "您的账户被限制登录(天)："
     const val ERROR_13002 = 11002
-    const val ERROR_13002_TEXT = "您的账户已申请注销，登录将会取消申请，确定要登录吗？(可以重复申请注销)"
+    const val ERROR_13002_TEXT = "您的账户已申请注销，重新登录将会取消申请!（可以重复申请）"
     const val ERROR_13003 = 11003
     const val ERROR_13003_TEXT = "您的账户已注销！"
     const val ERROR_13004 = 11004
@@ -68,7 +68,7 @@ object StatusCode {
     const val ERROR_16006 = 16006
     const val ERROR_16006_TEXT = "对方永久拒绝您的请求"
     const val ERROR_16007 = 16007
-    const val ERROR_16007_TEXT = "信息出错，请重新登录账号"
+    const val ERROR_16007_TEXT = "账户信息出错，请重新登录账号"
     const val ERROR_16008 = 16008
     const val ERROR_16008_TEXT = "好友关系不存在"
     const val ERROR_16009 = 16009

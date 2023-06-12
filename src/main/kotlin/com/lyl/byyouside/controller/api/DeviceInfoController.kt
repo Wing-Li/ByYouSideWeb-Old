@@ -1,5 +1,6 @@
 package com.lyl.byyouside.controller.api
 
+import com.lyl.byyouside.config.ContextHolder
 import com.lyl.byyouside.config.StatusCode
 import com.lyl.byyouside.controller.base.ApiBaseController
 import com.lyl.byyouside.model.base.BaseCallBack
@@ -27,8 +28,7 @@ class DeviceInfoController @Autowired constructor(
      * 新增设备信息信息
      */
     @PostMapping("/device/add")
-    fun addVipRecharge(
-        userId: Long,
+    fun addDeviceInfo(
         deviceName: String?,
         screenStatus: String?,
         screenLevel: String?,
@@ -45,6 +45,7 @@ class DeviceInfoController @Autowired constructor(
         locationLongitude: Double?,
         locationLatitude: Double?,
     ): BaseCallBack<Any> {
+        val userId = ContextHolder.userId
         val userDB = userRepository.findById(userId)
         if (!userDB.isPresent) {
             // 用户不存在
@@ -88,10 +89,15 @@ class DeviceInfoController @Autowired constructor(
         return successCallBack(deviceInfoDB)
     }
 
-    @GetMapping(value = ["/device/getAll"])
-    fun getDeviceAll(): BaseCallBack<Any> {
-        val findAll = deviceInfoRepository.findAll()
-        return successCallBack(findAll)
+    @GetMapping(value = ["/device/myInfoList"])
+    fun getMyDeviceInfoList(
+        page: Int, // page 从 1 开始
+        size: Int?,
+    ): BaseCallBack<MutableList<DeviceInfo>> {
+        val userId = ContextHolder.userId
+        val pageRequest = getBasePageRequest(page, size)
+        val deviceInfoPage = deviceInfoRepository.findDeviceInfosByUser_IdOrderByCreateTimeDesc(userId, pageRequest)
+        return successListCallBack(deviceInfoPage)
     }
 
     @GetMapping(value = ["/device/getByUserId"])
@@ -103,6 +109,17 @@ class DeviceInfoController @Autowired constructor(
         val pageRequest = getBasePageRequest(page, size)
         val deviceInfoPage = deviceInfoRepository.findDeviceInfosByUser_IdOrderByCreateTimeDesc(userId, pageRequest)
         return successListCallBack(deviceInfoPage)
+    }
+
+    @GetMapping(value = ["/device/getMyLast"])
+    fun getMyDeviceLast(): BaseCallBack<Any> {
+        val userId = ContextHolder.userId
+        val deviceInfo = deviceInfoRepository.findFirstByUser_IdOrderByCreateTimeDesc(userId)
+        if (deviceInfo == null) {
+            return failCallBack(StatusCode.ERROR_19000, StatusCode.ERROR_19000_TEXT)
+        } else {
+            return successCallBack(deviceInfo)
+        }
     }
 
     @GetMapping(value = ["/device/getLastByUserId"])

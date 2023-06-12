@@ -1,5 +1,6 @@
 package com.lyl.byyouside.controller.api
 
+import com.lyl.byyouside.config.ContextHolder
 import com.lyl.byyouside.config.StatusCode
 import com.lyl.byyouside.controller.base.ApiBaseController
 import com.lyl.byyouside.model.base.BaseCallBack
@@ -38,11 +39,12 @@ class VipRechargeController @Autowired constructor(
      */
     @PostMapping("/vip/addRecharge")
     fun addVipRecharge(
-        userId: Long,
         vipId: Long,
         money: BigDecimal,
         from: Int
     ): BaseCallBack<Any> {
+        val userId = ContextHolder.userId
+
         val user = userRepository.findById(userId)
         if (!user.isPresent) {
             // 用户不存在
@@ -107,6 +109,17 @@ class VipRechargeController @Autowired constructor(
         page: Int, // page 从 1 开始
         size: Int?,
     ): BaseCallBack<MutableList<VipRecharge>> {
+        val pageRequest = getBasePageRequest(page, size)
+        val vipRecharges = vipRechargeRepository.findVipRechargesByUserIdOrderByCreateTimeDesc(userId, pageRequest)
+        return successListCallBack(vipRecharges)
+    }
+
+    @GetMapping(value = ["/vip/getMyRecharge"])
+    fun getMyVipRecharge(
+        page: Int, // page 从 1 开始
+        size: Int?,
+    ): BaseCallBack<MutableList<VipRecharge>> {
+        val userId = ContextHolder.userId
         val pageRequest = getBasePageRequest(page, size)
         val vipRecharges = vipRechargeRepository.findVipRechargesByUserIdOrderByCreateTimeDesc(userId, pageRequest)
         return successListCallBack(vipRecharges)

@@ -1,17 +1,14 @@
-package com.lyl.byyouside.config;
+package com.lyl.byyouside.config
 
-public class ContextHolder {
-    public static ThreadLocal<Long> context = new ThreadLocal<>();
+object ContextHolder {
+    var context = ThreadLocal<Long>()
+    var userId: Long
+        get() = context.get()
+        set(userId) {
+            context.set(userId)
+        }
 
-    public static void setUserId(Long userId) {
-        context.set(userId);
-    }
-
-    public static Long getUserId() {
-        return context.get();
-    }
-
-    public static void shutdown() {
-        context.remove();
+    fun shutdown() {
+        context.remove()
     }
 }

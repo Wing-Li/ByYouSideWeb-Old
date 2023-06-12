@@ -4,7 +4,6 @@ import com.lyl.byyouside.config.ContextHolder
 import com.lyl.byyouside.utils.JwtUtils
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.springframework.stereotype.Component
 import org.springframework.web.servlet.HandlerInterceptor
 import java.util.*
 
@@ -20,7 +19,8 @@ class UserTokenInterceptor : HandlerInterceptor {
          */
         private val SAFE_URL_LIST = Arrays.asList(
             "/api/user/register",
-            "/api/user/login"
+            "/api/user/login",
+            "/api/user/rePassword",
         )
     }
 
@@ -38,7 +38,7 @@ class UserTokenInterceptor : HandlerInterceptor {
 
         // 验证令牌
         val verifyToken = JwtUtils.verifyToken(token)
-        if (verifyToken) {
+        if (!verifyToken) {
             throw RuntimeException("用户信息已过期，请重新登陆")
         }
 
@@ -47,7 +47,7 @@ class UserTokenInterceptor : HandlerInterceptor {
         val userId = headerMap["userId"].toString().toLong()
         val expireTime = headerMap["expireTime"].toString().toLong() // 验证过期时间
 
-        ContextHolder.setUserId(userId)
+        ContextHolder.userId = userId
 
         return true
     }

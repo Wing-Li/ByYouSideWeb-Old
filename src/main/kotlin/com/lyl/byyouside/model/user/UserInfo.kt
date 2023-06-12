@@ -72,6 +72,8 @@ data class UserInfo(
 
     ) {
 
+    var token = ""
+
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     var vipLimitDate: Date? = null // 会员过期时间
 

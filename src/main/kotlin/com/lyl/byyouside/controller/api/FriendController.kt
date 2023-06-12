@@ -1,6 +1,7 @@
 package com.lyl.byyouside.controller.api
 
 import com.lyl.byyouside.config.Config
+import com.lyl.byyouside.config.ContextHolder
 import com.lyl.byyouside.config.StatusCode
 import com.lyl.byyouside.controller.base.ApiBaseController
 import com.lyl.byyouside.model.base.BaseCallBack
@@ -33,9 +34,10 @@ class FriendController : ApiBaseController() {
      */
     @PostMapping(value = ["/friend/request"])
     fun requestFriend(
-        myId: Long, // 请求方
         toId: Long, // 被请求的人
     ): BaseCallBack<Any> {
+        val myId = ContextHolder.userId
+
         // 检查自己和对方的关系
         val friend = friendRepository.findByMyUser_IdAndToUser_Id(myId, toId)
         if (friend != null) {
@@ -87,40 +89,38 @@ class FriendController : ApiBaseController() {
      */
     @PostMapping(value = ["/friend/agreeRequest"])
     fun agreeFriendRequest(
-        myId: Long, // 被请求的人
-        toId: Long, // 请求方
         friendId: Long,
     ): BaseCallBack<Any> {
+        val myId = ContextHolder.userId
+
         val myUser = userRepository.findById(myId).getOrNull()
         userAuth(myUser)?.let { return it }
 
-        val toUser = userRepository.findById(toId).getOrNull()
-        userAuth(toUser)?.let { return it }
 
         // 他 -> 我
-        val toFriend = friendRepository.findById(friendId).getOrNull()
-        if (toFriend == null) {
+        val toAmeFriend = friendRepository.findById(friendId).getOrNull()
+        if (toAmeFriend == null) {
             // 好友关系不存在
             return failCallBack(StatusCode.ERROR_16008, StatusCode.ERROR_16008_TEXT)
         }
 
-        if (toFriend.toUser?.id != myId) {
+        if (toAmeFriend.toUser?.id != myId) {
             // 信息出错，请重新登录账号
             return failCallBack(StatusCode.ERROR_16007, StatusCode.ERROR_16007_TEXT)
         }
 
-        if (toFriend.status == 1) {
+        if (toAmeFriend.status == 1) {
             // 你们已经是密友关系
             return failCallBack(StatusCode.ERROR_16003, StatusCode.ERROR_16003_TEXT)
         }
 
-        toFriend.status = 1
-        friendRepository.save(toFriend)
+        toAmeFriend.status = 1
+        friendRepository.save(toAmeFriend)
 
         // 我 -> 他
         val myFriendData = Friend(
             myUser = myUser,
-            toUser = toUser,
+            toUser = toAmeFriend.myUser,
             status = 1,
         )
         val friendDB = friendRepository.save(myFriendData)
@@ -133,29 +133,29 @@ class FriendController : ApiBaseController() {
      */
     @PostMapping(value = ["/friend/rejectRequest"])
     fun rejectFriendRequest(
-        myId: Long, // 被请求的人
-        toId: Long, // 请求方
         friendId: Long, // 密友ID
         isPermanentRefusal: Boolean?, // 是否永久拒绝
     ): BaseCallBack<Any> {
-        val toFriend = friendRepository.findById(friendId).getOrNull()
-        if (toFriend == null) {
+        val myId = ContextHolder.userId
+
+        val toAmeFriend = friendRepository.findById(friendId).getOrNull()
+        if (toAmeFriend == null) {
             // 好友关系不存在
             return failCallBack(StatusCode.ERROR_16008, StatusCode.ERROR_16008_TEXT)
         }
-        if (toFriend.status == 1) {
+        if (toAmeFriend.status == 1) {
             return failCallBack(StatusCode.ERROR_16009, StatusCode.ERROR_16009_TEXT)
         }
-        if (toFriend.toUser?.id != myId) {
+        if (toAmeFriend.toUser?.id != myId) {
             return failCallBack(StatusCode.ERROR_16007, StatusCode.ERROR_16007_TEXT)
         }
 
         if (isPermanentRefusal == true) {
-            toFriend.status = -2
+            toAmeFriend.status = -2
         } else {
-            toFriend.status = -1
+            toAmeFriend.status = -1
         }
-        val save = friendRepository.save(toFriend)
+        val save = friendRepository.save(toAmeFriend)
 
         return successCallBack(save)
     }
@@ -167,6 +167,8 @@ class FriendController : ApiBaseController() {
     fun deleteFriend(
         friendId: Long, // 密友ID
     ): BaseCallBack<Any> {
+        val myId = ContextHolder.userId
+
         var myUserId = 0L
         var toUserId = 0L
 
@@ -176,6 +178,11 @@ class FriendController : ApiBaseController() {
             val myFriend = myFriendDB.get()
             myUserId = myFriend.myUser?.id ?: 0
             toUserId = myFriend.toUser?.id ?: 0
+
+            if (myId != myUserId) { // 不是操作自己的信息
+                return failCallBack(StatusCode.ERROR_16007, StatusCode.ERROR_16007_TEXT)
+            }
+
             friendRepository.delete(myFriend)
         }
 
@@ -196,11 +203,17 @@ class FriendController : ApiBaseController() {
         friendId: Long, // 密友ID
         friendAlias: String,
     ): BaseCallBack<Any> {
+        val myId = ContextHolder.userId
+
         val friendDB = friendRepository.findById(friendId)
         if (!friendDB.isPresent) {
             return failCallBack(StatusCode.ERROR_16008, StatusCode.ERROR_16008_TEXT)
         }
         val friend = friendDB.get()
+
+        if (myId != friend.myUser?.id) { // 不是操作自己的信息
+            return failCallBack(StatusCode.ERROR_16007, StatusCode.ERROR_16007_TEXT)
+        }
 
         if (MyUtils.isEmpty(friendAlias) || !friendAlias.matches(Regex(Config.REGEX_NICAKNAME))) {
             return failCallBack(StatusCode.ERROR_10003, StatusCode.ERROR_10003_TEXT)
@@ -217,11 +230,12 @@ class FriendController : ApiBaseController() {
      */
     @PostMapping(value = ["/friend/getMyFriend"])
     fun getMyFriend(
-        userId: Long,
         @RequestParam status: List<Int>?, // -2: 拒绝且不再添加 -1: 拒绝 0: 等待； 1: 同意
         page: Int, // page 从 1 开始
         size: Int?,
     ): BaseCallBack<MutableList<Friend>> {
+        val userId = ContextHolder.userId
+
         val pageRequest = getBasePageRequest(page, size)
         val friendPage: Page<Friend> =
             if (status == null) { // 不传，则 获取我的好友
@@ -238,11 +252,12 @@ class FriendController : ApiBaseController() {
      */
     @PostMapping(value = ["/friend/getRequestMeFriend"])
     fun getRequestMeFriend(
-        userId: Long,
         @RequestParam status: List<Int>?, // -2: 拒绝且不再添加 -1: 拒绝 0: 等待； 1: 同意
         page: Int, // page 从 1 开始
         size: Int?,
     ): BaseCallBack<MutableList<Friend>> {
+        val userId = ContextHolder.userId
+
         val pageRequest = getBasePageRequest(page, size)
         val friendPage: Page<Friend> =
             if (status == null) { // 不传，则 获取未同意的好友请求
