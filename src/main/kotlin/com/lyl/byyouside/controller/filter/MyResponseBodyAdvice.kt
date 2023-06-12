@@ -1,6 +1,7 @@
 package com.lyl.byyouside.controller.filter
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.lyl.byyouside.config.ContextHolder
 import com.lyl.byyouside.controller.exception.ExceptionController
 import com.lyl.byyouside.model.base.BaseCallBack
 import com.lyl.byyouside.utils.DESHelper
@@ -57,6 +58,8 @@ class MyResponseBodyAdvice() : ResponseBodyAdvice<Any> {
                 e.printStackTrace()
             }
         }
+
+        ContextHolder.shutdown()
 
         return body
     }

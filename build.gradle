@@ -1,5 +1,22 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+buildscript { //此配置必须在plugins之前，用于引入社区的构建插件
+    repositories {
+        mavenLocal()
+        maven { url 'https://maven.aliyun.com/repository/central' }
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+        maven { url 'https://maven.aliyun.com/repository/spring' }
+        maven { url 'https://maven.aliyun.com/repository/spring-plugin' }
+        maven { url 'https://maven.aliyun.com/repository/apache-snapshots' }
+        maven { url 'https://maven.aliyun.com/nexus/content/groups/public' }
+        mavenCentral()
+        jcenter()
+        google()
+    }
+}
+
 plugins {
     id 'org.springframework.boot' version '3.0.6'
     id 'io.spring.dependency-management' version '1.1.0'
@@ -20,11 +37,16 @@ repositories {
     maven { url 'https://maven.aliyun.com/repository/spring' }
     maven { url 'https://maven.aliyun.com/repository/spring-plugin' }
     maven { url 'https://maven.aliyun.com/repository/apache-snapshots' }
+    maven { url 'https://maven.aliyun.com/nexus/content/groups/public' }
 
     mavenCentral()
+    jcenter()
+    google()
 }
 
 dependencies {
+    implementation fileTree(dir: 'lib', includes: ['*.jar'])
+
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
@@ -36,6 +58,9 @@ dependencies {
     implementation 'com.alibaba:fastjson:2.0.25'
     runtimeOnly 'com.h2database:h2'
     implementation 'javax.mail:mail:1.4.7'
+
+    implementation 'org.springframework.security:spring-security-crypto:6.0.3'
+    implementation 'cn.hutool:hutool-all:5.8.18'
 }
 
 tasks.withType(KotlinCompile) {

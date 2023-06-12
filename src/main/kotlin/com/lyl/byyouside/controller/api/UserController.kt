@@ -8,6 +8,8 @@ import com.lyl.byyouside.model.user.UserInfo
 import com.lyl.byyouside.model.user.UserInfoRepository
 import com.lyl.byyouside.utils.MyUtils
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.*
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
@@ -36,6 +38,9 @@ class UserController @Autowired constructor(
             return failCallBack(StatusCode.ERROR_10005, StatusCode.ERROR_10005_TEXT)
         }
 
+        val passwordEncoder: PasswordEncoder = BCryptPasswordEncoder()
+        val encodedPassword: String = passwordEncoder.encode(passWord)
+
         // 用户名 不能重复
         val existsUser = userRepository.existsByUserName(userName)
         if (existsUser) {
@@ -45,7 +50,7 @@ class UserController @Autowired constructor(
         return try {
             val user = UserInfo(
                 userName = userName,
-                password = passWord,
+                password = encodedPassword,
                 email = email,
             )
             val save: UserInfo = userRepository.save(user)
@@ -125,23 +130,27 @@ class UserController @Autowired constructor(
         userName: String,
         passWord: String
     ): BaseCallBack<Any> {
-        if (!MyUtils.isEmpty(userName) && !MyUtils.isEmpty(passWord)) {
-            val user = userRepository.findByUserNameOrPhone(userName, userName)
-            userAuth(user)?.let { return it }
-
-            return if (user != null) {
-                if (passWord == user.password) {
-                    // 登录成功
-                    successCallBack(userAdapter(user))
-                } else {
-                    // 密码不对
-                    failCallBack(StatusCode.ERROR_11002, StatusCode.ERROR_11002_TEXT)
-                }
-            } else {
-                failCallBack(StatusCode.ERROR_11001, StatusCode.ERROR_11001_TEXT)
-            }
+        if (MyUtils.isEmpty(userName) || MyUtils.isEmpty(passWord)) {
+            return failCallBack(StatusCode.ERROR_11003, StatusCode.ERROR_11003_TEXT)
         }
-        return failCallBack(StatusCode.ERROR_11003, StatusCode.ERROR_11003_TEXT)
+
+        val user = userRepository.findByUserNameOrPhone(userName, userName)
+        userAuth(user)?.let { return it }
+
+        if (user == null) {
+            return failCallBack(StatusCode.ERROR_11001, StatusCode.ERROR_11001_TEXT)
+        }
+
+        val passwordEncoder: PasswordEncoder = BCryptPasswordEncoder()
+        val isResult: Boolean = passwordEncoder.matches(passWord, user.password)
+        return if (isResult) {
+            // 登录成功
+            successCallBack(userAdapter(user))
+        } else {
+            // 密码不对
+            failCallBack(StatusCode.ERROR_11002, StatusCode.ERROR_11002_TEXT)
+        }
+
     }
 
     /**
