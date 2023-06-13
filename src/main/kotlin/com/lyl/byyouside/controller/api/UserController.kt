@@ -72,7 +72,7 @@ class UserController @Autowired constructor(
                 password = encodedPassword,
                 email = lowerEmail,
             )
-            val save: UserInfo = userRepository.save(user)
+            val save: UserInfo = userRepository.saveAndFlush(user)
             save.id?.let { save.token = JwtUtils.createToken(it) }
             successCallBack(userAdapter(save))
         } catch (e: Exception) {
@@ -216,8 +216,6 @@ class UserController @Autowired constructor(
         introduction: String?,
         birthday: String?,
         email: String?,
-        province: String?,
-        city: String?
     ): BaseCallBack<Any> {
         val userId = ContextHolder.userId
         val user = userRepository.findById(userId).getOrNull()
@@ -252,8 +250,6 @@ class UserController @Autowired constructor(
             gender?.let { user.gender = it }
             icon?.let { user.icon = it }
             birthday?.let { user.birthday = it }
-            province?.let { user.province = it }
-            city?.let { user.city = it }
 
             val save = userRepository.save(user)
             return successCallBack(userAdapter(save))

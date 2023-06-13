@@ -45,9 +45,6 @@ data class UserInfo(
 
     var birthday: String? = "",
 
-    var province: String? = "",
-    var city: String? = "",
-
     var vipLevel: Int? = 0,
 
     /**

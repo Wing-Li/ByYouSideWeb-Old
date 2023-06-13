@@ -33,7 +33,7 @@ class ExceptionController {
         return BaseCallBack(
             code = HttpStatus.INTERNAL_SERVER_ERROR.value(),
             message = e.message ?: "",
-            ""
+            null
         )
     }
 }
