@@ -21,6 +21,8 @@ object StatusCode {
     const val ERROR_10003_TEXT = "昵称需为1-16位的中文/字母/数字/下划线/横线组合"
     const val ERROR_10004 = 10004
     const val ERROR_10004_TEXT = "用户名已经存在"
+    const val ERROR_10009 = 10009
+    const val ERROR_10009_TEXT = "邮箱已经存在！邮箱为修改密码必备，请慎重填写！"
     const val ERROR_10005 = 10005
     const val ERROR_10005_TEXT = "请检查邮箱是否正确"
     const val ERROR_10006 = 10006
@@ -29,6 +31,12 @@ object StatusCode {
     const val ERROR_10007_TEXT = "请填写邮箱"
     const val ERROR_10008 = 10008
     const val ERROR_10008_TEXT = "邮箱格式错误"
+    const val ERROR_10010 = 10010
+    const val ERROR_10010_TEXT = "验证码已发送，请耐心等待"
+    const val ERROR_10011 = 10011
+    const val ERROR_10011_TEXT = "验证码已过期，请重新发送"
+    const val ERROR_10012 = 10012
+    const val ERROR_10012_TEXT = "验证码错误，请仔细确认"
 
     // 更新用户
     const val ERROR_11001 = 11001

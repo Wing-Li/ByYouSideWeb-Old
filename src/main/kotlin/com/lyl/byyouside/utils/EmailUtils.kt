@@ -25,7 +25,7 @@ object EmailUtils {
         mEMailAccount.isDebug = false
     }
 
-    fun sendCodeHtml(
+    fun sendVerifyCodeHtml(
         verifyCode: String,
         toEmail: String,
     ) {

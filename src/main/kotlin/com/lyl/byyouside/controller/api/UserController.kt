@@ -24,6 +24,14 @@ class UserController @Autowired constructor(
 ) : ApiBaseController() {
 
     /**
+     * 密码加密
+     */
+    private fun encodePassword(passWord: String): String {
+        val passwordEncoder: PasswordEncoder = BCryptPasswordEncoder()
+        return passwordEncoder.encode(passWord)
+    }
+
+    /**
      * 创建用户
      */
     @PostMapping(value = ["/user/register"])
@@ -32,30 +40,37 @@ class UserController @Autowired constructor(
         passWord: String,
         email: String
     ): BaseCallBack<Any> {
+        val lowerEmail = email.lowercase(Locale.getDefault())
+
         if (MyUtils.isEmpty(userName) || !userName.matches(Regex(Config.REGEX_USERNAME))) {
             return failCallBack(StatusCode.ERROR_10001, StatusCode.ERROR_10001_TEXT)
         }
         if (MyUtils.isEmpty(passWord) || passWord.length > 32 || passWord.length < 6) {
             return failCallBack(StatusCode.ERROR_10002, StatusCode.ERROR_10002_TEXT)
         }
-        if (MyUtils.isEmpty(email) || !email.matches(Regex(Config.REGEX_EMAIL))) {
+        if (MyUtils.isEmpty(lowerEmail) || !lowerEmail.matches(Regex(Config.REGEX_EMAIL))) {
             return failCallBack(StatusCode.ERROR_10005, StatusCode.ERROR_10005_TEXT)
         }
 
-        val passwordEncoder: PasswordEncoder = BCryptPasswordEncoder()
-        val encodedPassword: String = passwordEncoder.encode(passWord)
+        val encodedPassword: String = encodePassword(passWord)
 
         // 用户名 不能重复
         val existsUser = userRepository.existsByUserName(userName)
-        if (existsUser) {
+        if (existsUser) {// 用户名已经存在
             return failCallBack(StatusCode.ERROR_10004, StatusCode.ERROR_10004_TEXT)
+        }
+
+        // 邮箱不能重复
+        val existsByEmail = userRepository.existsByEmail(lowerEmail)
+        if (existsByEmail) {
+            return failCallBack(StatusCode.ERROR_10009, StatusCode.ERROR_10009_TEXT)
         }
 
         return try {
             val user = UserInfo(
                 userName = userName,
                 password = encodedPassword,
-                email = email,
+                email = lowerEmail,
             )
             val save: UserInfo = userRepository.save(user)
             save.id?.let { save.token = JwtUtils.createToken(it) }
@@ -68,7 +83,7 @@ class UserController @Autowired constructor(
     /**
      * 登录
      *
-     * @param userName 用户号 或  手机号
+     * @param userName 用户号 或 邮箱
      * @param passWord 密码
      * @return 用户信息
      */
@@ -81,7 +96,7 @@ class UserController @Autowired constructor(
             return failCallBack(StatusCode.ERROR_11003, StatusCode.ERROR_11003_TEXT)
         }
 
-        val user = userRepository.findByUserNameOrPhone(userName, userName)
+        val user = userRepository.findByUserNameOrEmail(userName, userName)
         if (user == null) { // 没有此用户
             return failCallBack(StatusCode.ERROR_11001, StatusCode.ERROR_11001_TEXT)
         }
@@ -101,6 +116,96 @@ class UserController @Autowired constructor(
     }
 
     /**
+     * 修改密码时，发送邮箱 Code
+     */
+    @PostMapping("/user/resetPassSendEmailCode")
+    fun resetPassSendEmailCode(
+        userName: String?,
+        email: String?,
+    ): BaseCallBack<Any> {
+        val lowerEmail = email?.lowercase(Locale.getDefault())
+
+        var user: UserInfo? = null
+        if (!MyUtils.isEmpty(userName)) { // 填写的是 userName
+            user = userRepository.findByUserNameOrEmail(userName, null)
+        } else if (!MyUtils.isEmpty(lowerEmail)) { // 填写的是 邮箱
+            if (false == lowerEmail?.matches(Regex(Config.REGEX_EMAIL))) { // 邮箱格式错误
+                return failCallBack(StatusCode.ERROR_10008, StatusCode.ERROR_10008_TEXT)
+            }
+            user = userRepository.findByUserNameOrEmail(null, lowerEmail)
+        }
+
+        if (user == null) { // 没有此用户
+            return failCallBack(StatusCode.ERROR_11001, StatusCode.ERROR_11001_TEXT)
+        }
+
+        user.codeDate?.let {
+            if (System.currentTimeMillis() - it.time < 1 * 60 * 1000) {
+                // 验证码已发送，请耐心等待
+                return failCallBack(StatusCode.ERROR_10010, StatusCode.ERROR_10010_TEXT)
+            }
+        }
+
+        val sendEmail = user.email
+        // 随机生成四位数 验证码
+        val verifyCode: String = RandomUtil.randomNumbers(4)
+        // 发送验证码
+        EmailUtils.sendVerifyCodeHtml(verifyCode, sendEmail)
+
+        user.code = verifyCode;
+        user.codeDate = Date()
+        userRepository.save(user)
+
+        return successCallBack("验证码发送成功")
+    }
+
+    /**
+     * 修改密码，验证 Code
+     */
+    @PostMapping("/user/resetPassVerifyCode")
+    fun resetPassVerifyCode(
+        userName: String?,
+        email: String?,
+        passWord: String,
+        verifyCode: String,
+    ): BaseCallBack<Any> {
+        val lowerEmail = email?.lowercase(Locale.getDefault())
+
+        var user: UserInfo? = null
+        if (!MyUtils.isEmpty(userName)) { // 填写的是 userName
+            user = userRepository.findByUserNameOrEmail(userName, null)
+        } else if (!MyUtils.isEmpty(lowerEmail)) { // 填写的是 邮箱
+            if (false == lowerEmail?.matches(Regex(Config.REGEX_EMAIL))) { // 邮箱格式错误
+                return failCallBack(StatusCode.ERROR_10008, StatusCode.ERROR_10008_TEXT)
+            }
+            user = userRepository.findByUserNameOrEmail(null, lowerEmail)
+        }
+
+        if (user == null) { // 没有此用户
+            return failCallBack(StatusCode.ERROR_11001, StatusCode.ERROR_11001_TEXT)
+        }
+
+        user.codeDate?.let {
+            if (System.currentTimeMillis() - it.time > 5 * 60 * 1000) {
+                // 验证码已过期，请重新发送
+                return failCallBack(StatusCode.ERROR_10011, StatusCode.ERROR_10011_TEXT)
+            }
+        }
+
+        if (user.code?.equals(verifyCode) == false) {
+            // 验证码错误，请仔细确认
+            return failCallBack(StatusCode.ERROR_10012, StatusCode.ERROR_10012_TEXT)
+        }
+
+        user.password = encodePassword(passWord)
+        user.code = null;
+        user.codeDate = null
+        userRepository.save(user)
+
+        return successCallBack("密码修改成功")
+    }
+
+    /**
      * 更新数据库字段，只要某个字段传了值，就更新数据库
      */
     @PostMapping(value = ["/user/update"])
@@ -110,7 +215,6 @@ class UserController @Autowired constructor(
         icon: String?,
         introduction: String?,
         birthday: String?,
-        phone: String?,
         email: String?,
         province: String?,
         city: String?
@@ -136,18 +240,18 @@ class UserController @Autowired constructor(
                 }
             }
 
-            if (!MyUtils.isEmpty(email)) {
-                if (email?.matches(Regex(Config.REGEX_EMAIL)) == false) {
+            val lowerEmail = email?.lowercase(Locale.getDefault())
+            if (!MyUtils.isEmpty(lowerEmail)) {
+                if (lowerEmail?.matches(Regex(Config.REGEX_EMAIL)) == false) {
                     return failCallBack(StatusCode.ERROR_10005, StatusCode.ERROR_10005_TEXT)
                 } else {
-                    email?.let { user.email = it }
+                    lowerEmail?.let { user.email = it }
                 }
             }
 
             gender?.let { user.gender = it }
             icon?.let { user.icon = it }
             birthday?.let { user.birthday = it }
-            phone?.let { user.phone = it }
             province?.let { user.province = it }
             city?.let { user.city = it }
 
@@ -156,26 +260,6 @@ class UserController @Autowired constructor(
         }
 
         return successCallBack("")
-    }
-
-    /**
-     * 获取所有用户
-     */
-    @PostMapping("/user/code")
-    fun getCode(
-        email: String
-    ): BaseCallBack<Any> {
-        if (MyUtils.isEmpty(email)) {
-            return failCallBack(StatusCode.ERROR_10007, StatusCode.ERROR_10007_TEXT)
-        }
-        if (!email.matches(Regex(Config.REGEX_EMAIL))) {
-            return failCallBack(StatusCode.ERROR_10008, StatusCode.ERROR_10008_TEXT)
-        }
-
-        val verifyCode: String = RandomUtil.randomNumbers(4)
-        EmailUtils.sendCodeHtml(verifyCode, email)
-
-        return successCallBack("发送成功")
     }
 
     /**

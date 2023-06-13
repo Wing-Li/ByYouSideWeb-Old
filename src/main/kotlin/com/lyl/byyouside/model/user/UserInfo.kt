@@ -27,6 +27,7 @@ data class UserInfo(
 
     @Column(unique = true, nullable = false, length = 20)
     var userName: String = "",
+    var email: String = "",
 
     @JsonIgnore
     @Column(nullable = false)
@@ -43,10 +44,6 @@ data class UserInfo(
     var introduction: String? = "",
 
     var birthday: String? = "",
-
-    @Column(length = 11)
-    var phone: String = "",
-    var email: String = "",
 
     var province: String? = "",
     var city: String? = "",
@@ -69,6 +66,12 @@ data class UserInfo(
     var locationLongitude: Double? = 0.0,
     var locationLatitude: Double? = 0.0,
     var locationTime: Date? = null,
+
+    // 修改密码时的验证码
+    @JsonIgnore
+    var code: String? = null,
+    @JsonIgnore
+    var codeDate: Date? = null,
 
     ) {
 

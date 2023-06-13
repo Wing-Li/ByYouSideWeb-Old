@@ -66,14 +66,14 @@ open class ApiBaseController {
      * 获取用户之后的权鉴
      */
     protected fun userAuth(user: UserInfo?): BaseCallBack<Any>? {
-        if (user == null) {
+        if (user == null) { // 用户信息异常，请重新登陆
             return failCallBack(StatusCode.ERROR_16001, StatusCode.ERROR_16001_TEXT)
         }
         if (user.isDestroy == true) { // 用户注销
             return if (user.destroyDate != null && (System.currentTimeMillis() - (user.destroyDate?.time ?: 0)) > 14 * 24 * 60 * 60 * 1000) {
-                failCallBack(StatusCode.ERROR_13003, StatusCode.ERROR_13003_TEXT)
+                failCallBack(StatusCode.ERROR_13003, StatusCode.ERROR_13003_TEXT) // 您的账户已注销！
             } else {
-                failCallBack(StatusCode.ERROR_13002, StatusCode.ERROR_13002_TEXT)
+                failCallBack(StatusCode.ERROR_13002, StatusCode.ERROR_13002_TEXT) // 您的账户已申请注销，重新登录将会取消申请!（可以重复申请）
             }
         }
         if ((user.closeDate ?: 0) > 0) { // 您的账户被限制登录(天)：5
