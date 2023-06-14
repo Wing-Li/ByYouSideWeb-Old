@@ -25,6 +25,7 @@ class VersionController() : ApiBaseController() {
         description: String,
         androidDownloadUrl: String,
         iosDownloadUrl: String,
+        isForce: Boolean,
     ): BaseCallBack<Any> {
         val versionData = Version(
             androidVersionName = androidVersionName,
@@ -32,7 +33,8 @@ class VersionController() : ApiBaseController() {
             title = title,
             description = description,
             androidDownloadUrl = androidDownloadUrl,
-            iosDownloadUrl = iosDownloadUrl
+            iosDownloadUrl = iosDownloadUrl,
+            isForce = isForce,
         )
 
         val versionDB = versionRepository.save(versionData)

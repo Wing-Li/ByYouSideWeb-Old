@@ -21,6 +21,7 @@ data class Version(
 
     var androidDownloadUrl: String = "",
     var iosDownloadUrl: String = "",
+    var isForce: Boolean = false,
 
     ) {
 
