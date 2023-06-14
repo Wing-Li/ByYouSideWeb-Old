@@ -43,7 +43,7 @@ class VersionController() : ApiBaseController() {
 
     @GetMapping(value = ["/version/getLast"])
     fun getLastVersion(): BaseCallBack<Any> {
-        val version = versionRepository.findByOrderByReleaseDateDesc()
+        val version = versionRepository.findFirstByOrderByReleaseDateDesc()
 
         return if (version != null) {
             successCallBack(version)

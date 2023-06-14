@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository
 @Repository
 interface VersionRepository : JpaRepository<Version, Long> {
 
-    fun findByOrderByReleaseDateDesc(): Version?
+    fun findFirstByOrderByReleaseDateDesc(): Version?
 }
