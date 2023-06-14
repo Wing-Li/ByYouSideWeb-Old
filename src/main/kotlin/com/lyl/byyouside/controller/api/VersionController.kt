@@ -19,19 +19,19 @@ class VersionController() : ApiBaseController() {
 
     @PostMapping(value = ["/version/add"])
     fun addVersion(
-        androidVersionName: String,
-        iosVersionName: String,
         title: String,
         description: String,
+        androidVersionName: String,
+        iosVersionName: String,
         androidDownloadUrl: String,
         iosDownloadUrl: String,
         isForce: Boolean,
     ): BaseCallBack<Any> {
         val versionData = Version(
-            androidVersionName = androidVersionName,
-            iosVersionName = iosVersionName,
             title = title,
             description = description,
+            androidVersionName = androidVersionName,
+            iosVersionName = iosVersionName,
             androidDownloadUrl = androidDownloadUrl,
             iosDownloadUrl = iosDownloadUrl,
             isForce = isForce,
