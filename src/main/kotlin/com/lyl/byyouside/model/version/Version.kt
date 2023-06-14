@@ -13,9 +13,10 @@ data class Version(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null,
 
-    var androidVersionNumber: String = "",
-    var iosVersionNumber: String = "",
+    var androidVersionName: String = "",
+    var iosVersionName: String = "",
 
+    var title: String = "",
     var description: String = "",
 
     var androidDownloadUrl: String = "",

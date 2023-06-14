@@ -8,7 +8,6 @@ import com.lyl.byyouside.model.version.VersionRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 
@@ -20,15 +19,17 @@ class VersionController() : ApiBaseController() {
 
     @PostMapping(value = ["/version/add"])
     fun addVersion(
-        androidVersionNumber: String,
-        iosVersionNumber: String,
+        androidVersionName: String,
+        iosVersionName: String,
+        title: String,
         description: String,
         androidDownloadUrl: String,
         iosDownloadUrl: String,
     ): BaseCallBack<Any> {
         val versionData = Version(
-            androidVersionNumber = androidVersionNumber,
-            iosVersionNumber = iosVersionNumber,
+            androidVersionName = androidVersionName,
+            iosVersionName = iosVersionName,
+            title = title,
             description = description,
             androidDownloadUrl = androidDownloadUrl,
             iosDownloadUrl = iosDownloadUrl
