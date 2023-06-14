@@ -57,7 +57,7 @@ class UserTokenInterceptor : HandlerInterceptor {
         // 解析令牌
         val headerMap = JwtUtils.parseToken(token)
         val userId = headerMap["userId"].toString().toLong()
-        val expireTime = headerMap["expireTime"].toString().toLong() // 验证过期时间
+        // val expireTime = headerMap["expireTime"].toString().toLong() // 验证过期时间
 
         val userCheck = userCheck(userId)
         if (userCheck?.isNotEmpty() == true) {

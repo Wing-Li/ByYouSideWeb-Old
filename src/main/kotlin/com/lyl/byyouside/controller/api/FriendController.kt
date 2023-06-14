@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import kotlin.jvm.optionals.getOrNull
 
-
 @RestController
 @Transactional
 class FriendController : ApiBaseController() {
