@@ -156,7 +156,7 @@ class UserController @Autowired constructor(
         user.codeDate = Date()
         userRepository.save(user)
 
-        return successCallBack("验证码发送成功")
+        return successCallBack("验证码已发送至：$sendEmail")
     }
 
     /**
@@ -202,7 +202,7 @@ class UserController @Autowired constructor(
         user.codeDate = null
         userRepository.save(user)
 
-        return successCallBack("密码修改成功")
+        return successCallBack("密码修改成功，快去登录吧 (#^.^#)")
     }
 
     /**
