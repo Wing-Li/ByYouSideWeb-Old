@@ -49,8 +49,8 @@ class FeedbackController : ApiBaseController() {
         size: Int?,
     ): BaseCallBack<MutableList<Feedback>> {
         val pageRequest = getBasePageRequest(page, size)
-        val page = feedbackRepository.findAll(pageRequest)
-        return successListCallBack(page)
+        val resultPage = feedbackRepository.findAll(pageRequest)
+        return successListCallBack(resultPage)
     }
 
 }

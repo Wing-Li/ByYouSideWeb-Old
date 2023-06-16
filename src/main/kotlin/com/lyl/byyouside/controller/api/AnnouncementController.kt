@@ -7,6 +7,7 @@ import com.lyl.byyouside.model.announcement.AnnouncementRepository
 import com.lyl.byyouside.model.base.BaseCallBack
 import com.lyl.byyouside.utils.MyUtils
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Sort
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RestController
@@ -60,8 +61,9 @@ class AnnouncementController @Autowired constructor(
         size: Int?,
     ): BaseCallBack<MutableList<Announcement>> {
         val pageRequest = getBasePageRequest(page, size)
-        val page = announcementRepository.findAll(pageRequest)
-        return successListCallBack(page)
+        pageRequest.withSort(Sort.by("createTime").descending())
+        val resultPage = announcementRepository.findAll(pageRequest)
+        return successListCallBack(resultPage)
     }
 
     /**
