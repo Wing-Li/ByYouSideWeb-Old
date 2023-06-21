@@ -60,7 +60,6 @@ class VipRechargeController @Autowired constructor(
         }
 
         val vipDB = vipRepository.findById(vipId)
-
         if (!vipDB.isPresent) {
             // VIP不存在
             return failCallBack(StatusCode.ERROR_15003, StatusCode.ERROR_15003_TEXT)
@@ -73,7 +72,7 @@ class VipRechargeController @Autowired constructor(
             fromRecharge = from,
             actualPrice = money
         )
-        // 将数据保存到数据库
+        // 保存购买记录
         vipRechargeRepository.save(vipRecharge)
 
         // 给用户设置会员

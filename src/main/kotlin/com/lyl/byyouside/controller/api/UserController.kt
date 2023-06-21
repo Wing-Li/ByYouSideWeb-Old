@@ -5,12 +5,14 @@ import com.lyl.byyouside.config.Config
 import com.lyl.byyouside.config.ContextHolder
 import com.lyl.byyouside.config.StatusCode
 import com.lyl.byyouside.controller.base.ApiBaseController
+import com.lyl.byyouside.controller.chat.ChatYxImApi
 import com.lyl.byyouside.model.base.BaseCallBack
 import com.lyl.byyouside.model.user.UserInfo
 import com.lyl.byyouside.model.user.UserInfoRepository
 import com.lyl.byyouside.utils.EmailUtils
 import com.lyl.byyouside.utils.JwtUtils
 import com.lyl.byyouside.utils.MyUtils
+import jakarta.annotation.Resource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -20,8 +22,12 @@ import kotlin.jvm.optionals.getOrNull
 
 @RestController
 class UserController @Autowired constructor(
-    private val userRepository: UserInfoRepository
+    private val userRepository: UserInfoRepository,
 ) : ApiBaseController() {
+
+
+    @Resource
+    private lateinit var chatYxImApi: ChatYxImApi
 
     /**
      * 密码加密

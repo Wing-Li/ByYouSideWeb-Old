@@ -64,7 +64,7 @@ object StatusCode {
     const val ERROR_15002 = 15002
     const val ERROR_15002_TEXT = "金额不能小于0元"
     const val ERROR_15003 = 15003
-    const val ERROR_15003_TEXT = "此类型VIP不存在，请联系管理员"
+    const val ERROR_15003_TEXT = "您购买的VIP已过期，请联系管理员"
 
     // 绑定密友 16
     const val ERROR_16001 = 16001
