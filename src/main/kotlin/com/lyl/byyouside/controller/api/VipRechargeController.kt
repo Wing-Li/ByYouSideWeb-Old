@@ -122,6 +122,8 @@ class VipRechargeController @Autowired constructor(
     @PostMapping(value = ["/vip/update"])
     fun updateVip(
         vipId: Long,
+        title: String?,
+        description: String?,
         level: Int?,
         duration: Int?,
         price: BigDecimal?,
@@ -143,6 +145,8 @@ class VipRechargeController @Autowired constructor(
         }
 
         val vip = vipDB.get()
+        title?.let { vip.title = it }
+        description?.let { vip.description = it }
         level?.let { vip.level = it }
         duration?.let { vip.duration = it }
         price?.let { vip.price = it }
