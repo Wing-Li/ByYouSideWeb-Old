@@ -8,6 +8,7 @@ import com.lyl.byyouside.model.base.BaseCallBack
 import com.lyl.byyouside.model.config.ConfigInfo
 import com.lyl.byyouside.model.config.ConfigInfoRepository
 import com.lyl.byyouside.model.user.UserInfoRepository
+import com.lyl.byyouside.model.vip.VipRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 import kotlin.jvm.optionals.getOrNull
@@ -17,6 +18,9 @@ class ConfigInfoController : ApiBaseController() {
 
     @Autowired
     private lateinit var userInfoRepository: UserInfoRepository
+
+    @Autowired
+    private lateinit var vipRepository: VipRepository
 
     @Autowired
     private lateinit var configInfoRepository: ConfigInfoRepository
@@ -57,6 +61,9 @@ class ConfigInfoController : ApiBaseController() {
         return if (latestConfig == null) {
             failCallBack(StatusCode.ERROR_18002, StatusCode.ERROR_18002_TEXT)
         } else {
+            val vips = vipRepository.findAll()
+            latestConfig.vipTypeList = vips
+
             successCallBack(latestConfig)
         }
     }
