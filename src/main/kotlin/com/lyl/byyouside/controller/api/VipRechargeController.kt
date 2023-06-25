@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RestController
 import java.math.BigDecimal
 import java.util.*
+import kotlin.jvm.optionals.getOrNull
 
 /**
  * 会员充值记录
@@ -116,6 +117,39 @@ class VipRechargeController @Autowired constructor(
         // 保存用户信息
         val resultUser = userRepository.save(userData)
         return successCallBack(userAdapter(resultUser))
+    }
+
+    @PostMapping(value = ["/vip/update"])
+    fun updateVip(
+        vipId: Long,
+        level: Int?,
+        duration: Int?,
+        price: BigDecimal?,
+        status: Int?,
+    ): BaseCallBack<Any> {
+        val userId = ContextHolder.userId
+        val userData = userRepository.findById(userId).getOrNull()
+        userAuth(userData)?.let { return it }
+
+        if ("admin" != userData?.status) {
+            // 只有管理员才可以操作
+            return failCallBack(StatusCode.ERROR_10013, StatusCode.ERROR_10013_TEXT)
+        }
+
+        val vipDB = vipRepository.findById(vipId)
+        if (!vipDB.isPresent) {
+            // 此VIP类型不存在，请联系管理员
+            return failCallBack(StatusCode.ERROR_15004, StatusCode.ERROR_15004_TEXT)
+        }
+
+        val vip = vipDB.get()
+        level?.let { vip.level = it }
+        duration?.let { vip.duration = it }
+        price?.let { vip.price = it }
+        status?.let { vip.status = it }
+
+        val save = vipRepository.save(vip)
+        return successCallBack(save)
     }
 
     @GetMapping(value = ["/vip/getRechargeAll"])

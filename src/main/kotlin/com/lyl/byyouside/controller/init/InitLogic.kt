@@ -27,28 +27,28 @@ class InitLogic {
             val vip1 = Vip(
                 level = 1,
                 duration = 1,
-                price = BigDecimal.valueOf(9.9),
+                price = BigDecimal.valueOf(19.9),
             )
             vipRepository.save(vip1)
 
             val vip2 = Vip(
                 level = 1,
                 duration = 3,
-                price = BigDecimal.valueOf(19.9),
+                price = BigDecimal.valueOf(49.9),
             )
             vipRepository.save(vip2)
 
             val vip3 = Vip(
                 level = 1,
                 duration = 6,
-                price = BigDecimal.valueOf(49.9),
+                price = BigDecimal.valueOf(99.9),
             )
             vipRepository.save(vip3)
 
             val vip4 = Vip(
                 level = 1,
                 duration = 12,
-                price = BigDecimal.valueOf(89.9),
+                price = BigDecimal.valueOf(159.9),
             )
             vipRepository.save(vip4)
         }

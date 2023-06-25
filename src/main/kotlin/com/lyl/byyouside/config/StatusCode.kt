@@ -37,6 +37,8 @@ object StatusCode {
     const val ERROR_10011_TEXT = "验证码已过期，请重新发送"
     const val ERROR_10012 = 10012
     const val ERROR_10012_TEXT = "验证码错误，请仔细确认"
+    const val ERROR_10013 = 10013
+    const val ERROR_10013_TEXT = "只有管理员才可以操作"
 
     // 更新用户
     const val ERROR_11001 = 11001
@@ -65,6 +67,8 @@ object StatusCode {
     const val ERROR_15002_TEXT = "金额不能小于0元"
     const val ERROR_15003 = 15003
     const val ERROR_15003_TEXT = "您购买的VIP已过期，请联系管理员"
+    const val ERROR_15004 = 15004
+    const val ERROR_15004_TEXT = "此VIP类型不存在，请联系管理员"
 
     // 绑定密友 16
     const val ERROR_16001 = 16001
