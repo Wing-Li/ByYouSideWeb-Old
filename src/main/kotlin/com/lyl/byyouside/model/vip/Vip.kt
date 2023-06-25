@@ -17,6 +17,9 @@ data class Vip(
     @GeneratedValue(strategy = GenerationType.AUTO)
     val id: Long? = null,
 
+    var title: String = "",
+    var description: String = "",
+
     @Column(nullable = false)
     var level: Int = 1, //等级
 

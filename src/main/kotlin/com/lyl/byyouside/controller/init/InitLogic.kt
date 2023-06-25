@@ -28,6 +28,7 @@ class InitLogic {
                 level = 1,
                 duration = 1,
                 price = BigDecimal.valueOf(19.9),
+                title = "连续包月",
             )
             vipRepository.save(vip1)
 
@@ -35,13 +36,16 @@ class InitLogic {
                 level = 1,
                 duration = 3,
                 price = BigDecimal.valueOf(49.9),
+                title = "连续包季",
+                description = "最多人购买"
             )
             vipRepository.save(vip2)
 
             val vip3 = Vip(
                 level = 1,
                 duration = 6,
-                price = BigDecimal.valueOf(99.9),
+                price = BigDecimal.valueOf(94.9),
+                title = "连续半年",
             )
             vipRepository.save(vip3)
 
@@ -49,6 +53,7 @@ class InitLogic {
                 level = 1,
                 duration = 12,
                 price = BigDecimal.valueOf(159.9),
+                title = "连续包年",
             )
             vipRepository.save(vip4)
         }
