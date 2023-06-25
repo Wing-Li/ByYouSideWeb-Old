@@ -13,13 +13,13 @@ data class ConfigInfo(
     @GeneratedValue(strategy = GenerationType.AUTO)
     var id: Long? = null,
 
+    // 环境
+    var environment: String? = null,
 
     ) {
 
-    var appConfig: String = ""
 
-    var h5Config: String = ""
-
+    var appName: String? = null
 
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     @CreatedDate

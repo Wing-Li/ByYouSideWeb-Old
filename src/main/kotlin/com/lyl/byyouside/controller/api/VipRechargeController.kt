@@ -3,11 +3,13 @@ package com.lyl.byyouside.controller.api
 import com.lyl.byyouside.config.ContextHolder
 import com.lyl.byyouside.config.StatusCode
 import com.lyl.byyouside.controller.base.ApiBaseController
+import com.lyl.byyouside.controller.chat.ChatYxImApi
 import com.lyl.byyouside.model.base.BaseCallBack
 import com.lyl.byyouside.model.user.UserInfoRepository
 import com.lyl.byyouside.model.vip.VipRecharge
 import com.lyl.byyouside.model.vip.VipRechargeRepository
 import com.lyl.byyouside.model.vip.VipRepository
+import com.lyl.byyouside.utils.MyUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.GetMapping
@@ -24,7 +26,8 @@ import java.util.*
 class VipRechargeController @Autowired constructor(
     private val vipRepository: VipRepository,
     private val vipRechargeRepository: VipRechargeRepository,
-    private val userRepository: UserInfoRepository
+    private val userRepository: UserInfoRepository,
+    private val chatYxImApi: ChatYxImApi,
 ) : ApiBaseController() {
 
     /**
@@ -78,7 +81,6 @@ class VipRechargeController @Autowired constructor(
         // 给用户设置会员
         val userData = user.get()
         userData.vipLevel = vip.level
-
         // 设置用户的到期时间
         // 先获取以前时间，查看他是否过期，没过期继续加。过期了，或者没有，从新设置
         val vipLimitDate = userData.vipLimitDate
@@ -92,6 +94,26 @@ class VipRechargeController @Autowired constructor(
             nowTime.month = nowTime.month + vip.duration
             userData.vipLimitDate = nowTime
         }
+
+        // 给用户注册IM账号
+        val accountId = chatYxImApi.getAccountId(userId)
+        val accountToken = chatYxImApi.getAccountToken(userId)
+        val resultStr = chatYxImApi.createImUser(
+            accid = accountId,
+            token = accountToken,
+            name = userData.nickName,
+            icon = userData.icon,
+            email = userData.email,
+            gender = userData.gender,
+            sign = userData.introduction,
+            birth = userData.birthday
+        )
+        if (!MyUtils.isEmpty(resultStr)) {
+            println("给用户注册IM账号:$resultStr");
+        }
+        userData.imAccountId = accountId
+
+        // 保存用户信息
         val resultUser = userRepository.save(userData)
         return successCallBack(userAdapter(resultUser))
     }

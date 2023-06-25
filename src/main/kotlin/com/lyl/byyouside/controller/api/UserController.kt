@@ -23,11 +23,9 @@ import kotlin.jvm.optionals.getOrNull
 @RestController
 class UserController @Autowired constructor(
     private val userRepository: UserInfoRepository,
+    private val chatYxImApi: ChatYxImApi,
 ) : ApiBaseController() {
 
-
-    @Resource
-    private lateinit var chatYxImApi: ChatYxImApi
 
     /**
      * 密码加密
@@ -257,8 +255,22 @@ class UserController @Autowired constructor(
             icon?.let { user.icon = it }
             birthday?.let { user.birthday = it }
 
-            val save = userRepository.save(user)
-            return successCallBack(userAdapter(save))
+            val userData = userRepository.save(user)
+
+            // 更新IM的信息
+            if (!MyUtils.isEmpty(userData.imAccountId)) {
+                chatYxImApi.updateImUserInfo(
+                    accid = userData.imAccountId!!,
+                    name = nickName,
+                    icon = icon,
+                    email = email,
+                    gender = gender,
+                    sign = introduction,
+                    birth = birthday
+                )
+            }
+
+            return successCallBack(userAdapter(userData))
         }
 
         return successCallBack("")

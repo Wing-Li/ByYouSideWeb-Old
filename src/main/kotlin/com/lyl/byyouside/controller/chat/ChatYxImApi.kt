@@ -3,9 +3,17 @@ package com.lyl.byyouside.controller.chat
 import cn.hutool.core.util.RandomUtil
 import cn.hutool.http.HttpRequest
 import cn.hutool.json.JSONUtil
+import com.lyl.byyouside.config.Config
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
 import java.util.*
 
+@Component
 class ChatYxImApi {
+
+
+    @Autowired
+    private lateinit var mConfig: Config
 
     private fun buildBaseHeader(): HashMap<String, String> {
         // 伴你左右-Dev 环境
@@ -115,4 +123,15 @@ class ChatYxImApi {
         return "200" == jsonObject["code"]
     }
 
+    fun getUserId(account: String?): Long {
+        return account?.replace("bnzy_", "")?.toLong() ?: -1
+    }
+
+    fun getAccountId(userId: Long): String {
+        return "${if ("dev" == mConfig.active) "dev_" else ""}bnzy_$userId";
+    }
+
+    fun getAccountToken(userId: Long): String {
+        return "${getAccountId(userId)}${getAccountId(userId)}";
+    }
 }

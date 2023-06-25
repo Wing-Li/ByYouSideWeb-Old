@@ -70,6 +70,9 @@ data class UserInfo(
     @JsonIgnore
     var codeDate: Date? = null,
 
+    // 云信IM 的用户名，密码为 用户名+用户名
+    var imAccountId: String? = null,
+
     ) {
 
     var token = ""
