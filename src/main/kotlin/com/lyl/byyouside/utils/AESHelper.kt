@@ -1,7 +1,7 @@
 package com.lyl.byyouside.utils
 
+import cn.hutool.core.codec.Base64
 import java.nio.charset.StandardCharsets
-import java.util.*
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
@@ -23,9 +23,9 @@ object AESHelper {
         val ivSpec = IvParameterSpec(MY_IV.toByteArray())
 
         val cipher = Cipher.getInstance(ALGORITHM)
-        cipher.init(Cipher.ENCRYPT_MODE, keySpec)
+        cipher.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec)
         val encryptedBytes = cipher.doFinal(plainText.toByteArray(StandardCharsets.UTF_8))
-        val encryptedBase64 = Base64.getEncoder().encodeToString(encryptedBytes)
+        val encryptedBase64 = Base64.encodeUrlSafe(encryptedBytes)
         return encryptedBase64
     }
 
@@ -38,8 +38,8 @@ object AESHelper {
 
         return try {
             val cipher = Cipher.getInstance(ALGORITHM)
-            cipher.init(Cipher.DECRYPT_MODE, keySpec)
-            val decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(encryptedText))
+            cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec)
+            val decryptedBytes = cipher.doFinal(Base64.decode(encryptedText))
             val decryptedText = String(decryptedBytes, StandardCharsets.UTF_8)
             decryptedText
         } catch (e: Exception) {
