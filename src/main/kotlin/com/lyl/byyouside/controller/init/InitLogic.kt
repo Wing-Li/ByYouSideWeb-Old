@@ -1,5 +1,6 @@
 package com.lyl.byyouside.controller.init
 
+import com.lyl.byyouside.controller.api.ConfigInfoController
 import com.lyl.byyouside.model.vip.Vip
 import com.lyl.byyouside.model.vip.VipRepository
 import jakarta.annotation.PostConstruct
@@ -14,9 +15,14 @@ class InitLogic {
     @Autowired
     private lateinit var vipRepository: VipRepository
 
+    @Autowired
+    private lateinit var configInfoController: ConfigInfoController
+
     @PostConstruct
     fun init() {
         initVipType()
+
+        initConfig()
     }
 
     private fun initVipType() {
@@ -56,7 +62,17 @@ class InitLogic {
                 title = "连续包年",
             )
             vipRepository.save(vip4)
+
+            println("初始化 VIP 会员类型")
+        } else {
+            println("VIP 会员类型 已经初始化")
         }
+    }
+
+    private fun initConfig() {
+        configInfoController.initConfig(
+            appName = "伴你左右"
+        )
     }
 
 }

@@ -28,6 +28,25 @@ class ConfigInfoController : ApiBaseController() {
     @Autowired
     private lateinit var mConfig: Config
 
+    fun initConfig(
+        appName: String?,
+    ) {
+        val latestConfig = configInfoRepository.findTopByOrderByCreateTimeDesc()
+        if (latestConfig == null) {
+            val config = ConfigInfo(
+                environment = mConfig.active,
+            )
+
+            appName?.let { config.appName = it }
+
+            configInfoRepository.save(config)
+
+            println("初始化配置成功")
+        } else {
+            println("初始化配置 已经配置")
+        }
+    }
+
     @PostMapping(value = ["/config/create"])
     fun createConfig(
         appName: String?,
