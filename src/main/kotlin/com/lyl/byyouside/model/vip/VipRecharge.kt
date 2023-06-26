@@ -25,7 +25,7 @@ data class VipRecharge(
     @JoinColumn(name = "vip_id", nullable = false)
     var vip: Vip? = null,
 
-    var fromRecharge: Int = 0, // 3,是官方送的
+    var fromRecharge: Int = 0, // 1:ios; 2:Android; 3,是官方送的
 
     @Column(nullable = false)
     var actualPrice: BigDecimal = BigDecimal.ZERO,
