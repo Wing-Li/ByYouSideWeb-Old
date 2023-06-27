@@ -38,18 +38,19 @@ class MyResponseBodyAdvice() : ResponseBodyAdvice<Any> {
         response: ServerHttpResponse
     ): Any? {
 
-        // dev 环境不加密
-        if ("dev" != mConfig.active) {
-            try {
-                val objectMapper = ObjectMapper()
-                // 对所有的 api 数据都加密
-                val result = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(body)
-                logger.info("加密返回数据：$result")
-                return AESHelper.encrypt(result)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
+//        // 一直有问题，暂时不加密了
+//        // dev 环境不加密
+//        if ("dev" != mConfig.active) {
+//            try {
+//                val objectMapper = ObjectMapper()
+//                // 对所有的 api 数据都加密
+//                val result = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(body)
+//                logger.info("加密返回数据：$result")
+//                return AESHelper.encrypt(result)
+//            } catch (e: Exception) {
+//                e.printStackTrace()
+//            }
+//        }
 
         return body
     }
