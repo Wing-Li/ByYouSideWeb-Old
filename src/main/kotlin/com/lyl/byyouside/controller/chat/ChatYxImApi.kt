@@ -33,6 +33,9 @@ class ChatYxImApi {
         return headerMap
     }
 
+    /**
+     * 创建用户
+     */
     fun createImUser(
         accid: String,
         token: String, // 密码
@@ -43,11 +46,18 @@ class ChatYxImApi {
         sign: String?,
         birth: String?,
     ): String {
+        // 用户已存在，则更新用户信息
+        val isUserExist = getUserInfo(listOf(accid))
+        if (isUserExist) {
+            val isUpdateSuccess = updateImUserInfo(accid, name, icon, email, gender, sign, birth)
+            return if (isUpdateSuccess) "" else "用户已存在，但信息更新失败";
+        }
+
         val url = "https://api.netease.im/nimserver/user/create.action"
         val headerMap = buildBaseHeader()
 
         // 设置请求的参数， 全部转为 String类型，包括 Boolean
-        val paramMap = HashMap<String, Any>();
+        val paramMap = HashMap<String, Any>()
         paramMap.put("accid", accid)
         paramMap.put("token", token)
         paramMap.put("name", name)
@@ -90,6 +100,9 @@ class ChatYxImApi {
         // 打印执行结果
     }
 
+    /**
+     * 更新用户信息
+     */
     fun updateImUserInfo(
         accid: String,
         name: String?,
@@ -103,7 +116,7 @@ class ChatYxImApi {
         val headerMap = buildBaseHeader()
 
         // 设置请求的参数， 全部转为 String类型，包括 Boolean
-        val paramMap = HashMap<String, Any>();
+        val paramMap = HashMap<String, Any>()
         paramMap.put("accid", accid)
         name?.let { paramMap.put("name", it) }
         icon?.let { paramMap.put("icon", it) }
@@ -111,6 +124,30 @@ class ChatYxImApi {
         gender?.let { paramMap.put("gender", it.toString()) }
         sign?.let { paramMap.put("sign", it) }
         birth?.let { paramMap.put("birth", it) }
+
+        val body = HttpRequest.post(url)
+            .headerMap(headerMap, false)
+            .form(paramMap)
+            .timeout(15 * 1000)
+            .execute()
+            .body()
+
+        val jsonObject = JSONUtil.parseObj(body)
+        return "200" == jsonObject["code"]
+    }
+
+    /**
+     * 获取用户信息
+     */
+    fun getUserInfo(
+        accids: List<String>
+    ): Boolean {
+        val url = "https://api.netease.im/nimserver/user/getUinfos.action"
+        val headerMap = buildBaseHeader()
+
+        // 设置请求的参数， 全部转为 String类型，包括 Boolean
+        val paramMap = HashMap<String, Any>()
+        paramMap.put("accids", accids)
 
         val body = HttpRequest.post(url)
             .headerMap(headerMap, false)
