@@ -158,6 +158,7 @@ class UserController @Autowired constructor(
 
         user.code = verifyCode;
         user.codeDate = Date()
+        user.updateTime = Date()
         userRepository.save(user)
 
         return successCallBack("验证码已发送至：$sendEmail")
@@ -204,6 +205,7 @@ class UserController @Autowired constructor(
         user.password = encodePassword(passWord)
         user.code = null;
         user.codeDate = null
+        user.updateTime = Date()
         userRepository.save(user)
 
         return successCallBack("密码修改成功，快去登录吧 (#^.^#)")
@@ -254,6 +256,7 @@ class UserController @Autowired constructor(
             gender?.let { user.gender = it }
             icon?.let { user.icon = it }
             birthday?.let { user.birthday = it }
+            user.updateTime = Date()
 
             val userData = userRepository.save(user)
 
@@ -346,6 +349,7 @@ class UserController @Autowired constructor(
                 user.isDestroy = true
                 user.destroyDate = Date()
                 user.destroyReason = destroyReason
+                user.updateTime = Date()
 
                 val save = userRepository.save(user)
                 successCallBack(userAdapter(save))
@@ -370,6 +374,7 @@ class UserController @Autowired constructor(
                 user.destroyDate = Date()
                 user.destroyReason = ""
             }
+            user.updateTime = Date()
             val save = userRepository.save(user)
             successCallBack(userAdapter(save))
         } else {
