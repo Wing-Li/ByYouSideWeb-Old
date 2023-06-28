@@ -46,6 +46,9 @@ data class UserInfo(
     var birthday: String? = "",
 
     var vipLevel: Int? = 0,
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    var vipLimitDate: Date? = null, // 会员过期时间
+    var vipFrom: String? = null, // ios android admin ,当充值类型为 ios 时，充值时间就不准确了。
 
     /**
      * 封号时间, 封号天数
@@ -80,9 +83,6 @@ data class UserInfo(
     ) {
 
     var token = ""
-
-    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    var vipLimitDate: Date? = null // 会员过期时间
 
     @CreatedDate
     @Column(nullable = false)

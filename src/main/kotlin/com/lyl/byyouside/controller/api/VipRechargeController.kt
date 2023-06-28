@@ -45,7 +45,7 @@ class VipRechargeController @Autowired constructor(
     fun addVipRecharge(
         vipId: Long,
         money: BigDecimal,
-        from: Int
+        from: String
     ): BaseCallBack<Any> {
         val userId = ContextHolder.userId
 
@@ -55,8 +55,8 @@ class VipRechargeController @Autowired constructor(
             return failCallBack(StatusCode.ERROR_15001, StatusCode.ERROR_15001_TEXT)
         }
 
-        // from = 3,是官方送的
-        if (from != 3) {
+        // from = admin,是官方送的
+        if ("admin" != from) {
             if (money < BigDecimal.ZERO) {
                 // 金额小于0
                 return failCallBack(StatusCode.ERROR_15002, StatusCode.ERROR_15002_TEXT)
@@ -73,7 +73,7 @@ class VipRechargeController @Autowired constructor(
         val vipRecharge = VipRecharge(
             userId = userId,
             vip = vip,
-            fromRecharge = from,
+            vipFrom = from,
             actualPrice = money
         )
         // 保存购买记录
@@ -82,6 +82,7 @@ class VipRechargeController @Autowired constructor(
         // 给用户设置会员
         val userData = user.get()
         userData.vipLevel = vip.level
+        userData.vipFrom = from
         // 设置用户的到期时间
         // 先获取以前时间，查看他是否过期，没过期继续加。过期了，或者没有，从新设置
         val vipLimitDate = userData.vipLimitDate
