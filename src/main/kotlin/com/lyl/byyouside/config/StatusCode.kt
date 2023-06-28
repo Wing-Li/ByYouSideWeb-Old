@@ -66,7 +66,7 @@ object StatusCode {
     const val ERROR_15002 = 15002
     const val ERROR_15002_TEXT = "金额不能小于0元"
     const val ERROR_15003 = 15003
-    const val ERROR_15003_TEXT = "您购买的VIP已过期，请联系管理员"
+    const val ERROR_15003_TEXT = "您购买的VIP套餐已不存在，请联系管理员"
     const val ERROR_15004 = 15004
     const val ERROR_15004_TEXT = "此VIP类型不存在，请联系管理员"
 
