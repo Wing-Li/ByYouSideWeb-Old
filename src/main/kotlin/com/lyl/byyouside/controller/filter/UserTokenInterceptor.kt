@@ -48,7 +48,7 @@ class UserTokenInterceptor : HandlerInterceptor {
         }
 
         // 从请求头里面读取token
-        val token = request.getHeader(HEADER_AUTH) ?: throw RuntimeException("请求失败，Token为空")
+        val token = request.getHeader(HEADER_AUTH) ?: throw RuntimeException("请求失败，Token异常，请重新登录")
 
         // 验证令牌
         val verifyToken = JwtUtils.verifyToken(token)
