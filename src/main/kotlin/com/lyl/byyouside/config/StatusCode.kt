@@ -103,4 +103,10 @@ object StatusCode {
     // 设备信息 19
     const val ERROR_19000 = 19000
     const val ERROR_19000_TEXT = "该用户还没有上传过信息"
+
+    // 设备信息 20
+    const val ERROR_20000 = 20000
+    const val ERROR_20000_TEXT = "此回忆不存在"
+    const val ERROR_20001 = 20001
+    const val ERROR_20001_TEXT = "此回忆不是您写的，无法删除"
 }

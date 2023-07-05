@@ -25,6 +25,9 @@ class UserTokenInterceptor : HandlerInterceptor {
          * 安全的url，不需要令牌
          */
         private val SAFE_URL_LIST = listOf(
+            "/favicon.ico",
+            "/error",
+
             "/api/user/register",
             "/api/user/login",
             "/api/user/resetPassSendEmailCode",

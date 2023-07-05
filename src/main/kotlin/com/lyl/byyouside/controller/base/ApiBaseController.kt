@@ -18,9 +18,9 @@ open class ApiBaseController {
     /**
      * 分页请求，基础配置
      */
-    fun getBasePageRequest(page: Int, size: Int?): PageRequest {
+    fun getBasePageRequest(page: Int?, size: Int?): PageRequest {
         // page 从 1 开始
-        return PageRequest.of(page - 1, size ?: 20)
+        return PageRequest.of((page ?: 1) - 1, size ?: 20)
     }
 
     /**
