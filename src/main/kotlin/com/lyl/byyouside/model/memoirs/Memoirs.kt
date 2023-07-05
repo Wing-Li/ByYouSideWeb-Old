@@ -15,6 +15,10 @@ data class Memoirs(
     var id: Long? = null,
 
     var title: String = "",
+
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
+    @Column(columnDefinition = "text")
     var content: String = "",
 
     @Column(nullable = false)
