@@ -3,10 +3,17 @@ package com.lyl.byyouside.controller.base
 import com.lyl.byyouside.config.StatusCode
 import com.lyl.byyouside.model.base.BaseCallBack
 import com.lyl.byyouside.model.user.UserInfo
+import org.springframework.beans.propertyeditors.CustomDateEditor
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.bind.WebDataBinder
+import org.springframework.web.bind.annotation.InitBinder
 import org.springframework.web.bind.annotation.RequestMapping
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
+
 
 /**
  * API 的基类，所有 API 都继承这个类
@@ -53,6 +60,13 @@ open class ApiBaseController {
      */
     fun failCallBack(code: Int, msg: String): BaseCallBack<Any> {
         return BaseCallBack(code, msg, null)
+    }
+
+    @InitBinder
+    fun initBinder(binder: WebDataBinder) {
+        val dateFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
+        dateFormat.isLenient = true
+        binder.registerCustomEditor(Date::class.java, CustomDateEditor(dateFormat, true))
     }
 
     //============================= 基础操作 ===========================================
