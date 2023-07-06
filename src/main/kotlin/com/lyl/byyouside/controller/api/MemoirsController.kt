@@ -53,6 +53,7 @@ class MemoirsController @Autowired constructor(
     @PostMapping("/memoirs/update")
     fun updateMemoirs(
         memoirsId: Long,
+        friendId: Long,
         title: String?,
         content: String?,
         date: Date?,
@@ -60,6 +61,16 @@ class MemoirsController @Autowired constructor(
         val memoirsDB = memoirsRepository.findById(memoirsId)
         if (!memoirsDB.isPresent) {
             return failCallBack(StatusCode.ERROR_20000, StatusCode.ERROR_20000_TEXT)
+        }
+
+        val userId = ContextHolder.userId
+        val user = userInfoRepository.findById(userId).getOrNull()
+        userAuth(user)?.let { return it }
+
+        val friend = friendRepository.findById(friendId).getOrNull()
+        if (friend?.myUser?.id != userId && friend?.toUser?.id != userId) {
+            // 好友关系，不是自己的 // 用户关系异常，请重新登录后再次尝试
+            return failCallBack(StatusCode.ERROR_20002, StatusCode.ERROR_20002_TEXT)
         }
 
         val memoirs = memoirsDB.get()
