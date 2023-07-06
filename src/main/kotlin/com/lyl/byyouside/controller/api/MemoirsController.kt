@@ -4,6 +4,7 @@ import com.lyl.byyouside.config.ContextHolder
 import com.lyl.byyouside.config.StatusCode
 import com.lyl.byyouside.controller.base.ApiBaseController
 import com.lyl.byyouside.model.base.BaseCallBack
+import com.lyl.byyouside.model.friend.FriendRepository
 import com.lyl.byyouside.model.memoirs.Memoirs
 import com.lyl.byyouside.model.memoirs.MemoirsRepository
 import com.lyl.byyouside.model.user.UserInfoRepository
@@ -16,6 +17,7 @@ import kotlin.jvm.optionals.getOrNull
 class MemoirsController @Autowired constructor(
     private val memoirsRepository: MemoirsRepository,
     private val userInfoRepository: UserInfoRepository,
+    private val friendRepository: FriendRepository,
 ) : ApiBaseController() {
 
     @PostMapping("/memoirs/create")
@@ -29,6 +31,12 @@ class MemoirsController @Autowired constructor(
 
         val user = userInfoRepository.findById(userId).getOrNull()
         userAuth(user)?.let { return it }
+
+        val friend = friendRepository.findById(friendId).getOrNull()
+        if (friend?.myUser?.id != userId && friend?.toUser?.id != userId) {
+            // 好友关系，不是自己的
+            return failCallBack(StatusCode.ERROR_20002, StatusCode.ERROR_20002_TEXT)
+        }
 
         val memoirs = Memoirs(
             friendId = friendId,

@@ -109,4 +109,6 @@ object StatusCode {
     const val ERROR_20000_TEXT = "此回忆不存在"
     const val ERROR_20001 = 20001
     const val ERROR_20001_TEXT = "此回忆不是您写的，无法删除"
+    const val ERROR_20002 = 20002
+    const val ERROR_20002_TEXT = "用户关系异常，请重新登录后再次尝试"
 }
