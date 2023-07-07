@@ -75,10 +75,10 @@ class ChatYxImApi {
             .body()
 
         val jsonObject = JSONUtil.parseObj(body)
-        if ("200" == jsonObject.get("code")) {
-            return ""
+        return if ("200" == jsonObject["code"] || 200 == jsonObject["code"]) {
+            ""
         } else {
-            return jsonObject.get("desc")?.toString() ?: "注册IM出错"
+            jsonObject["desc"]?.toString() ?: "注册IM出错"
         }
 
 //        注册成功返回示例
@@ -133,7 +133,7 @@ class ChatYxImApi {
             .body()
 
         val jsonObject = JSONUtil.parseObj(body)
-        return "200" == jsonObject["code"]
+        return "200" == jsonObject["code"] || 200 == jsonObject["code"]
     }
 
     /**
@@ -145,9 +145,13 @@ class ChatYxImApi {
         val url = "https://api.netease.im/nimserver/user/getUinfos.action"
         val headerMap = buildBaseHeader()
 
+        val jsonArray = JSONUtil.createArray()
+        accids.forEach { jsonArray.put(it) }
+        val toJsonStr = JSONUtil.toJsonStr(jsonArray) // 这里需要是 json
+
         // 设置请求的参数， 全部转为 String类型，包括 Boolean
         val paramMap = HashMap<String, Any>()
-        paramMap.put("accids", accids)
+        paramMap.put("accids", toJsonStr)
 
         val body = HttpRequest.post(url)
             .headerMap(headerMap, false)
@@ -156,8 +160,9 @@ class ChatYxImApi {
             .execute()
             .body()
 
+        // {"uinfos":[{"valid":true,"gender":0,"name":"Wing_Li","accid":"dev_bnzy_10010","mute":false,"email":"609101522@qq.com"}],"code":200}
         val jsonObject = JSONUtil.parseObj(body)
-        return "200" == jsonObject["code"]
+        return "200" == jsonObject["code"] || 200 == jsonObject["code"]
     }
 
     fun getUserId(account: String?): Long {
@@ -165,7 +170,7 @@ class ChatYxImApi {
     }
 
     fun getAccountId(userId: Long): String {
-        return "${if ("dev" == mConfig.active) "dev_" else ""}bnzy_$userId";
+        return "${if ("dev" == mConfig.active) "dev_" else "prod_"}bnzy_$userId";
     }
 
     fun getAccountToken(userId: Long): String {
