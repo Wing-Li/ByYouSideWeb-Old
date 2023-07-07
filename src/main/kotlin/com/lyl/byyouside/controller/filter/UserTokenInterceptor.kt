@@ -46,7 +46,7 @@ class UserTokenInterceptor : HandlerInterceptor {
 
         val url = request.requestURI.substring(request.contextPath.length)
         // 登录和注册等请求不需要令牌
-        if (SAFE_URL_LIST.contains(url)) {
+        if (SAFE_URL_LIST.contains(url) || url.startsWith("/images/user/")) {
             return true
         }
 

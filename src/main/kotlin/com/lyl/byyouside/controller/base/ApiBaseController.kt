@@ -64,6 +64,7 @@ open class ApiBaseController {
 
     @InitBinder
     fun initBinder(binder: WebDataBinder) {
+        // 只能支持 三位小数的 毫秒，不能支持6位小数的
         val dateFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
         dateFormat.isLenient = true
         binder.registerCustomEditor(Date::class.java, CustomDateEditor(dateFormat, true))
