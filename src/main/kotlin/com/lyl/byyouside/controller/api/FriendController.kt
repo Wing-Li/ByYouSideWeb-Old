@@ -7,6 +7,7 @@ import com.lyl.byyouside.controller.base.ApiBaseController
 import com.lyl.byyouside.model.base.BaseCallBack
 import com.lyl.byyouside.model.friend.Friend
 import com.lyl.byyouside.model.friend.FriendRepository
+import com.lyl.byyouside.model.memoirs.MemoirsRepository
 import com.lyl.byyouside.model.user.UserInfo
 import com.lyl.byyouside.model.user.UserInfoRepository
 import com.lyl.byyouside.utils.MyUtils
@@ -27,6 +28,9 @@ class FriendController : ApiBaseController() {
 
     @Autowired
     private lateinit var friendRepository: FriendRepository
+
+    @Autowired
+    private lateinit var memoirsRepository: MemoirsRepository
 
     /**
      * 请求好友
@@ -167,29 +171,30 @@ class FriendController : ApiBaseController() {
         friendId: Long, // 密友关系ID
     ): BaseCallBack<Any> {
         val myId = ContextHolder.userId
-
-        var myUserId = 0L
-        var toUserId = 0L
+        val friendIds = ArrayList<Long>()
 
         // 删除自己记录
-        val myFriendDB = friendRepository.findById(friendId)
-        if (myFriendDB.isPresent) {
-            val myFriend = myFriendDB.get()
-            myUserId = myFriend.myUser?.id ?: 0
-            toUserId = myFriend.toUser?.id ?: 0
-
-            if (myId != myUserId) { // 不是操作自己的信息
-                return failCallBack(StatusCode.ERROR_16007, StatusCode.ERROR_16007_TEXT)
-            }
-
-            friendRepository.delete(myFriend)
+        val myFriend = friendRepository.findById(friendId).getOrNull()
+        if (myFriend == null || myFriend.myUser?.id != myId) {
+            // 账户信息出错，请重新登录账号
+            return failCallBack(StatusCode.ERROR_16007, StatusCode.ERROR_16007_TEXT)
         }
+
+        friendIds.add(myFriend.id!!)
+        val myUserId = myFriend.myUser?.id ?: 0
+        val toUserId = myFriend.toUser?.id ?: 0
+
+        friendRepository.delete(myFriend)
 
         // 删除对方记录
         val toFriend = friendRepository.findByMyUser_IdAndToUser_Id(toUserId, myUserId)
         if (toFriend != null) {
+            friendIds.add(toFriend.id!!)
             friendRepository.delete(toFriend)
         }
+
+        // 删除两人相关的回忆录
+        memoirsRepository.deleteByFriendIdIn(friendIds)
 
         return successCallBack("删除简单，朋友难得。千万不要因为一些小事，失去一个要好的朋友！")
     }

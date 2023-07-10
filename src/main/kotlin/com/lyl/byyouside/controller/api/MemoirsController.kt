@@ -123,8 +123,28 @@ class MemoirsController @Autowired constructor(
         page: Int?, // page 从 1 开始
         size: Int?,
     ): BaseCallBack<MutableList<Memoirs>> {
+        val myId = ContextHolder.userId
+
+        // 通过我的好友ID，查询到两人的ID，再查询对方的关系ID
+        val myFriend = friendRepository.findById(friendId).getOrNull()
+        if (myFriend == null || myFriend.myUser?.id != myId) {
+            // 账户信息出错，请重新登录账号
+            throw RuntimeException(StatusCode.ERROR_16007_TEXT)
+        }
+
+        val myUserId = myFriend.myUser?.id ?: 0
+        val toUserId = myFriend.toUser?.id ?: 0
+
+        // 查询 他->我  的 好友关系
+        val toFriend = friendRepository.findByMyUser_IdAndToUser_Id(toUserId, myUserId)
+        if (toFriend == null || toFriend.toUser?.id != myId) {
+            // 好友关系不存在
+            throw RuntimeException(StatusCode.ERROR_16008_TEXT)
+        }
+
+        val friendIds = listOf(myFriend.id!!, toFriend.id!!)
         val pageRequest = getBasePageRequest(page, size)
-        val findAll = memoirsRepository.findDiariesByFriendIdOrderByDateDesc(friendId, pageRequest)
+        val findAll = memoirsRepository.findDiariesByFriendIdInOrderByDateDesc(friendIds, pageRequest)
         return successListCallBack(findAll)
     }
 
