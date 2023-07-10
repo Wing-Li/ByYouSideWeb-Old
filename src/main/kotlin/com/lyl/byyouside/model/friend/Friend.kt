@@ -40,6 +40,12 @@ data class Friend(
     @Column(nullable = false)
     var status: Int = 0,
 
+    /**
+     * 是否拉黑好友
+     * 0：正常； 1：我拉黑了对方； 2： 对方拉黑了我。
+     */
+    var checkBlock: Int? = 0,
+
     ) {
 
     @CreatedDate

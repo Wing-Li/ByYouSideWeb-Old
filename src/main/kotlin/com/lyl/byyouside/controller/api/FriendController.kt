@@ -84,7 +84,7 @@ class FriendController : ApiBaseController() {
     }
 
     /**
-     * 同意请求
+     * 同意请求，创建两条记录来保存双方的关系
      */
     @PostMapping(value = ["/friend/agreeRequest"])
     fun agreeFriendRequest(
@@ -164,7 +164,7 @@ class FriendController : ApiBaseController() {
      */
     @PostMapping(value = ["/friend/delete"])
     fun deleteFriend(
-        friendId: Long, // 密友ID
+        friendId: Long, // 密友关系ID
     ): BaseCallBack<Any> {
         val myId = ContextHolder.userId
 
@@ -193,6 +193,50 @@ class FriendController : ApiBaseController() {
 
         return successCallBack("删除简单，朋友难得。千万不要因为一些小事，失去一个要好的朋友！")
     }
+
+    /**
+     * 拉黑好友
+     */
+    @PostMapping(value = ["/friend/block"])
+    fun blockFriend(
+        friendId: Long, // 密友关系ID
+        isBlock: Boolean,
+    ): BaseCallBack<Any> {
+        val myId = ContextHolder.userId
+
+        var myUserId = 0L
+        var toUserId = 0L
+
+        // 修改自己的记录
+        val myFriendDB = friendRepository.findById(friendId)
+        if (myFriendDB.isPresent) {
+            val myFriend = myFriendDB.get()
+            myUserId = myFriend.myUser?.id ?: 0
+            toUserId = myFriend.toUser?.id ?: 0
+
+            if (myId != myUserId) { // 不是操作自己的信息
+                return failCallBack(StatusCode.ERROR_16007, StatusCode.ERROR_16007_TEXT)
+            }
+
+            myFriend.checkBlock = if (isBlock) 1 else 0
+
+            friendRepository.save(myFriend)
+        }
+
+        // 修改对方记录
+        val toFriend = friendRepository.findByMyUser_IdAndToUser_Id(toUserId, myUserId)
+        if (toFriend != null) {
+            toFriend.checkBlock = if (isBlock) 2 else 0
+            friendRepository.save(toFriend)
+        }
+
+        return if (isBlock) {
+            successCallBack("好友关系建立不易。千万不要因为一些小事，失去一个要好的朋友！")
+        } else {
+            successCallBack("冤家宜解不宜结。经历风雨的感情，才更加弥足珍贵！")
+        }
+    }
+
 
     /**
      * 修改密友备注
