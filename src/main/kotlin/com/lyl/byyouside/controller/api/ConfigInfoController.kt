@@ -30,6 +30,7 @@ class ConfigInfoController : ApiBaseController() {
 
     fun initConfig(
         appName: String?,
+        unCheckModel: Boolean?,
     ) {
         val latestConfig = configInfoRepository.findTopByOrderByCreateTimeDesc()
         if (latestConfig == null) {
@@ -38,6 +39,7 @@ class ConfigInfoController : ApiBaseController() {
             )
 
             appName?.let { config.appName = it }
+            unCheckModel?.let { config.unCheckModel = it }
 
             configInfoRepository.save(config)
 
@@ -50,6 +52,7 @@ class ConfigInfoController : ApiBaseController() {
     @PostMapping(value = ["/config/create"])
     fun createConfig(
         appName: String?,
+        unCheckModel: Boolean?,
     ): BaseCallBack<Any> {
         val userId = ContextHolder.userId
         val userData = userInfoRepository.findById(userId).getOrNull()
@@ -68,6 +71,7 @@ class ConfigInfoController : ApiBaseController() {
 
         if (config.environment == null) config.environment = mConfig.active
         appName?.let { config.appName = it }
+        unCheckModel?.let { config.unCheckModel = it }
 
         val configDB = configInfoRepository.save(config)
         return successCallBack(configDB)

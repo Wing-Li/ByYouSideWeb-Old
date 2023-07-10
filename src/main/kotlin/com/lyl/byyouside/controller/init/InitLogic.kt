@@ -71,7 +71,8 @@ class InitLogic {
 
     private fun initConfig() {
         configInfoController.initConfig(
-            appName = "伴你左右"
+            appName = "伴你左右",
+            unCheckModel = false,
         )
     }
 
