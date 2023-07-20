@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository
 @Repository
 interface MemoirsRepository : JpaRepository<Memoirs, Long> {
 
-    fun findDiariesByFriendIdInOrderByDateDesc(friendId: List<Long>, pageable: Pageable): Page<Memoirs>
+    fun findMemoirsByFriendIdInOrderByDateDesc(friendId: List<Long>, pageable: Pageable): Page<Memoirs>
 
     fun deleteByFriendIdIn(friendIds: List<Long>): Int
 }

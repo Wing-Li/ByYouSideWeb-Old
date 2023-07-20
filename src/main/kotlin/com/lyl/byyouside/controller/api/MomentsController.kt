@@ -5,8 +5,8 @@ import com.lyl.byyouside.config.StatusCode
 import com.lyl.byyouside.controller.base.ApiBaseController
 import com.lyl.byyouside.model.base.BaseCallBack
 import com.lyl.byyouside.model.friend.FriendRepository
-import com.lyl.byyouside.model.memoirs.Memoirs
-import com.lyl.byyouside.model.memoirs.MemoirsRepository
+import com.lyl.byyouside.model.moment.Moments
+import com.lyl.byyouside.model.moment.MomentsRepository
 import com.lyl.byyouside.model.user.UserInfoRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
@@ -14,16 +14,15 @@ import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
 @RestController
-class MemoirsController @Autowired constructor(
-    private val memoirsRepository: MemoirsRepository,
+class MomentsController @Autowired constructor(
+    private val momentsRepository: MomentsRepository,
     private val userInfoRepository: UserInfoRepository,
     private val friendRepository: FriendRepository,
 ) : ApiBaseController() {
 
-    @PostMapping("/memoirs/create")
-    fun createMemoirs(
+    @PostMapping("/moments/create")
+    fun createMoments(
         friendId: Long,
-        title: String,
         content: String,
         date: Date?,
     ): BaseCallBack<Any> {
@@ -38,29 +37,28 @@ class MemoirsController @Autowired constructor(
             return failCallBack(StatusCode.ERROR_16010, StatusCode.ERROR_16010_TEXT)
         }
 
-        val memoirs = Memoirs(
+        val moments = Moments(
             friendId = friendId,
-            title = title,
             content = content,
             user = user!!,
         )
-        date?.let { memoirs.date = it }
+        date?.let { moments.date = it }
 
-        val save = memoirsRepository.save(memoirs)
+        val save = momentsRepository.save(moments)
         return successCallBack(save)
     }
 
-    @PostMapping("/memoirs/update")
-    fun updateMemoirs(
-        memoirsId: Long,
+    @PostMapping("/moments/update")
+    fun updateMoments(
+        momentsId: Long,
         friendId: Long,
-        title: String?,
         content: String?,
         date: Date?,
     ): BaseCallBack<Any> {
-        val memoirsDB = memoirsRepository.findById(memoirsId)
-        if (!memoirsDB.isPresent) {
-            return failCallBack(StatusCode.ERROR_20000, StatusCode.ERROR_20000_TEXT)
+        val momentsDB = momentsRepository.findById(momentsId)
+        if (!momentsDB.isPresent) {
+            // 此瞬间不存在
+            return failCallBack(StatusCode.ERROR_21000, StatusCode.ERROR_21000_TEXT)
         }
 
         val userId = ContextHolder.userId
@@ -73,56 +71,55 @@ class MemoirsController @Autowired constructor(
             return failCallBack(StatusCode.ERROR_16010, StatusCode.ERROR_16010_TEXT)
         }
 
-        val memoirs = memoirsDB.get()
-        title?.let { memoirs.title = it }
-        content?.let { memoirs.content = it }
-        date?.let { memoirs.date = it }
+        val moments = momentsDB.get()
+        content?.let { moments.content = it }
+        date?.let { moments.date = it }
 
-        val save = memoirsRepository.save(memoirs)
+        val save = momentsRepository.save(moments)
 
         return successCallBack(save)
     }
 
-    @PostMapping("/memoirs/delete")
-    fun deleteMemoirs(
+    @PostMapping("/moments/delete")
+    fun deleteMoments(
         id: Long
     ): BaseCallBack<Any> {
         val userId = ContextHolder.userId
 
-        val memoirsDB = memoirsRepository.findById(id)
-        if (!memoirsDB.isPresent) {
-            return failCallBack(StatusCode.ERROR_20000, StatusCode.ERROR_20000_TEXT)
+        val momentsDB = momentsRepository.findById(id)
+        if (!momentsDB.isPresent) {
+            return failCallBack(StatusCode.ERROR_21000, StatusCode.ERROR_21000_TEXT)
         }
 
-        val memoirs = memoirsDB.get()
-        if (userId != memoirs.user?.id) {
-            // 此回忆不是您写的，无法删除
-            return failCallBack(StatusCode.ERROR_20001, StatusCode.ERROR_20001_TEXT)
+        val moments = momentsDB.get()
+        if (userId != moments.user?.id) {
+            // 此瞬间不是您写的，无法删除
+            return failCallBack(StatusCode.ERROR_21001, StatusCode.ERROR_21001_TEXT)
         }
 
-        memoirsRepository.deleteById(id)
+        momentsRepository.deleteById(id)
 
         return successCallBack("删除成功")
     }
 
-    @GetMapping("/memoirs/get")
-    fun getMemoirsById(
+    @GetMapping("/moments/get")
+    fun getMomentsById(
         id: Long
     ): BaseCallBack<Any> {
-        val memoirsDB = memoirsRepository.findById(id)
-        if (!memoirsDB.isPresent) {
-            return failCallBack(StatusCode.ERROR_20000, StatusCode.ERROR_20000_TEXT)
+        val momentsDB = momentsRepository.findById(id)
+        if (!momentsDB.isPresent) {
+            return failCallBack(StatusCode.ERROR_21000, StatusCode.ERROR_21000_TEXT)
         }
 
-        return successCallBack(memoirsDB.get())
+        return successCallBack(momentsDB.get())
     }
 
-    @GetMapping(value = ["/memoirs/list"])
-    fun getAllMemoirs(
+    @GetMapping(value = ["/moments/list"])
+    fun getAllMoments(
         friendId: Long,
         page: Int?, // page 从 1 开始
         size: Int?,
-    ): BaseCallBack<MutableList<Memoirs>> {
+    ): BaseCallBack<MutableList<Moments>> {
         val myId = ContextHolder.userId
 
         // 通过我的好友ID，查询到两人的ID，再查询对方的关系ID
@@ -144,7 +141,7 @@ class MemoirsController @Autowired constructor(
 
         val friendIds = listOf(myFriend.id!!, toFriend.id!!)
         val pageRequest = getBasePageRequest(page, size)
-        val findAll = memoirsRepository.findMemoirsByFriendIdInOrderByDateDesc(friendIds, pageRequest)
+        val findAll = momentsRepository.findMomentsByFriendIdInOrderByDateDesc(friendIds, pageRequest)
         return successListCallBack(findAll)
     }
 

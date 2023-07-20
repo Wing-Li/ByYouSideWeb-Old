@@ -8,6 +8,7 @@ import com.lyl.byyouside.model.base.BaseCallBack
 import com.lyl.byyouside.model.friend.Friend
 import com.lyl.byyouside.model.friend.FriendRepository
 import com.lyl.byyouside.model.memoirs.MemoirsRepository
+import com.lyl.byyouside.model.moment.MomentsRepository
 import com.lyl.byyouside.model.user.UserInfo
 import com.lyl.byyouside.model.user.UserInfoRepository
 import com.lyl.byyouside.utils.MyUtils
@@ -31,6 +32,9 @@ class FriendController : ApiBaseController() {
 
     @Autowired
     private lateinit var memoirsRepository: MemoirsRepository
+
+    @Autowired
+    private lateinit var momentsRepository: MomentsRepository
 
     /**
      * 请求好友
@@ -195,6 +199,9 @@ class FriendController : ApiBaseController() {
 
         // 删除两人相关的回忆录
         memoirsRepository.deleteByFriendIdIn(friendIds)
+
+        // 删除两人相关的瞬间
+        momentsRepository.deleteByFriendIdIn(friendIds)
 
         return successCallBack("删除简单，朋友难得。千万不要因为一些小事，失去一个要好的朋友！")
     }

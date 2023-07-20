@@ -89,6 +89,8 @@ object StatusCode {
     const val ERROR_16008_TEXT = "好友关系不存在"
     const val ERROR_16009 = 16009
     const val ERROR_16009_TEXT = "你们已经是好友，无法重复操作"
+    const val ERROR_16010 = 1610
+    const val ERROR_16010_TEXT = "伴友关系异常，请重新登录后再次尝试"
 
     // 查询版本 17
     const val ERROR_17000 = 17000
@@ -104,11 +106,16 @@ object StatusCode {
     const val ERROR_19000 = 19000
     const val ERROR_19000_TEXT = "该用户还没有上传过信息"
 
-    // 设备信息 20
+    // 回忆录 20
     const val ERROR_20000 = 20000
     const val ERROR_20000_TEXT = "此回忆不存在"
     const val ERROR_20001 = 20001
     const val ERROR_20001_TEXT = "此回忆不是您写的，无法删除"
-    const val ERROR_20002 = 20002
-    const val ERROR_20002_TEXT = "用户关系异常，请重新登录后再次尝试"
+
+    // 瞬间 21
+    const val ERROR_21000 = 21000
+    const val ERROR_21000_TEXT = "此瞬间不存在"
+    const val ERROR_21001 = 21001
+    const val ERROR_21001_TEXT = "此瞬间不是您写的，无法删除"
+
 }
