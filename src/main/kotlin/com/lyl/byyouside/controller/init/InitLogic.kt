@@ -26,17 +26,22 @@ class InitLogic {
     }
 
     private fun initVipType() {
-        val levels = listOf(1, 3, 6, 12)
-        val existsByLevel = vipRepository.existsByLevelIn(levels)
+        // 13 代表 包年三天免费
+        val levels = listOf(1, 3, 6, 12, 13)
+        val existsByLevel = vipRepository.existsByDurationIn(levels)
 
         if (!existsByLevel) {
+            vipRepository.deleteAll()
+
+            val list = ArrayList<Vip>()
+
             val vip1 = Vip(
                 level = 1,
                 duration = 1,
                 price = BigDecimal.valueOf(19.9),
                 title = "连续包月",
             )
-            vipRepository.save(vip1)
+            list.add(vip1)
 
             val vip2 = Vip(
                 level = 1,
@@ -45,7 +50,7 @@ class InitLogic {
                 title = "连续包季",
                 description = "最多人购买"
             )
-            vipRepository.save(vip2)
+            list.add(vip2)
 
             val vip3 = Vip(
                 level = 1,
@@ -53,7 +58,7 @@ class InitLogic {
                 price = BigDecimal.valueOf(94.9),
                 title = "连续半年",
             )
-            vipRepository.save(vip3)
+            list.add(vip3)
 
             val vip4 = Vip(
                 level = 1,
@@ -61,7 +66,19 @@ class InitLogic {
                 price = BigDecimal.valueOf(159.9),
                 title = "连续包年",
             )
-            vipRepository.save(vip4)
+            list.add(vip4)
+
+            val vip5 = Vip(
+                level = 1,
+                duration = 13,
+                price = BigDecimal.valueOf(159.9),
+                title = "连续包年",
+                description = "免费体验三天",
+                status = 3,
+            )
+            list.add(vip5)
+
+            vipRepository.saveAll(list)
 
             println("初始化 VIP 会员类型")
         } else {

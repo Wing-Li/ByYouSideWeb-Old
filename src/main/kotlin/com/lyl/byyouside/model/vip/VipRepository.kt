@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository
 @Repository
 interface VipRepository : JpaRepository<Vip, Long> {
 
-    fun existsByLevelIn(levels: List<Int>): Boolean
+    fun existsByDurationIn(levels: List<Int>): Boolean
 }

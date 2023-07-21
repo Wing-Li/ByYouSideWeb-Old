@@ -6,6 +6,7 @@ import com.lyl.byyouside.controller.base.ApiBaseController
 import com.lyl.byyouside.controller.chat.ChatYxImApi
 import com.lyl.byyouside.model.base.BaseCallBack
 import com.lyl.byyouside.model.user.UserInfoRepository
+import com.lyl.byyouside.model.vip.Vip
 import com.lyl.byyouside.model.vip.VipRecharge
 import com.lyl.byyouside.model.vip.VipRechargeRepository
 import com.lyl.byyouside.model.vip.VipRepository
@@ -118,6 +119,36 @@ class VipRechargeController @Autowired constructor(
         // 保存用户信息
         val resultUser = userRepository.save(userData)
         return successCallBack(userAdapter(resultUser))
+    }
+
+    @PostMapping(value = ["/vip/create"])
+    fun createVip(
+        title: String,
+        description: String?,
+        level: Int,
+        duration: Int,
+        price: BigDecimal,
+        status: Int,
+    ): BaseCallBack<Any> {
+        val userId = ContextHolder.userId
+        val userData = userRepository.findById(userId).getOrNull()
+        userAuth(userData)?.let { return it }
+
+        if ("admin" != userData?.status) {
+            // 只有管理员才可以操作
+            return failCallBack(StatusCode.ERROR_10013, StatusCode.ERROR_10013_TEXT)
+        }
+
+        val vip = Vip()
+        title.let { vip.title = it }
+        description?.let { vip.description = it }
+        level.let { vip.level = it }
+        duration.let { vip.duration = it }
+        price.let { vip.price = it }
+        status.let { vip.status = it }
+
+        val save = vipRepository.save(vip)
+        return successCallBack(save)
     }
 
     @PostMapping(value = ["/vip/update"])

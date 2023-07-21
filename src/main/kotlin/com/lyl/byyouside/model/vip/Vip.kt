@@ -29,7 +29,7 @@ data class Vip(
     @Column(nullable = false)
     var price: BigDecimal = BigDecimal.ZERO, // 价格
 
-    var status: Int = 0, // 0: 正常；  -1：关闭；   2：测试
+    var status: Int = 0, // 0: 正常；  -1：关闭；   2：测试   3: 带有三天免费
 ) {
     @CreatedDate
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
