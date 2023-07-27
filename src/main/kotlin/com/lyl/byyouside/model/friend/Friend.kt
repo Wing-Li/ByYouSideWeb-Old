@@ -32,6 +32,11 @@ data class Friend(
     var friendAlias: String = "",
 
     /**
+     * 是否绑定为 亲密伴友
+     */
+    var checkBestFriend: Boolean? = false,
+
+    /**
      * -2: 拒绝且不再添加
      * -1: 拒绝
      * 0: 等待；

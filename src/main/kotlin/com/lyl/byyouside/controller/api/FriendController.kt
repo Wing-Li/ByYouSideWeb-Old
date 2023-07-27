@@ -18,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.jvm.optionals.getOrNull
 
 @RestController
@@ -274,7 +276,7 @@ class FriendController : ApiBaseController() {
             return failCallBack(StatusCode.ERROR_10003, StatusCode.ERROR_10003_TEXT)
         }
         friend.friendAlias = friendAlias
-
+        friend.updateTime = Date()
         friendRepository.save(friend);
 
         return successCallBack("修改成功")
@@ -323,4 +325,38 @@ class FriendController : ApiBaseController() {
 
         return successListCallBack(friendPage)
     }
+
+    /**
+     * 绑定亲密好友
+     */
+    @PostMapping(value = ["/friend/bindBestFriend"])
+    fun bindBestFriend(
+        friendId: Long, // 密友ID
+    ): BaseCallBack<Any> {
+        val userId = ContextHolder.userId
+
+        // 先查询当前是否存在 最好伴友
+        val bestFriend = friendRepository.findTopByMyUser_IdAndStatusAndCheckBestFriend(userId, 1, true)
+        if (bestFriend != null) {
+            if (bestFriend.id != friendId) {
+                // 存在，且不是当前好友，则将其恢复普通好友
+                bestFriend.checkBestFriend = false
+                bestFriend.updateTime = Date()
+                friendRepository.save(bestFriend)
+            } else {
+                // 存在，且是当前好友，则直接返回
+                return successCallBack(bestFriend)
+            }
+        }
+
+        val friend = friendRepository.findById(friendId).getOrNull()
+            ?: return failCallBack(StatusCode.ERROR_16010, StatusCode.ERROR_16010_TEXT)
+
+        friend.checkBestFriend = true
+        friend.updateTime = Date()
+        val save = friendRepository.save(friend)
+
+        return successCallBack(save)
+    }
+
 }
