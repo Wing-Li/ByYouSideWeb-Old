@@ -222,6 +222,7 @@ class UserController @Autowired constructor(
         introduction: String?,
         birthday: String?,
         email: String?,
+        uploadIntervalTime: Int?,
     ): BaseCallBack<Any> {
         val userId = ContextHolder.userId
         val user = userRepository.findById(userId).getOrNull()
@@ -256,6 +257,7 @@ class UserController @Autowired constructor(
             gender?.let { user.gender = it }
             icon?.let { user.icon = it }
             birthday?.let { user.birthday = it }
+            uploadIntervalTime?.let { user.uploadIntervalTime = it }
             user.updateTime = Date()
 
             val userData = userRepository.save(user)

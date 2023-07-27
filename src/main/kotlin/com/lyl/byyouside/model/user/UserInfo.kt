@@ -45,6 +45,9 @@ data class UserInfo(
 
     var birthday: String? = "",
 
+    // 上传信息的间隔时间。 默认 每120分钟上传一次
+    var uploadIntervalTime: Int = 120,
+
     var vipLevel: Int? = 0,
     var vipFrom: String? = null, // ios android admin ,当充值类型为 ios 时，充值时间就不准确了。
 
