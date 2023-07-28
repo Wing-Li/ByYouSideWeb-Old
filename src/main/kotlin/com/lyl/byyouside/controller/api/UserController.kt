@@ -225,7 +225,8 @@ class UserController @Autowired constructor(
         email: String?,
         uploadIntervalTime: Int?,
         deviceType: String?, // android  和  ios
-        deviceToken: String?,
+        deviceAlias: String?,
+        deviceAliasType: String?,
     ): BaseCallBack<Any> {
         val userId = ContextHolder.userId
         val user = userRepository.findById(userId).getOrNull()
@@ -263,7 +264,8 @@ class UserController @Autowired constructor(
             uploadIntervalTime?.let { user.uploadIntervalTime = it }
 
             deviceType?.let { user.deviceType = it }
-            deviceToken?.let { user.deviceToken = it }
+            deviceAlias?.let { user.deviceAlias = it }
+            deviceAliasType?.let { user.deviceAliasType = it }
 
             user.updateTime = Date()
 
@@ -405,14 +407,15 @@ class UserController @Autowired constructor(
         val user = userRepository.findById(userId).getOrNull()
             ?: return failCallBack(StatusCode.ERROR_11001, StatusCode.ERROR_11001_TEXT)
 
-        if (MyUtils.isEmpty(user.deviceType) || !MyUtils.isEmpty(user.deviceToken)) {
+        if (MyUtils.isEmpty(user.deviceType) || !MyUtils.isEmpty(user.deviceAlias)) {
             // 未获取到对方的设备信息，无法实时通知对方
             return failCallBack(StatusCode.ERROR_10014, StatusCode.ERROR_10014_TEXT)
         }
 
         PushApi().sendRequestLocation(
             user.deviceType!!,
-            user.deviceToken!!,
+            user.deviceAlias!!,
+            user.deviceAliasType!!,
             myId,
             myUser!!.nickName,
             myUser.icon

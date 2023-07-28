@@ -79,7 +79,8 @@ data class UserInfo(
 
     // 友盟推送 使用
     var deviceType: String? = null, // android  和  ios
-    var deviceToken: String? = null,
+    var deviceAliasType: String? = null, // push_vip /  push_normal
+    var deviceAlias: String? = null, // alias Token
 
     // 身份 admin: 管理员
     @JsonIgnore

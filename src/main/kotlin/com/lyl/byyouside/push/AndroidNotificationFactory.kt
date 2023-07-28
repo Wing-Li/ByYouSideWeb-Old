@@ -86,8 +86,9 @@ object AndroidNotificationFactory {
     /**
      * 给某个人发透传消息
      */
-    fun createSingleTokenMessage(
-        deviceToken: String,
+    fun createSingleAliasMessage(
+        deviceAlias: String,
+        deviceAliasType: String,
         title: String,
         text: String,
         customMessage: CustomMessage,
@@ -101,9 +102,9 @@ object AndroidNotificationFactory {
             isPrivateMessage = true,
         )
 
-        jsonObject["type"] = "unicast" // 单播
-        jsonObject["device_tokens"] = deviceToken // 当type=unicast时,必填
-
+        jsonObject["type"] = "customizedcast" // 通过alias进行推送
+        jsonObject["alias_type"] = deviceAliasType // 当type=customizedcast时,必填
+        jsonObject["alias"] = deviceAlias // 当type=customizedcast时,选填
 
         return jsonObject.toJSONString()
     }
@@ -111,8 +112,9 @@ object AndroidNotificationFactory {
     /**
      * 给某个人发通知
      */
-    fun createSingleTokenNotification(
-        deviceToken: String,
+    fun createSingleAliasNotification(
+        deviceAlias: String,
+        deviceAliasType: String,
         title: String,
         text: String,
         customMessage: CustomMessage?,
@@ -125,38 +127,9 @@ object AndroidNotificationFactory {
             isPrivateMessage = true,
         )
 
-        jsonObject["type"] = "unicast" // 单播
-        jsonObject["device_tokens"] = deviceToken // 当type=unicast时,必填
-
-
-        return jsonObject.toJSONString()
-    }
-
-    /**
-     * 构建 Token 列表
-     */
-    fun createTokenListNotification(
-        deviceTokenList: List<String>,
-        title: String,
-        text: String,
-    ): String {
-        val jsonObject = baseParameter(
-            displayType = DisplayType.NOTIFICATION,
-            title = title,
-            text = text,
-            customMessage = null,
-            isPrivateMessage = true,
-        )
-
-        val deviceTokens = if (deviceTokenList.size > 500) {
-            deviceTokenList.subList(0, 500).joinToString(",")
-        } else {
-            deviceTokenList.joinToString(",")
-        }
-
-        jsonObject["type"] = "listcast" // 列播
-        jsonObject["device_tokens"] = deviceTokens // 当type=unicast时,必填
-
+        jsonObject["type"] = "customizedcast" // 通过alias进行推送
+        jsonObject["alias_type"] = deviceAliasType // 当type=customizedcast时,必填
+        jsonObject["alias"] = deviceAlias // 当type=customizedcast时,选填
 
         return jsonObject.toJSONString()
     }
@@ -180,7 +153,6 @@ object AndroidNotificationFactory {
 
         jsonObject["type"] = "customizedcast" // 通过alias进行推送
         jsonObject["alias_type"] = aliasType // 当type=customizedcast时,必填
-
 
         return jsonObject.toJSONString()
     }

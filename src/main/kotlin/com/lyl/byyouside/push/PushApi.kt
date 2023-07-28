@@ -36,7 +36,8 @@ class PushApi() {
 
     fun sendRequestLocation(
         deviceType: String,
-        deviceToken: String,
+        deviceAlias: String,
+        deviceAliasType: String,
         fromUserId: Long,
         fromUserNickName: String,
         fromUserIcon: String,
@@ -52,9 +53,9 @@ class PushApi() {
         )
 
         val jsonBody = if (isIos) {
-            IOSNotificationFactory.createSingleTokenNotification(deviceToken, title, text, customMessage)
+            IOSNotificationFactory.createSingleAliasNotification(deviceAlias, deviceAliasType, title, text, customMessage)
         } else {
-            AndroidNotificationFactory.createSingleTokenMessage(deviceToken, title, text, customMessage)
+            AndroidNotificationFactory.createSingleAliasNotification(deviceAlias, deviceAliasType, title, text, customMessage)
         }
 
         return send(jsonBody, isIos)
@@ -62,7 +63,8 @@ class PushApi() {
 
     fun sendRequestAddFriend(
         deviceType: String,
-        deviceToken: String,
+        deviceAlias: String,
+        deviceAliasType: String,
         fromUserId: Long,
         fromUserNickName: String,
         fromUserIcon: String,
@@ -78,9 +80,9 @@ class PushApi() {
         )
 
         val jsonBody = if (isIos) {
-            IOSNotificationFactory.createSingleTokenNotification(deviceToken, title, text, customMessage)
+            IOSNotificationFactory.createSingleAliasNotification(deviceAlias, deviceAliasType, title, text, customMessage)
         } else {
-            AndroidNotificationFactory.createSingleTokenMessage(deviceToken, title, text, customMessage)
+            AndroidNotificationFactory.createSingleAliasNotification(deviceAlias, deviceAliasType, title, text, customMessage)
         }
 
         return send(jsonBody, isIos)
@@ -88,7 +90,8 @@ class PushApi() {
 
     fun sendAgreeAddFriend(
         deviceType: String,
-        deviceToken: String,
+        deviceAlias: String,
+        deviceAliasType: String,
         fromUserId: Long,
         fromUserNickName: String,
         fromUserIcon: String,
@@ -104,9 +107,9 @@ class PushApi() {
         )
 
         val jsonBody = if (isIos) {
-            IOSNotificationFactory.createSingleTokenNotification(deviceToken, title, text, customMessage)
+            IOSNotificationFactory.createSingleAliasNotification(deviceAlias, deviceAliasType, title, text, customMessage)
         } else {
-            AndroidNotificationFactory.createSingleTokenMessage(deviceToken, title, text, customMessage)
+            AndroidNotificationFactory.createSingleAliasNotification(deviceAlias, deviceAliasType, title, text, customMessage)
         }
 
         return send(jsonBody, isIos)
