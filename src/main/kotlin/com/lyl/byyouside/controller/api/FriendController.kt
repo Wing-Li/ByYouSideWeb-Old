@@ -272,7 +272,7 @@ class FriendController : ApiBaseController() {
             return failCallBack(StatusCode.ERROR_16007, StatusCode.ERROR_16007_TEXT)
         }
 
-        if (MyUtils.isEmpty(friendAlias) || !friendAlias.matches(Regex(Config.REGEX_NICAKNAME))) {
+        if (MyUtils.isEmpty(friendAlias) || friendAlias.length > 8) {
             return failCallBack(StatusCode.ERROR_10003, StatusCode.ERROR_10003_TEXT)
         }
         friend.friendAlias = friendAlias

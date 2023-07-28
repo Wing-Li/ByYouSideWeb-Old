@@ -230,7 +230,7 @@ class UserController @Autowired constructor(
 
         user?.let {
             if (!MyUtils.isEmpty(nickName)) {
-                if (nickName?.matches(Regex(Config.REGEX_NICAKNAME)) == false) {
+                if ((nickName?.length ?: 0) > 8) {
                     return failCallBack(StatusCode.ERROR_10003, StatusCode.ERROR_10003_TEXT)
                 } else {
                     nickName?.let { user.nickName = it }

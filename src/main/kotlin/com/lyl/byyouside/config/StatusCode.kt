@@ -18,7 +18,7 @@ object StatusCode {
     const val ERROR_10002 = 10002
     const val ERROR_10002_TEXT = "密码必须在6-32位字符之间"
     const val ERROR_10003 = 10003
-    const val ERROR_10003_TEXT = "昵称需为1-16位的中文/字母/数字/下划线/横线组合"
+    const val ERROR_10003_TEXT = "昵称为1-8个字"
     const val ERROR_10004 = 10004
     const val ERROR_10004_TEXT = "用户名已经存在"
     const val ERROR_10009 = 10009
