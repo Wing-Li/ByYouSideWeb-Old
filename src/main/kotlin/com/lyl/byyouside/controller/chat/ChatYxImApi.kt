@@ -117,13 +117,15 @@ class ChatYxImApi {
 
         // 设置请求的参数， 全部转为 String类型，包括 Boolean
         val paramMap = HashMap<String, Any>()
-        paramMap.put("accid", accid)
+        paramMap["accid"] = accid
         name?.let { paramMap.put("name", it) }
         icon?.let { paramMap.put("icon", it) }
         email?.let { paramMap.put("email", it) }
         gender?.let { paramMap.put("gender", it.toString()) }
         sign?.let { paramMap.put("sign", it) }
         birth?.let { paramMap.put("birth", it) }
+
+        if (paramMap.size <= 1) return false
 
         val body = HttpRequest.post(url)
             .headerMap(headerMap, false)

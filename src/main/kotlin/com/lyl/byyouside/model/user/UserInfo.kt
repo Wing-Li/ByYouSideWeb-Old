@@ -77,6 +77,10 @@ data class UserInfo(
     // 云信IM 的用户名，密码为 用户名+用户名
     var imAccountId: String? = null,
 
+    // 友盟推送 使用
+    var deviceType: String? = null, // android  和  ios
+    var deviceToken: String? = null,
+
     // 身份 admin: 管理员
     @JsonIgnore
     var status: String? = null,

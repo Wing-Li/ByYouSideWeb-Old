@@ -223,6 +223,8 @@ class UserController @Autowired constructor(
         birthday: String?,
         email: String?,
         uploadIntervalTime: Int?,
+        deviceType: String?, // android  和  ios
+        deviceToken: String?,
     ): BaseCallBack<Any> {
         val userId = ContextHolder.userId
         val user = userRepository.findById(userId).getOrNull()
@@ -258,6 +260,10 @@ class UserController @Autowired constructor(
             icon?.let { user.icon = it }
             birthday?.let { user.birthday = it }
             uploadIntervalTime?.let { user.uploadIntervalTime = it }
+
+            deviceType?.let { user.deviceType = it }
+            deviceToken?.let { user.deviceToken = it }
+
             user.updateTime = Date()
 
             val userData = userRepository.save(user)
