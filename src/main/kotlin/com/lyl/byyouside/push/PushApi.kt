@@ -43,7 +43,7 @@ class PushApi() {
         fromUserIcon: String,
     ): Boolean {
         val title = "$fromUserNickName 查看了你"
-        val text = "伴友想你了，快去看看吧~~~"
+        val text = "Ta好像想你了(✿◡‿◡)，快去看看吧 ~ ~"
         val isIos = "ios" == deviceType
         val customMessage = CustomMessage(
             fromUserId = fromUserId,
