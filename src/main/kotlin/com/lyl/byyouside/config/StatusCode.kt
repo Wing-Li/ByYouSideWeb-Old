@@ -39,6 +39,8 @@ object StatusCode {
     const val ERROR_10012_TEXT = "验证码错误，请仔细确认"
     const val ERROR_10013 = 10013
     const val ERROR_10013_TEXT = "只有管理员才可以操作"
+    const val ERROR_10014 = 10014
+    const val ERROR_10014_TEXT = "未获取到对方的设备信息，无法实时通知对方"
 
     // 更新用户
     const val ERROR_11001 = 11001

@@ -9,6 +9,7 @@ import com.lyl.byyouside.controller.chat.ChatYxImApi
 import com.lyl.byyouside.model.base.BaseCallBack
 import com.lyl.byyouside.model.user.UserInfo
 import com.lyl.byyouside.model.user.UserInfoRepository
+import com.lyl.byyouside.push.PushApi
 import com.lyl.byyouside.utils.EmailUtils
 import com.lyl.byyouside.utils.JwtUtils
 import com.lyl.byyouside.utils.MyUtils
@@ -388,6 +389,36 @@ class UserController @Autowired constructor(
         } else {
             failCallBack(StatusCode.ERROR_11001, StatusCode.ERROR_11001_TEXT)
         }
+    }
+
+    /**
+     * push通知：请求对方位置
+     */
+    @PostMapping("/user/requestLocation")
+    fun requestLocation(
+        userId: Long
+    ): BaseCallBack<Any> {
+        val myId = ContextHolder.userId
+        val myUser = userRepository.findById(myId).getOrNull()
+        userAuth(myUser)?.let { return it }
+
+        val user = userRepository.findById(userId).getOrNull()
+            ?: return failCallBack(StatusCode.ERROR_11001, StatusCode.ERROR_11001_TEXT)
+
+        if (MyUtils.isEmpty(user.deviceType) || !MyUtils.isEmpty(user.deviceToken)) {
+            // 未获取到对方的设备信息，无法实时通知对方
+            return failCallBack(StatusCode.ERROR_10014, StatusCode.ERROR_10014_TEXT)
+        }
+
+        PushApi().sendRequestLocation(
+            user.deviceType!!,
+            user.deviceToken!!,
+            myId,
+            myUser!!.nickName,
+            myUser.icon
+        )
+
+        return successCallBack("通知发送成功")
     }
 
 }
