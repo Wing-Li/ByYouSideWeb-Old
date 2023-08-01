@@ -82,13 +82,9 @@ class VipRechargeController @Autowired constructor(
         userData.vipFrom = from
         when (vip.status) {
             // 单人会员
-            0, 3 -> {
-                userData.bindCount = "0/0"
-            }
+            0 -> userData.bindCount = "0/0"
             // 双人会员
-            4 -> {
-                userData.bindCount = "1/1"
-            }
+            2 -> userData.bindCount = "1/1"
         }
 
         // 设置用户的到期时间

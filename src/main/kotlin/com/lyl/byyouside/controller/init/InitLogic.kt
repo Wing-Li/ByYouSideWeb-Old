@@ -128,7 +128,7 @@ class InitLogic {
                 duration = 12,
                 price = BigDecimal.valueOf(239.0),
                 title = "双人包年",
-                description = "",
+                description = "巨划算",
                 status = 2,
                 identity = "com.lyl.byyourside.vip.month.duet.12"
             )
