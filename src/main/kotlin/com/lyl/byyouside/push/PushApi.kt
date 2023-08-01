@@ -34,6 +34,9 @@ enum class MyNotificationType {
 
 class PushApi() {
 
+    /**
+     * 发送位置请求
+     */
     fun sendRequestLocation(
         deviceType: String,
         deviceAlias: String,
@@ -61,6 +64,9 @@ class PushApi() {
         return send(jsonBody, isIos)
     }
 
+    /**
+     * 请求好友
+     */
     fun sendRequestAddFriend(
         deviceType: String,
         deviceAlias: String,
@@ -88,6 +94,9 @@ class PushApi() {
         return send(jsonBody, isIos)
     }
 
+    /**
+     * 同意好友
+     */
     fun sendAgreeAddFriend(
         deviceType: String,
         deviceAlias: String,
@@ -116,6 +125,9 @@ class PushApi() {
     }
 
 
+    /**
+     * 请求友盟发送通知
+     */
     private fun send(jsonBody: String, isIos: Boolean): Boolean {
         val APP_MASTER_SECRET_ANDROID = "lymihxt43onxap8jzi9bpvihcuciabcr"
         val APP_MASTER_SECRET_IOS = "yuiwgqfdhjv4rpccqr7p1eycy5zk8gbo"
@@ -139,6 +151,5 @@ class PushApi() {
         }
         return true
     }
-
 
 }

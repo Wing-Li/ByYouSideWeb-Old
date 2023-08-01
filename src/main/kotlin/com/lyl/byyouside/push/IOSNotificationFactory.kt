@@ -19,8 +19,8 @@ object IOSNotificationFactory {
         // 当display_type=message时，custom 必填
         customMessage: CustomMessage?,
 
-        // 公信 / 私信
-        isPrivateMessage: Boolean,
+        // 正式 / 测试
+        isProd: Boolean,
     ): JSONObject {
         val jsonObject = JSONObject()
         jsonObject["appKey"] = "64b0248dbd4b621232d129ea"
@@ -55,7 +55,7 @@ object IOSNotificationFactory {
             fluentPut("out_biz_no", "${System.currentTimeMillis()}${RandomUtil.randomInt(0, 1000000)}")
         }
 
-        jsonObject["production_mode"] = "true"
+        jsonObject["production_mode"] = if (isProd) "true" else "false"
         jsonObject["description"] = text
 
 
@@ -78,7 +78,7 @@ object IOSNotificationFactory {
             title = title,
             text = text,
             customMessage = customMessage,
-            isPrivateMessage = true,
+            isProd = isProd(deviceAlias)
         )
 
         jsonObject["type"] = "customizedcast" // 通过alias进行推送
@@ -104,7 +104,7 @@ object IOSNotificationFactory {
             title = title,
             text = text,
             customMessage = customMessage,
-            isPrivateMessage = true,
+            isProd = isProd(deviceAlias)
         )
 
         jsonObject["type"] = "customizedcast" // 通过alias进行推送
@@ -129,7 +129,7 @@ object IOSNotificationFactory {
             title = title,
             text = text,
             customMessage = null,
-            isPrivateMessage = false,
+            isProd = true
         )
 
         jsonObject["type"] = "customizedcast" // 通过alias进行推送
@@ -139,5 +139,9 @@ object IOSNotificationFactory {
         return jsonObject.toJSONString()
     }
 
+
+    private fun isProd(deviceAlias: String): Boolean {
+        return deviceAlias.startsWith("push_prod")
+    }
 }
 

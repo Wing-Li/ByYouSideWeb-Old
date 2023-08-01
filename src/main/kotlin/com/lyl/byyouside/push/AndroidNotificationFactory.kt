@@ -21,6 +21,9 @@ object AndroidNotificationFactory {
 
         // 公信 / 私信
         isPrivateMessage: Boolean,
+
+        // 正式 / 测试
+        isProd: Boolean,
     ): JSONObject {
         val jsonObject = JSONObject()
         jsonObject["appKey"] = "64b02374bd4b621232d129d3"
@@ -56,7 +59,7 @@ object AndroidNotificationFactory {
             fluentPut("out_biz_no", "${System.currentTimeMillis()}${RandomUtil.randomInt(0, 1000000)}")
         }
 
-        jsonObject["production_mode"] = "true"
+        jsonObject["production_mode"] = if (isProd) "true" else "false"
         jsonObject["description"] = text
 
         jsonObject["mipush"] = "true"
@@ -100,6 +103,7 @@ object AndroidNotificationFactory {
             text = text,
             customMessage = customMessage,
             isPrivateMessage = true,
+            isProd = isProd(deviceAlias)
         )
 
         jsonObject["type"] = "customizedcast" // 通过alias进行推送
@@ -125,6 +129,7 @@ object AndroidNotificationFactory {
             text = text,
             customMessage = customMessage,
             isPrivateMessage = true,
+            isProd = isProd(deviceAlias)
         )
 
         jsonObject["type"] = "customizedcast" // 通过alias进行推送
@@ -149,6 +154,7 @@ object AndroidNotificationFactory {
             text = text,
             customMessage = null,
             isPrivateMessage = false,
+            isProd = true,
         )
 
         jsonObject["type"] = "customizedcast" // 通过alias进行推送
@@ -157,6 +163,10 @@ object AndroidNotificationFactory {
         return jsonObject.toJSONString()
     }
 
+
+    private fun isProd(deviceAlias: String): Boolean {
+        return deviceAlias.startsWith("push_prod")
+    }
 }
 
 
