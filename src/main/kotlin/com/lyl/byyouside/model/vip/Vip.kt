@@ -29,8 +29,10 @@ data class Vip(
     @Column(nullable = false)
     var price: BigDecimal = BigDecimal.ZERO, // 价格
 
+    var identity: String = "",
+
     /**
-     * 0: 正常；  -1：关闭；   2：测试   3: 带有三天免费  4: 双人会员
+     * -1：关闭； 0: 正常；  2: 双人会员  999: 测试
      */
     var status: Int = 0,
 ) {
