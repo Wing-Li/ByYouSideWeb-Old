@@ -71,6 +71,10 @@ object StatusCode {
     const val ERROR_15003_TEXT = "您购买的VIP套餐已不存在，请联系管理员"
     const val ERROR_15004 = 15004
     const val ERROR_15004_TEXT = "此VIP类型不存在，请联系管理员"
+    const val ERROR_15005 = 15005
+    const val ERROR_15005_TEXT = "您没有可绑定的名额"
+    const val ERROR_15006 = 15006
+    const val ERROR_15006_TEXT = "您的名额已经用完"
 
     // 绑定密友 16
     const val ERROR_16001 = 16001

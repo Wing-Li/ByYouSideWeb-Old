@@ -5,11 +5,13 @@ import com.lyl.byyouside.config.StatusCode
 import com.lyl.byyouside.controller.base.ApiBaseController
 import com.lyl.byyouside.controller.chat.ChatYxImApi
 import com.lyl.byyouside.model.base.BaseCallBack
+import com.lyl.byyouside.model.user.UserInfo
 import com.lyl.byyouside.model.user.UserInfoRepository
 import com.lyl.byyouside.model.vip.Vip
 import com.lyl.byyouside.model.vip.VipRecharge
 import com.lyl.byyouside.model.vip.VipRechargeRepository
 import com.lyl.byyouside.model.vip.VipRepository
+import com.lyl.byyouside.push.PushApi
 import com.lyl.byyouside.utils.MyUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.transaction.annotation.Transactional
@@ -34,21 +36,15 @@ class VipRechargeController @Autowired constructor(
 
     /**
      * 会员充值
-     *
-     * @param userId   会员id
-     * @param money    出的钱数
-     * @param vipGrade vip等级
-     * @param duration 充值时长（天）
-     * @param from     充值来源  1：用户充值； 3：官方赠送
-     * @return
      */
     @PostMapping("/vip/addRecharge")
     fun addVipRecharge(
+        toUserId: Long?,
         vipId: Long,
         money: BigDecimal,
-        from: String
+        from: String, // 充值类型： ios/android/bind/admin
     ): BaseCallBack<Any> {
-        val userId = ContextHolder.userId
+        val userId = toUserId ?: ContextHolder.userId
 
         val user = userRepository.findById(userId)
         if (!user.isPresent) {
@@ -84,6 +80,17 @@ class VipRechargeController @Autowired constructor(
         val userData = user.get()
         userData.vipLevel = vip.level
         userData.vipFrom = from
+        when (vip.status) {
+            // 单人会员
+            0, 3 -> {
+                userData.bindCount = "0/0"
+            }
+            // 双人会员
+            4 -> {
+                userData.bindCount = "1/1"
+            }
+        }
+
         // 设置用户的到期时间
         // 先获取以前时间，查看他是否过期，没过期继续加。过期了，或者没有，从新设置
         val vipLimitDate = userData.vipLimitDate
@@ -97,6 +104,7 @@ class VipRechargeController @Autowired constructor(
             nowTime.month = nowTime.month + vip.duration
             userData.vipLimitDate = nowTime
         }
+
 
         // 给用户注册IM账号
         val accountId = chatYxImApi.getAccountId(userId)
@@ -119,6 +127,62 @@ class VipRechargeController @Autowired constructor(
         // 保存用户信息
         val resultUser = userRepository.save(userData)
         return successCallBack(userAdapter(resultUser))
+    }
+
+    /**
+     * 绑定会员
+     */
+    @PostMapping("/vip/bindVip")
+    fun bindVip(
+        toUserId: Long,
+        vipId: Long,
+    ): BaseCallBack<Any> {
+        val userId = ContextHolder.userId
+        val myUser = userRepository.findById(userId).getOrNull()
+        userAuth(myUser)?.let { return it }
+
+        if (MyUtils.isEmpty(myUser?.bindCount)) {
+            myUser!!.bindCount = "0/0"
+            userRepository.save(myUser)
+            // 您没有可绑定的名额
+            return failCallBack(StatusCode.ERROR_15005, StatusCode.ERROR_15005_TEXT)
+        }
+
+        val split = myUser?.bindCount?.split("/") ?: listOf("0", "0")
+        val num = split[0].toInt()
+        val all = split[1].toInt()
+
+        if (num <= 0 || num >= all) {
+            // 您的名额已经用完
+            return failCallBack(StatusCode.ERROR_15006, StatusCode.ERROR_15006_TEXT)
+        }
+
+        val result = addVipRecharge(toUserId, vipId, BigDecimal.valueOf(0.0), "bind")
+        if (result.code != 200) {
+            // 如果充值异常，将异常返回
+            return result
+        }
+
+        // 充值完，修改剩余数量
+        myUser!!.bindCount = "${num - 1}/$all"
+        userRepository.save(myUser)
+
+        if (result.data is UserInfo) {
+            val user = result.data as? UserInfo
+            user?.let {
+                // 通知提醒对方： myUser 为你开通了VIP
+                PushApi().sendBindVip(
+                    user.deviceType!!,
+                    user.deviceAlias!!,
+                    user.deviceAliasType!!,
+                    myUser.id!!,
+                    myUser.nickName,
+                    myUser.icon
+                )
+            }
+        }
+
+        return successCallBack(userAdapter(myUser))
     }
 
     @PostMapping(value = ["/vip/create"])

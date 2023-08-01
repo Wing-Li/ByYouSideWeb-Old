@@ -227,6 +227,7 @@ class UserController @Autowired constructor(
         deviceType: String?, // android  和  ios
         deviceAlias: String?,
         deviceAliasType: String?,
+        isVip: Boolean?,
     ): BaseCallBack<Any> {
         val userId = ContextHolder.userId
         val user = userRepository.findById(userId).getOrNull()
@@ -266,6 +267,24 @@ class UserController @Autowired constructor(
             deviceType?.let { user.deviceType = it }
             deviceAlias?.let { user.deviceAlias = it }
             deviceAliasType?.let { user.deviceAliasType = it }
+
+            // 如果当前是会员，检查会员是否过期
+            // 能到这里的都是会员，因为充值会员不在这里，这里是判断会员是否过期的逻辑
+            if ((user.vipLevel ?: 0) >= 1) {
+                if (user.vipFrom == "ios" && deviceType == "ios" && isVip != null) {
+                    val localV = if (isVip == true) 1 else 0
+                    if (localV != user.vipLevel) {
+                        user.vipLevel = localV
+                    }
+                } else {
+                    val vipLimitDate: Long = user.vipLimitDate?.time ?: 0
+                    val nowTime = Date().time
+                    // 过期时间 小于 当前时间，将会员删除
+                    if (vipLimitDate < nowTime) {
+                        user.vipLevel = 0
+                    }
+                }
+            }
 
             user.updateTime = Date()
 
@@ -325,17 +344,6 @@ class UserController @Autowired constructor(
         return if (userDB.isPresent) {
             val user: UserInfo = userDB.get()
             userAuth(user)?.let { return it }
-
-//                // 如果当前是会员，检查会员是否过期
-//                if (user.getVipGrade() >= 2) {
-//                    val vipLimitDate: Long = user.getVipLimitDate().getTime()
-//                    val nowTime = Date().time
-//                    // 过期时间 小于 当前时间，将会员等级设计会普通
-//                    if (vipLimitDate < nowTime) {
-//                        user.setVipGrade(1)
-//                        user = userRepository.save(user)
-//                    }
-//                }
 
             successCallBack(userAdapter(user))
         } else {

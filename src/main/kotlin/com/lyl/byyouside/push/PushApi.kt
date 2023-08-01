@@ -27,6 +27,14 @@ enum class MyNotificationType {
     agreeAddFriend {
         override val value: String
             get() = "agreeAddFriend"
+    },
+
+    /**
+     * 绑定VIP
+     */
+    bindVip {
+        override val value: String
+            get() = "bindVip"
     };
 
     abstract val value: String
@@ -124,6 +132,35 @@ class PushApi() {
         return send(jsonBody, isIos)
     }
 
+    /**
+     * 绑定VIP的通知
+     */
+    fun sendBindVip(
+        deviceType: String,
+        deviceAlias: String,
+        deviceAliasType: String,
+        fromUserId: Long,
+        fromUserNickName: String,
+        fromUserIcon: String,
+    ): Boolean {
+        val title = "$fromUserNickName 为你开通了VIP"
+        val text = "真真爱❤️啊，快重启App体验会员吧 ~ ~"
+        val isIos = "ios" == deviceType
+        val customMessage = CustomMessage(
+            fromUserId = fromUserId,
+            fromUserNickName = fromUserNickName,
+            fromUserIcon = fromUserIcon,
+            type = MyNotificationType.bindVip.value
+        )
+
+        val jsonBody = if (isIos) {
+            IOSNotificationFactory.createSingleAliasNotification(deviceAlias, deviceAliasType, title, text, customMessage)
+        } else {
+            AndroidNotificationFactory.createSingleAliasNotification(deviceAlias, deviceAliasType, title, text, customMessage)
+        }
+
+        return send(jsonBody, isIos)
+    }
 
     /**
      * 请求友盟发送通知

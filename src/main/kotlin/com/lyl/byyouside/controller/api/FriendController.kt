@@ -74,6 +74,16 @@ class FriendController : ApiBaseController() {
                 status = 1,
             )
             val myFriendDB = friendRepository.save(myFriendData)
+
+            PushApi().sendAgreeAddFriend(
+                myFriendData.toUser!!.deviceType!!,
+                myFriendData.toUser!!.deviceAlias!!,
+                myFriendData.toUser!!.deviceAliasType!!,
+                myFriendData.myUser!!.id!!,
+                myFriendData.myUser!!.nickName,
+                myFriendData.myUser!!.icon
+            )
+
             return successCallBack(myFriendDB)
 
         } else {
@@ -91,7 +101,7 @@ class FriendController : ApiBaseController() {
             )
             val friendDB = friendRepository.save(friendData)
 
-            PushApi().sendRequestLocation(
+            PushApi().sendRequestAddFriend(
                 toUser!!.deviceType!!,
                 toUser.deviceAlias!!,
                 toUser.deviceAliasType!!,

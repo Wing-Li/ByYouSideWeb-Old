@@ -25,7 +25,10 @@ data class VipRecharge(
     @JoinColumn(name = "vip_id", nullable = false)
     var vip: Vip? = null,
 
-    var vipFrom: String = "", // ios android admin ,当充值类型为 ios 时，充值时间就不准确了。
+    /**
+     * ios/android/bind/admin
+     */
+    var vipFrom: String = "",
 
     @Column(nullable = false)
     var actualPrice: BigDecimal = BigDecimal.ZERO,
