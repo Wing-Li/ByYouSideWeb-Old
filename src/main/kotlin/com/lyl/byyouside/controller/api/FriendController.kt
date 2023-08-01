@@ -11,6 +11,7 @@ import com.lyl.byyouside.model.memoirs.MemoirsRepository
 import com.lyl.byyouside.model.moment.MomentsRepository
 import com.lyl.byyouside.model.user.UserInfo
 import com.lyl.byyouside.model.user.UserInfoRepository
+import com.lyl.byyouside.push.PushApi
 import com.lyl.byyouside.utils.MyUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
@@ -89,6 +90,16 @@ class FriendController : ApiBaseController() {
                 status = 0,
             )
             val friendDB = friendRepository.save(friendData)
+
+            PushApi().sendRequestLocation(
+                toUser!!.deviceType!!,
+                toUser.deviceAlias!!,
+                toUser.deviceAliasType!!,
+                myUser!!.id!!,
+                myUser.nickName,
+                myUser.icon
+            )
+
             return successCallBack(friendDB)
         }
     }
@@ -127,12 +138,22 @@ class FriendController : ApiBaseController() {
         friendRepository.save(toAmeFriend)
 
         // 我 -> 他
+        val toUser = toAmeFriend.myUser
         val myFriendData = Friend(
             myUser = myUser,
-            toUser = toAmeFriend.myUser,
+            toUser = toUser,
             status = 1,
         )
         val friendDB = friendRepository.save(myFriendData)
+
+        PushApi().sendAgreeAddFriend(
+            toUser!!.deviceType!!,
+            toUser.deviceAlias!!,
+            toUser.deviceAliasType!!,
+            myUser!!.id!!,
+            myUser.nickName,
+            myUser.icon
+        )
 
         return successCallBack(friendDB)
     }
