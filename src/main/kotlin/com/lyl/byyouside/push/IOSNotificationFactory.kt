@@ -41,7 +41,7 @@ object IOSNotificationFactory {
                 fluentPut("alert", JSONObject().apply {
                     fluentPut("title", title)
                     fluentPut("subtitle", text)
-                    fluentPut("body", text)
+//                    fluentPut("body", text)
                 })
                 fluentPut("badge", "+1")
             })
