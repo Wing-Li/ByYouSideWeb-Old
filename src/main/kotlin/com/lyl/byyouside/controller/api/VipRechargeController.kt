@@ -182,7 +182,7 @@ class VipRechargeController @Autowired constructor(
 
         if (result.data is UserInfo) {
             val user = result.data as? UserInfo
-            user?.let {
+            user?.deviceAlias?.let {
                 // 通知提醒对方： myUser 为你开通了VIP
                 PushApi().sendBindVip(
                     user.deviceType!!,

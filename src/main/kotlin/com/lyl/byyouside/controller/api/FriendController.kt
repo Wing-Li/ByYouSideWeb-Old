@@ -75,14 +75,16 @@ class FriendController : ApiBaseController() {
             )
             val myFriendDB = friendRepository.save(myFriendData)
 
-            PushApi().sendAgreeAddFriend(
-                myFriendData.toUser!!.deviceType!!,
-                myFriendData.toUser!!.deviceAlias!!,
-                myFriendData.toUser!!.deviceAliasType!!,
-                myFriendData.myUser!!.id!!,
-                myFriendData.myUser!!.nickName,
-                myFriendData.myUser!!.icon
-            )
+            myFriendData.toUser?.deviceAlias?.let {
+                PushApi().sendAgreeAddFriend(
+                    myFriendData.toUser!!.deviceType!!,
+                    myFriendData.toUser!!.deviceAlias!!,
+                    myFriendData.toUser!!.deviceAliasType!!,
+                    myFriendData.myUser!!.id!!,
+                    myFriendData.myUser!!.nickName,
+                    myFriendData.myUser!!.icon
+                )
+            }
 
             return successCallBack(myFriendDB)
 
@@ -101,14 +103,16 @@ class FriendController : ApiBaseController() {
             )
             val friendDB = friendRepository.save(friendData)
 
-            PushApi().sendRequestAddFriend(
-                toUser!!.deviceType!!,
-                toUser.deviceAlias!!,
-                toUser.deviceAliasType!!,
-                myUser!!.id!!,
-                myUser.nickName,
-                myUser.icon
-            )
+            toUser?.deviceAlias?.let {
+                PushApi().sendRequestAddFriend(
+                    toUser.deviceType!!,
+                    toUser.deviceAlias!!,
+                    toUser.deviceAliasType!!,
+                    myUser!!.id!!,
+                    myUser.nickName,
+                    myUser.icon
+                )
+            }
 
             return successCallBack(friendDB)
         }
@@ -156,14 +160,16 @@ class FriendController : ApiBaseController() {
         )
         val friendDB = friendRepository.save(myFriendData)
 
-        PushApi().sendAgreeAddFriend(
-            toUser!!.deviceType!!,
-            toUser.deviceAlias!!,
-            toUser.deviceAliasType!!,
-            myUser!!.id!!,
-            myUser.nickName,
-            myUser.icon
-        )
+        toUser?.deviceAlias?.let {
+            PushApi().sendAgreeAddFriend(
+                toUser.deviceType!!,
+                toUser.deviceAlias!!,
+                toUser.deviceAliasType!!,
+                myUser!!.id!!,
+                myUser.nickName,
+                myUser.icon
+            )
+        }
 
         return successCallBack(friendDB)
     }

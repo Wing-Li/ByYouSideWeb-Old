@@ -420,14 +420,16 @@ class UserController @Autowired constructor(
             return failCallBack(StatusCode.ERROR_10014, StatusCode.ERROR_10014_TEXT)
         }
 
-        PushApi().sendRequestLocation(
-            user.deviceType!!,
-            user.deviceAlias!!,
-            user.deviceAliasType!!,
-            myId,
-            myUser!!.nickName,
-            myUser.icon
-        )
+        user.deviceAlias?.let {
+            PushApi().sendRequestLocation(
+                user.deviceType!!,
+                user.deviceAlias!!,
+                user.deviceAliasType!!,
+                myId,
+                myUser!!.nickName,
+                myUser.icon
+            )
+        }
 
         return successCallBack("通知发送成功")
     }
