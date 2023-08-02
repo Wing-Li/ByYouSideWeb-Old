@@ -53,7 +53,7 @@ data class UserInfo(
      */
     var vipFrom: String? = null,
     var vipLevel: Int? = 0,
-    var bindCount: String? = "0/0", // 0/1  ;   4/50
+    var bindCount: String? = "0/0", //  剩余/总数 ;  0/1
 
     /**
      * 封号时间, 封号天数

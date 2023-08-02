@@ -30,6 +30,11 @@ data class VipRecharge(
      */
     var vipFrom: String = "",
 
+    /**
+     * 如果 vipFrom == "bind"，此时有值。 代表来自于谁的绑定
+     */
+    var bindFromUserId: Long? = null,
+
     @Column(nullable = false)
     var actualPrice: BigDecimal = BigDecimal.ZERO,
 

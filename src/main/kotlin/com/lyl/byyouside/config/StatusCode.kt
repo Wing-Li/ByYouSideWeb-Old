@@ -75,6 +75,10 @@ object StatusCode {
     const val ERROR_15005_TEXT = "您没有可绑定的名额"
     const val ERROR_15006 = 15006
     const val ERROR_15006_TEXT = "您的名额已经用完"
+    const val ERROR_15007 = 15007
+    const val ERROR_15007_TEXT = "您已经是会员了，不需要绑定"
+    const val ERROR_15008 = 15008
+    const val ERROR_15008_TEXT = "您的购买信息有误，请联系管理员"
 
     // 绑定密友 16
     const val ERROR_16001 = 16001

@@ -39,10 +39,11 @@ class VipRechargeController @Autowired constructor(
      */
     @PostMapping("/vip/addRecharge")
     fun addVipRecharge(
-        toUserId: Long?,
+        toUserId: Long?, // 给谁充值，可为空。默认给自己充值
         vipId: Long,
         money: BigDecimal,
         from: String, // 充值类型： ios/android/bind/admin
+        bindFromUserId: Long?, // 如果 vipFrom == bind，此时有值。代表是谁绑定的
     ): BaseCallBack<Any> {
         val userId = toUserId ?: ContextHolder.userId
 
@@ -73,6 +74,7 @@ class VipRechargeController @Autowired constructor(
             vipFrom = from,
             actualPrice = money
         )
+        if ("bind" == from) vipRecharge.bindFromUserId = bindFromUserId
         // 保存购买记录
         vipRechargeRepository.save(vipRecharge)
 
@@ -131,9 +133,14 @@ class VipRechargeController @Autowired constructor(
     @PostMapping("/vip/bindVip")
     fun bindVip(
         toUserId: Long,
-        vipId: Long,
     ): BaseCallBack<Any> {
         val userId = ContextHolder.userId
+
+        if (toUserId == userId) {
+            // 不能绑定给自己
+            return failCallBack(StatusCode.ERROR_15007, StatusCode.ERROR_15007_TEXT)
+        }
+
         val myUser = userRepository.findById(userId).getOrNull()
         userAuth(myUser)?.let { return it }
 
@@ -153,7 +160,17 @@ class VipRechargeController @Autowired constructor(
             return failCallBack(StatusCode.ERROR_15006, StatusCode.ERROR_15006_TEXT)
         }
 
-        val result = addVipRecharge(toUserId, vipId, BigDecimal.valueOf(0.0), "bind")
+        // 获取我最新地购买记录
+        val vipRecharge = vipRechargeRepository.findTopByUserIdOrderByCreateTimeDesc(userId)
+            ?: return failCallBack(StatusCode.ERROR_15008, StatusCode.ERROR_15008_TEXT)
+
+        val result = addVipRecharge(
+            toUserId = toUserId,
+            vipId = vipRecharge.vip!!.id!!,
+            money = BigDecimal.valueOf(0.0),
+            from = "bind",
+            bindFromUserId = userId,
+        )
         if (result.code != 200) {
             // 如果充值异常，将异常返回
             return result
