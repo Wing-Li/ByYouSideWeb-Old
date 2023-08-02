@@ -63,12 +63,20 @@ class PushApi() {
             type = MyNotificationType.requestLocation.value
         )
 
+        // 先发透传消息
+        val messageJsonBody = if (isIos) {
+            IOSNotificationFactory.createSingleAliasMessage(deviceAlias, deviceAliasType, title, text, customMessage)
+        } else {
+            AndroidNotificationFactory.createSingleAliasMessage(deviceAlias, deviceAliasType, title, text, customMessage)
+        }
+        send(messageJsonBody, isIos)
+
+        // 再发通知
         val jsonBody = if (isIos) {
             IOSNotificationFactory.createSingleAliasNotification(deviceAlias, deviceAliasType, title, text, customMessage)
         } else {
             AndroidNotificationFactory.createSingleAliasNotification(deviceAlias, deviceAliasType, title, text, customMessage)
         }
-
         return send(jsonBody, isIos)
     }
 
@@ -93,12 +101,18 @@ class PushApi() {
             type = MyNotificationType.requestAddFriend.value
         )
 
+        val messageJsonBody = if (isIos) {
+            IOSNotificationFactory.createSingleAliasMessage(deviceAlias, deviceAliasType, title, text, customMessage)
+        } else {
+            AndroidNotificationFactory.createSingleAliasMessage(deviceAlias, deviceAliasType, title, text, customMessage)
+        }
+        send(messageJsonBody, isIos)
+
         val jsonBody = if (isIos) {
             IOSNotificationFactory.createSingleAliasNotification(deviceAlias, deviceAliasType, title, text, customMessage)
         } else {
             AndroidNotificationFactory.createSingleAliasNotification(deviceAlias, deviceAliasType, title, text, customMessage)
         }
-
         return send(jsonBody, isIos)
     }
 
@@ -123,12 +137,18 @@ class PushApi() {
             type = MyNotificationType.agreeAddFriend.value
         )
 
+        val messageJsonBody = if (isIos) {
+            IOSNotificationFactory.createSingleAliasNotification(deviceAlias, deviceAliasType, title, text, customMessage)
+        } else {
+            AndroidNotificationFactory.createSingleAliasNotification(deviceAlias, deviceAliasType, title, text, customMessage)
+        }
+        send(messageJsonBody, isIos)
+
         val jsonBody = if (isIos) {
             IOSNotificationFactory.createSingleAliasNotification(deviceAlias, deviceAliasType, title, text, customMessage)
         } else {
             AndroidNotificationFactory.createSingleAliasNotification(deviceAlias, deviceAliasType, title, text, customMessage)
         }
-
         return send(jsonBody, isIos)
     }
 

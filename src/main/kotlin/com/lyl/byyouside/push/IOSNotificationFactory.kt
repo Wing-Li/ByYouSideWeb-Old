@@ -65,7 +65,7 @@ object IOSNotificationFactory {
     /**
      * 给某个人发透传消息
      */
-    fun createSingleTokenMessage(
+    fun createSingleAliasMessage(
         deviceAlias: String,
         deviceAliasType: String,
         title: String,
