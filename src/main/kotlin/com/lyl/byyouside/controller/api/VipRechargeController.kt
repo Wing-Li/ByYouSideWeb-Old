@@ -82,11 +82,17 @@ class VipRechargeController @Autowired constructor(
         val userData = user.get()
         userData.vipLevel = vip.level
         userData.vipFrom = from
-        when (vip.status) {
-            // 单人会员
-            0 -> userData.bindCount = "0/0"
-            // 双人会员
-            2 -> userData.bindCount = "1/1"
+
+        if ("bind" == from) {
+            // 如果来源是绑定的VIP，则没有绑定资格
+            userData.bindCount = "0/0"
+        } else {
+            when (vip.status) {
+                // 单人会员
+                0 -> userData.bindCount = "0/0"
+                // 双人会员
+                2 -> userData.bindCount = "1/1"
+            }
         }
 
         // 设置用户的到期时间
