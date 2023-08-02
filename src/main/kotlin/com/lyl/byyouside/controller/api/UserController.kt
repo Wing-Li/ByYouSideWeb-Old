@@ -275,6 +275,7 @@ class UserController @Autowired constructor(
                     val localV = if (isVip == true) 1 else 0
                     if (localV != user.vipLevel) {
                         user.vipLevel = localV
+                        user.bindCount = "0/0"
                     }
                 } else {
                     val vipLimitDate: Long = user.vipLimitDate?.time ?: 0

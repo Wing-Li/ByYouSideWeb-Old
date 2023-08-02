@@ -155,7 +155,11 @@ class VipRechargeController @Autowired constructor(
         val num = split[0].toInt()
         val all = split[1].toInt()
 
-        if (num <= 0 || num >= all) {
+        if (all <= 0) {
+            // 您没有可绑定的名额
+            return failCallBack(StatusCode.ERROR_15005, StatusCode.ERROR_15005_TEXT)
+        }
+        if (num <= 0) {
             // 您的名额已经用完
             return failCallBack(StatusCode.ERROR_15006, StatusCode.ERROR_15006_TEXT)
         }
