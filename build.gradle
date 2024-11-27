@@ -59,7 +59,7 @@ dependencies {
     runtimeOnly 'com.h2database:h2'
 
     implementation 'org.springframework.security:spring-security-crypto:6.0.3'
-    implementation 'cn.hutool:hutool-all:5.8.18'
+    implementation 'cn.hutool:hutool-all:5.8.21'
 
     // 邮件发送，利用 HTML 模板
     implementation 'com.sun.mail:javax.mail:1.6.2'
