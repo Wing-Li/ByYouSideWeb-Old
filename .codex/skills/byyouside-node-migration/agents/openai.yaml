@@ -1,0 +1,4 @@
+interface:
+  display_name: "ByYouSide Node Migration"
+  short_description: "Guardrails for migrating ByYouSide to Node.js"
+  default_prompt: "Use $byyouside-node-migration to migrate a ByYouSide backend module into the new Node.js project."

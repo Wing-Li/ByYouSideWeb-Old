@@ -36,3 +36,9 @@ out/
 ### VS Code ###
 .vscode/
 /ByYourSide/
+
+### Node migration ###
+/server-node/node_modules/
+/server-node/dist/
+/server-node/coverage/
+/server-node/.env
