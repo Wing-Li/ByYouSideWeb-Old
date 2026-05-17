@@ -9,7 +9,7 @@
 | 计划 | 状态 |
 | --- | --- |
 | `phase-01-node-foundation.md` | 已关闭 |
-| `phase-02-prisma-schema.md` | 未开始 |
+| `phase-02-prisma-schema.md` | 已验证 |
 | `phase-03-auth-users.md` | 未开始 |
 | `phase-04-friends.md` | 未开始 |
 | `phase-05-devices-location.md` | 未开始 |

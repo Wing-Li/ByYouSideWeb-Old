@@ -4,18 +4,19 @@ import { ApiResponseDto } from '../../common/response/api-response.dto';
 import { HealthResponseDto } from './dto/health-response.dto';
 import { HealthService } from './health.service';
 
-@ApiTags('health')
+@ApiTags('健康检查')
 @Controller('health')
 export class HealthController {
   constructor(private readonly healthService: HealthService) {}
 
   @Get()
   @ApiOperation({
-    summary: 'Health check',
-    description: 'Returns the basic runtime health status of the Node service.',
+    summary: '获取服务健康状态',
+    description:
+      '返回 Node.js 后端服务的基础运行状态，用于确认服务是否已经成功启动并可以响应请求。',
   })
   @ApiOkResponse({
-    description: 'The service is running.',
+    description: '服务正在运行。',
     schema: {
       example: {
         code: 200,

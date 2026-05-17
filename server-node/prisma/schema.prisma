@@ -1,0 +1,295 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  DISABLED
+  DESTROY_REQUESTED
+  DESTROYED
+}
+
+enum Gender {
+  UNKNOWN
+  MALE
+  FEMALE
+}
+
+enum VerificationPurpose {
+  PASSWORD_RESET
+  EMAIL_VERIFY
+}
+
+enum FriendStatus {
+  REJECTED_BLOCKED
+  REJECTED
+  PENDING
+  ACCEPTED
+}
+
+enum FriendBlockState {
+  NORMAL
+  REQUESTER_BLOCKED_RECEIVER
+  RECEIVER_BLOCKED_REQUESTER
+}
+
+enum VipPlanStatus {
+  DISABLED
+  ACTIVE
+  DUET
+  TEST
+}
+
+enum VipOrderSource {
+  IOS
+  ANDROID
+  BIND
+  ADMIN
+}
+
+model User {
+  id                    BigInt          @id @default(autoincrement())
+  username              String          @unique @db.VarChar(20)
+  email                 String          @unique @db.VarChar(255)
+  passwordHash          String          @map("password_hash") @db.VarChar(255)
+  nickname              String          @default("") @db.VarChar(20)
+  avatarUrl             String          @default("") @map("avatar_url") @db.Text
+  gender                Gender          @default(UNKNOWN)
+  bio                   String          @default("") @db.VarChar(200)
+  birthday              DateTime?
+  role                  UserRole        @default(USER)
+  status                UserStatus      @default(ACTIVE)
+  disabledDays          Int             @default(0) @map("disabled_days")
+  uploadIntervalMinutes Int             @default(120) @map("upload_interval_minutes")
+  vipLevel              Int             @default(0) @map("vip_level")
+  vipSource             VipOrderSource? @map("vip_source")
+  vipExpiresAt          DateTime?       @map("vip_expires_at")
+  vipBindQuotaTotal     Int             @default(0) @map("vip_bind_quota_total")
+  vipBindQuotaUsed      Int             @default(0) @map("vip_bind_quota_used")
+  destroyRequestedAt    DateTime?       @map("destroy_requested_at")
+  destroyReason         String?         @map("destroy_reason") @db.Text
+  lastLocationAddress   String          @default("") @map("last_location_address") @db.Text
+  lastLocationLongitude Decimal         @default(0) @map("last_location_longitude") @db.Decimal(10, 7)
+  lastLocationLatitude  Decimal         @default(0) @map("last_location_latitude") @db.Decimal(10, 7)
+  lastLocationAt        DateTime?       @map("last_location_at")
+  pushDeviceType        String?         @map("push_device_type") @db.VarChar(20)
+  pushAliasType         String?         @map("push_alias_type") @db.VarChar(50)
+  pushAlias             String?         @map("push_alias") @db.VarChar(255)
+  createdAt             DateTime        @default(now()) @map("created_at")
+  updatedAt             DateTime        @updatedAt @map("updated_at")
+
+  sentFriendRelations     FriendRelation[]   @relation("FriendRequester")
+  receivedFriendRelations FriendRelation[]   @relation("FriendReceiver")
+  deviceSnapshots         DeviceSnapshot[]
+  memoirs                 Memoir[]
+  moments                 Moment[]
+  verificationCodes       VerificationCode[]
+  vipOrders               VipOrder[]         @relation("VipOrderUser")
+  boundVipOrders          VipOrder[]         @relation("VipOrderBindFromUser")
+  announcements           Announcement[]
+  feedbacks               Feedback[]
+
+  @@map("users")
+}
+
+model VerificationCode {
+  id         BigInt              @id @default(autoincrement())
+  userId     BigInt?             @map("user_id")
+  email      String              @db.VarChar(255)
+  codeHash   String              @map("code_hash") @db.VarChar(255)
+  purpose    VerificationPurpose
+  expiresAt  DateTime            @map("expires_at")
+  consumedAt DateTime?           @map("consumed_at")
+  createdAt  DateTime            @default(now()) @map("created_at")
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([email, purpose, createdAt])
+  @@index([userId])
+  @@map("verification_codes")
+}
+
+model FriendRelation {
+  id             BigInt           @id @default(autoincrement())
+  requesterId    BigInt           @map("requester_id")
+  receiverId     BigInt           @map("receiver_id")
+  requesterAlias String           @default("") @map("requester_alias") @db.VarChar(50)
+  receiverAlias  String           @default("") @map("receiver_alias") @db.VarChar(50)
+  isBestFriend   Boolean          @default(false) @map("is_best_friend")
+  status         FriendStatus     @default(PENDING)
+  blockState     FriendBlockState @default(NORMAL) @map("block_state")
+  createdAt      DateTime         @default(now()) @map("created_at")
+  updatedAt      DateTime         @updatedAt @map("updated_at")
+
+  requester User     @relation("FriendRequester", fields: [requesterId], references: [id], onDelete: Cascade)
+  receiver  User     @relation("FriendReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+  memoirs   Memoir[]
+  moments   Moment[]
+
+  @@unique([requesterId, receiverId])
+  @@index([requesterId, status, updatedAt])
+  @@index([receiverId, status, updatedAt])
+  @@map("friend_relations")
+}
+
+model DeviceSnapshot {
+  id                BigInt   @id @default(autoincrement())
+  userId            BigInt   @map("user_id")
+  deviceName        String   @default("") @map("device_name") @db.VarChar(100)
+  screenStatus      String   @default("") @map("screen_status") @db.VarChar(50)
+  screenLevel       String   @default("") @map("screen_level") @db.VarChar(50)
+  batteryStatus     String   @default("") @map("battery_status") @db.VarChar(50)
+  batteryLevel      String   @default("") @map("battery_level") @db.VarChar(50)
+  volumeLevel       String   @default("") @map("volume_level") @db.VarChar(50)
+  bluetoothStatus   String   @default("") @map("bluetooth_status") @db.VarChar(50)
+  bluetoothName     String   @default("") @map("bluetooth_name") @db.VarChar(100)
+  wifiStatus        String   @default("") @map("wifi_status") @db.VarChar(50)
+  wifiName          String   @default("") @map("wifi_name") @db.VarChar(100)
+  gpsStatus         String   @default("") @map("gps_status") @db.VarChar(50)
+  locationSource    String   @default("") @map("location_source") @db.VarChar(50)
+  locationAddress   String   @default("") @map("location_address") @db.Text
+  locationLongitude Decimal  @default(0) @map("location_longitude") @db.Decimal(10, 7)
+  locationLatitude  Decimal  @default(0) @map("location_latitude") @db.Decimal(10, 7)
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("device_snapshots")
+}
+
+model Memoir {
+  id               BigInt   @id @default(autoincrement())
+  friendRelationId BigInt   @map("friend_relation_id")
+  authorId         BigInt   @map("author_id")
+  title            String   @default("") @db.VarChar(120)
+  content          String   @db.Text
+  happenedAt       DateTime @default(now()) @map("happened_at")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  friendRelation FriendRelation @relation(fields: [friendRelationId], references: [id], onDelete: Cascade)
+  author         User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([friendRelationId, happenedAt])
+  @@index([authorId, createdAt])
+  @@map("memoirs")
+}
+
+model Moment {
+  id               BigInt   @id @default(autoincrement())
+  friendRelationId BigInt   @map("friend_relation_id")
+  authorId         BigInt   @map("author_id")
+  content          String   @db.Text
+  happenedAt       DateTime @default(now()) @map("happened_at")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  friendRelation FriendRelation @relation(fields: [friendRelationId], references: [id], onDelete: Cascade)
+  author         User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([friendRelationId, happenedAt])
+  @@index([authorId, createdAt])
+  @@map("moments")
+}
+
+model VipPlan {
+  id             BigInt        @id @default(autoincrement())
+  name           String        @db.VarChar(80)
+  description    String        @default("") @db.Text
+  level          Int           @default(1)
+  durationMonths Int           @map("duration_months")
+  price          Decimal       @db.Decimal(10, 2)
+  productCode    String        @unique @map("product_code") @db.VarChar(120)
+  status         VipPlanStatus @default(ACTIVE)
+  createdAt      DateTime      @default(now()) @map("created_at")
+  updatedAt      DateTime      @updatedAt @map("updated_at")
+
+  orders VipOrder[]
+
+  @@index([status, durationMonths])
+  @@map("vip_plans")
+}
+
+model VipOrder {
+  id             BigInt         @id @default(autoincrement())
+  userId         BigInt         @map("user_id")
+  planId         BigInt         @map("plan_id")
+  source         VipOrderSource
+  bindFromUserId BigInt?        @map("bind_from_user_id")
+  amount         Decimal        @db.Decimal(10, 2)
+  createdAt      DateTime       @default(now()) @map("created_at")
+
+  user         User    @relation("VipOrderUser", fields: [userId], references: [id], onDelete: Cascade)
+  plan         VipPlan @relation(fields: [planId], references: [id], onDelete: Restrict)
+  bindFromUser User?   @relation("VipOrderBindFromUser", fields: [bindFromUserId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+  @@index([planId])
+  @@index([bindFromUserId])
+  @@map("vip_orders")
+}
+
+model AppConfig {
+  id          BigInt   @id @default(autoincrement())
+  environment String   @default("development") @db.VarChar(50)
+  appName     String   @default("伴你左右") @map("app_name") @db.VarChar(80)
+  unCheckMode Boolean  @default(false) @map("un_check_mode")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@unique([environment])
+  @@index([createdAt])
+  @@map("app_configs")
+}
+
+model Announcement {
+  id         BigInt   @id @default(autoincrement())
+  authorId   BigInt   @map("author_id")
+  title      String   @db.VarChar(120)
+  authorName String   @default("管理员") @map("author_name") @db.VarChar(50)
+  content    String   @db.Text
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  author User @relation(fields: [authorId], references: [id], onDelete: Restrict)
+
+  @@index([createdAt])
+  @@map("announcements")
+}
+
+model Feedback {
+  id        BigInt   @id @default(autoincrement())
+  userId    BigInt   @map("user_id")
+  content   String   @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("feedbacks")
+}
+
+model AppVersion {
+  id                 BigInt   @id @default(autoincrement())
+  title              String   @default("") @db.VarChar(120)
+  description        String   @default("") @db.Text
+  androidVersionName String   @default("") @map("android_version_name") @db.VarChar(50)
+  iosVersionName     String   @default("") @map("ios_version_name") @db.VarChar(50)
+  androidDownloadUrl String   @default("") @map("android_download_url") @db.Text
+  iosDownloadUrl     String   @default("") @map("ios_download_url") @db.Text
+  forceUpdate        Boolean  @default(false) @map("force_update")
+  releasedAt         DateTime @default(now()) @map("released_at")
+
+  @@index([releasedAt])
+  @@map("app_versions")
+}

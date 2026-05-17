@@ -58,7 +58,7 @@ describe('HealthController (e2e)', () => {
           paths: Record<string, unknown>;
         };
 
-        expect(body.info.title).toBe('ByYouSide API');
+        expect(body.info.title).toBe('伴你左右 API');
         expect(body.info.version).toBe('1.0.0');
         expect(body.paths).toHaveProperty('/api/v1/health');
       });

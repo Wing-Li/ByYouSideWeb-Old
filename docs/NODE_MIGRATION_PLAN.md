@@ -20,7 +20,7 @@
 | 迁移实施文档 | 已完成 | 已创建本文档，后续按阶段持续更新 |
 | 迁移作业 Skill | 已完成 | 已创建 `.codex/skills/byyouside-node-migration/`，后续迁移任务应优先使用 |
 | Node 项目初始化 | 已完成 | `server-node/` NestJS 基础骨架、Swagger、统一响应、异常处理、健康检查和基础测试已完成 |
-| 数据模型设计 | 未开始 | 待设计 Prisma schema |
+| 数据模型设计 | 已完成 | Phase 2 已完成第一版 Prisma schema、migration SQL、Neon main/dev 数据库 migration 和 seed；已创建 Neon local 分支用于本地开发 |
 | API 文档编写 | 进行中 | Phase 1 已建立 Swagger/OpenAPI，后续模块需持续补充接口文档 |
 | 业务模块迁移 | 未开始 | 待分阶段实施 |
 | 测试与验收 | 进行中 | Phase 1 已建立 unit/e2e/build/lint 基础验证 |
@@ -504,7 +504,7 @@ server-node/
 
 ### Phase 2：数据库与 Prisma
 
-状态：未开始
+状态：已完成
 
 任务：
 
@@ -520,6 +520,21 @@ server-node/
 - `prisma migrate dev` 可成功执行。
 - `prisma db seed` 可成功执行。
 - 管理员账号可登录。
+
+当前进展：
+
+- 已创建 Neon Postgres 项目 `byyouside-dev`，并将数据库命名为 `dev`。
+- Neon `main` 分支作为线上测试环境数据库，Branch ID 为 `br-odd-smoke-ajcku34s`。
+- Neon `local` 分支作为本地开发数据库，Branch ID 为 `br-restless-feather-aj3rh3dm`。
+- 两个分支都保留数据库名 `dev`；本地 `.env` 应指向 `local/dev`，测试环境 `.env.test` 或部署环境变量应指向 `main/dev`。
+- 已添加 Prisma 7、PostgreSQL datasource、`@prisma/adapter-pg` 和 `PrismaService`。
+- 已设计第一版 `schema.prisma`，覆盖用户、验证码、好友关系、设备快照、回忆录、瞬间、VIP、配置、公告、反馈和版本。
+- 已添加首个 migration SQL：`server-node/prisma/migrations/20260517010000_init/migration.sql`。
+- 已添加 seed 脚本，初始化默认管理员、App 配置和旧系统 `InitLogic` 中的 10 个 VIP 套餐。
+- 已通过 Prisma format/validate/generate、format、lint、unit test、e2e test 和 build。
+- 已执行 `npm run prisma:migrate -- --name init_neon_dev` 和 `npm run prisma:seed`。
+- Neon SQL 核对结果：`users=1`、`app_configs=1`、`vip_plans=10`、`_prisma_migrations=1`。
+- 2026-05-17 已创建 Neon `local` 分支，并已将本地 `.env` 的 `DATABASE_URL` 替换为 `local` 分支直连 host；`.env.test` 和线上测试环境继续指向 `main` 分支直连 host。
 
 ### Phase 3：认证与用户模块
 
@@ -773,11 +788,10 @@ docs/migration-plans/
 
 ## 下一步建议
 
-下一步建议执行 Phase 2：
+下一步建议执行 Phase 3：
 
-1. 创建 `docs/migration-plans/phase-02-prisma-schema.md`。
-2. 设计 Prisma schema。
-3. 配置 PostgreSQL。
-4. 添加 Prisma migration。
-5. 添加 seed 脚本。
-6. 初始化默认管理员、App 配置和 VIP 套餐。
+1. 创建或更新 `docs/migration-plans/phase-03-auth-users.md`。
+2. 阅读旧 `UserController.kt`、`UserInfo.kt`、`UserInfoRepository.kt`、`JwtUtils.kt`、`EmailUtils.kt` 和相关工具类。
+3. 基于 Neon `local/dev` 数据库实现注册、登录、JWT 鉴权、当前用户信息和用户资料更新。
+4. 完成 Swagger DTO、单元测试和 e2e 测试。
+5. 验证 seed 管理员账号可登录。

@@ -1,0 +1,10 @@
+node_modules
+
+# 环境变量文件不能进入版本控制。
+.env
+.env.*
+!.env.example
+
+/generated/prisma
+
+*.log
