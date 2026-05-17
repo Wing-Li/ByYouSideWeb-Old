@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-05-17T12:58:45.813Z",
-  "sourceBaseUrl": "http://localhost:3010",
+  "generatedAt": "2026-05-17T13:33:02.641Z",
+  "sourceBaseUrl": "http://localhost:3001",
   "note": "本文件由 npm run api:examples 通过真实 HTTP 请求生成。token 和密码已脱敏，验证码不会写入文档。",
   "examples": [
     {
@@ -10,9 +10,9 @@
         "name": "registerSuccessRequest",
         "summary": "注册成功请求",
         "value": {
-          "username": "demo_mp9s6nyj",
+          "username": "demo_mp9temkw",
           "password": "<demo-password>",
-          "email": "swagger.demo.mp9s6nyj@example.com"
+          "email": "swagger.demo.mp9temkw@example.com"
         }
       },
       "responses": [
@@ -26,9 +26,9 @@
             "data": {
               "token": "Bearer <captured-jwt-redacted>",
               "user": {
-                "id": "4",
-                "username": "demo_mp9s6nyj",
-                "email": "swagger.demo.mp9s6nyj@example.com",
+                "id": "8",
+                "username": "demo_mp9temkw",
+                "email": "swagger.demo.mp9temkw@example.com",
                 "nickname": "",
                 "avatarUrl": "",
                 "gender": "UNKNOWN",
@@ -50,8 +50,8 @@
                 "pushDeviceType": null,
                 "pushAliasType": null,
                 "pushAlias": null,
-                "createdAt": "2026-05-17T12:58:26.857Z",
-                "updatedAt": "2026-05-17T12:58:26.857Z"
+                "createdAt": "2026-05-17T13:32:37.346Z",
+                "updatedAt": "2026-05-17T13:32:37.346Z"
               }
             }
           }
@@ -105,7 +105,7 @@
                 "pushAliasType": null,
                 "pushAlias": null,
                 "createdAt": "2026-05-17T08:10:17.314Z",
-                "updatedAt": "2026-05-17T12:36:32.702Z"
+                "updatedAt": "2026-05-17T13:31:20.386Z"
               }
             }
           }
@@ -159,7 +159,7 @@
               "pushAliasType": null,
               "pushAlias": null,
               "createdAt": "2026-05-17T08:10:17.314Z",
-              "updatedAt": "2026-05-17T12:36:32.702Z"
+              "updatedAt": "2026-05-17T13:31:20.386Z"
             }
           }
         }
@@ -211,7 +211,7 @@
               "pushAliasType": null,
               "pushAlias": null,
               "createdAt": "2026-05-17T08:10:17.314Z",
-              "updatedAt": "2026-05-17T12:58:29.401Z"
+              "updatedAt": "2026-05-17T13:32:39.897Z"
             }
           }
         }
@@ -252,7 +252,7 @@
               "vipExpiresAt": null,
               "vipBindQuotaTotal": 0,
               "vipBindQuotaUsed": 0,
-              "destroyRequestedAt": "2026-05-17T12:58:30.069Z",
+              "destroyRequestedAt": "2026-05-17T13:32:40.563Z",
               "lastLocationAddress": "",
               "lastLocationLongitude": "0",
               "lastLocationLatitude": "0",
@@ -261,7 +261,7 @@
               "pushAliasType": null,
               "pushAlias": null,
               "createdAt": "2026-05-17T08:10:17.314Z",
-              "updatedAt": "2026-05-17T12:58:30.070Z"
+              "updatedAt": "2026-05-17T13:32:40.564Z"
             }
           }
         }
@@ -304,7 +304,7 @@
               "pushAliasType": null,
               "pushAlias": null,
               "createdAt": "2026-05-17T08:10:17.314Z",
-              "updatedAt": "2026-05-17T12:58:30.734Z"
+              "updatedAt": "2026-05-17T13:32:41.230Z"
             }
           }
         }
@@ -317,7 +317,7 @@
         "name": "passwordResetCodeRequest",
         "summary": "发送密码重置验证码请求",
         "value": {
-          "email": "swagger.demo.mp9s6nyj@example.com"
+          "email": "swagger.demo.mp9temkw@example.com"
         }
       },
       "responses": [
@@ -328,7 +328,7 @@
           "value": {
             "code": 200,
             "message": "success",
-            "data": "验证码已发送至：swagger.demo.mp9s6nyj@example.com"
+            "data": "验证码已发送至：swagger.demo.mp9temkw@example.com"
           }
         }
       ]
@@ -340,7 +340,7 @@
         "name": "friendRequestCreateRequest",
         "summary": "请求添加好友请求",
         "value": {
-          "toUserId": "5"
+          "toUserId": "9"
         }
       },
       "responses": [
@@ -352,18 +352,18 @@
             "code": 200,
             "message": "success",
             "data": {
-              "id": "1",
-              "requesterId": "4",
-              "receiverId": "5",
+              "id": "5",
+              "requesterId": "8",
+              "receiverId": "9",
               "requesterAlias": "",
               "receiverAlias": "",
               "isBestFriend": false,
               "status": "PENDING",
               "blockState": "NORMAL",
               "friend": {
-                "id": "5",
-                "username": "friend_p9s6nyj",
-                "email": "swagger.friend.mp9s6nyj@example.com",
+                "id": "9",
+                "username": "friend_p9temkw",
+                "email": "swagger.friend.mp9temkw@example.com",
                 "nickname": "",
                 "avatarUrl": "",
                 "gender": "UNKNOWN",
@@ -385,11 +385,11 @@
                 "pushDeviceType": null,
                 "pushAliasType": null,
                 "pushAlias": null,
-                "createdAt": "2026-05-17T12:58:27.711Z",
-                "updatedAt": "2026-05-17T12:58:27.711Z"
+                "createdAt": "2026-05-17T13:32:38.191Z",
+                "updatedAt": "2026-05-17T13:32:38.191Z"
               },
-              "createdAt": "2026-05-17T12:58:32.938Z",
-              "updatedAt": "2026-05-17T12:58:32.938Z"
+              "createdAt": "2026-05-17T13:32:43.415Z",
+              "updatedAt": "2026-05-17T13:32:43.415Z"
             }
           }
         }
@@ -408,18 +408,18 @@
             "message": "success",
             "data": [
               {
-                "id": "1",
-                "requesterId": "4",
-                "receiverId": "5",
+                "id": "5",
+                "requesterId": "8",
+                "receiverId": "9",
                 "requesterAlias": "",
                 "receiverAlias": "",
                 "isBestFriend": false,
                 "status": "PENDING",
                 "blockState": "NORMAL",
                 "friend": {
-                  "id": "4",
-                  "username": "demo_mp9s6nyj",
-                  "email": "swagger.demo.mp9s6nyj@example.com",
+                  "id": "8",
+                  "username": "demo_mp9temkw",
+                  "email": "swagger.demo.mp9temkw@example.com",
                   "nickname": "",
                   "avatarUrl": "",
                   "gender": "UNKNOWN",
@@ -441,11 +441,11 @@
                   "pushDeviceType": null,
                   "pushAliasType": null,
                   "pushAlias": null,
-                  "createdAt": "2026-05-17T12:58:26.857Z",
-                  "updatedAt": "2026-05-17T12:58:26.857Z"
+                  "createdAt": "2026-05-17T13:32:37.346Z",
+                  "updatedAt": "2026-05-17T13:32:37.346Z"
                 },
-                "createdAt": "2026-05-17T12:58:32.938Z",
-                "updatedAt": "2026-05-17T12:58:32.938Z"
+                "createdAt": "2026-05-17T13:32:43.415Z",
+                "updatedAt": "2026-05-17T13:32:43.415Z"
               }
             ],
             "pagination": {
@@ -471,18 +471,18 @@
             "code": 200,
             "message": "success",
             "data": {
-              "id": "2",
-              "requesterId": "5",
-              "receiverId": "4",
+              "id": "6",
+              "requesterId": "9",
+              "receiverId": "8",
               "requesterAlias": "",
               "receiverAlias": "",
               "isBestFriend": false,
               "status": "ACCEPTED",
               "blockState": "NORMAL",
               "friend": {
-                "id": "4",
-                "username": "demo_mp9s6nyj",
-                "email": "swagger.demo.mp9s6nyj@example.com",
+                "id": "8",
+                "username": "demo_mp9temkw",
+                "email": "swagger.demo.mp9temkw@example.com",
                 "nickname": "",
                 "avatarUrl": "",
                 "gender": "UNKNOWN",
@@ -504,11 +504,11 @@
                 "pushDeviceType": null,
                 "pushAliasType": null,
                 "pushAlias": null,
-                "createdAt": "2026-05-17T12:58:26.857Z",
-                "updatedAt": "2026-05-17T12:58:26.857Z"
+                "createdAt": "2026-05-17T13:32:37.346Z",
+                "updatedAt": "2026-05-17T13:32:37.346Z"
               },
-              "createdAt": "2026-05-17T12:58:37.209Z",
-              "updatedAt": "2026-05-17T12:58:37.209Z"
+              "createdAt": "2026-05-17T13:32:47.702Z",
+              "updatedAt": "2026-05-17T13:32:47.702Z"
             }
           }
         }
@@ -527,18 +527,18 @@
             "message": "success",
             "data": [
               {
-                "id": "1",
-                "requesterId": "4",
-                "receiverId": "5",
+                "id": "5",
+                "requesterId": "8",
+                "receiverId": "9",
                 "requesterAlias": "",
                 "receiverAlias": "",
                 "isBestFriend": false,
                 "status": "ACCEPTED",
                 "blockState": "NORMAL",
                 "friend": {
-                  "id": "5",
-                  "username": "friend_p9s6nyj",
-                  "email": "swagger.friend.mp9s6nyj@example.com",
+                  "id": "9",
+                  "username": "friend_p9temkw",
+                  "email": "swagger.friend.mp9temkw@example.com",
                   "nickname": "",
                   "avatarUrl": "",
                   "gender": "UNKNOWN",
@@ -560,11 +560,11 @@
                   "pushDeviceType": null,
                   "pushAliasType": null,
                   "pushAlias": null,
-                  "createdAt": "2026-05-17T12:58:27.711Z",
-                  "updatedAt": "2026-05-17T12:58:27.711Z"
+                  "createdAt": "2026-05-17T13:32:38.191Z",
+                  "updatedAt": "2026-05-17T13:32:38.191Z"
                 },
-                "createdAt": "2026-05-17T12:58:32.938Z",
-                "updatedAt": "2026-05-17T12:58:36.771Z"
+                "createdAt": "2026-05-17T13:32:43.415Z",
+                "updatedAt": "2026-05-17T13:32:47.260Z"
               }
             ],
             "pagination": {
@@ -636,18 +636,18 @@
             "code": 200,
             "message": "success",
             "data": {
-              "id": "2",
-              "requesterId": "5",
-              "receiverId": "4",
+              "id": "6",
+              "requesterId": "9",
+              "receiverId": "8",
               "requesterAlias": "示例好友",
               "receiverAlias": "",
               "isBestFriend": true,
               "status": "ACCEPTED",
               "blockState": "REQUESTER_BLOCKED_RECEIVER",
               "friend": {
-                "id": "4",
-                "username": "demo_mp9s6nyj",
-                "email": "swagger.demo.mp9s6nyj@example.com",
+                "id": "8",
+                "username": "demo_mp9temkw",
+                "email": "swagger.demo.mp9temkw@example.com",
                 "nickname": "",
                 "avatarUrl": "",
                 "gender": "UNKNOWN",
@@ -669,12 +669,233 @@
                 "pushDeviceType": null,
                 "pushAliasType": null,
                 "pushAlias": null,
-                "createdAt": "2026-05-17T12:58:26.857Z",
-                "updatedAt": "2026-05-17T12:58:26.857Z"
+                "createdAt": "2026-05-17T13:32:37.346Z",
+                "updatedAt": "2026-05-17T13:32:37.346Z"
               },
-              "createdAt": "2026-05-17T12:58:37.209Z",
-              "updatedAt": "2026-05-17T12:58:42.719Z"
+              "createdAt": "2026-05-17T13:32:47.702Z",
+              "updatedAt": "2026-05-17T13:32:54.429Z"
             }
+          }
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/devices/snapshots",
+      "method": "post",
+      "request": {
+        "name": "createDeviceSnapshotRequest",
+        "summary": "上报设备状态请求",
+        "value": {
+          "deviceName": "iPhone",
+          "batteryLevel": "76",
+          "locationSource": "gps",
+          "locationAddress": "北京市朝阳区",
+          "locationLongitude": 116.4074,
+          "locationLatitude": 39.9042
+        }
+      },
+      "responses": [
+        {
+          "status": "201",
+          "name": "createDeviceSnapshotSuccess",
+          "summary": "上报设备状态成功响应",
+          "value": {
+            "code": 200,
+            "message": "success",
+            "data": {
+              "id": "1",
+              "userId": "9",
+              "deviceName": "iPhone",
+              "screenStatus": "",
+              "screenLevel": "",
+              "batteryStatus": "",
+              "batteryLevel": "76",
+              "volumeLevel": "",
+              "bluetoothStatus": "",
+              "bluetoothName": "",
+              "wifiStatus": "",
+              "wifiName": "",
+              "gpsStatus": "",
+              "locationSource": "gps",
+              "locationAddress": "北京市朝阳区",
+              "locationLongitude": "116.4074",
+              "locationLatitude": "39.9042",
+              "createdAt": "2026-05-17T13:32:56.644Z"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/devices/me/snapshots/latest",
+      "method": "get",
+      "responses": [
+        {
+          "status": "200",
+          "name": "myLatestDeviceSnapshotSuccess",
+          "summary": "查询当前用户最新设备状态成功响应",
+          "value": {
+            "code": 200,
+            "message": "success",
+            "data": {
+              "id": "1",
+              "userId": "9",
+              "deviceName": "iPhone",
+              "screenStatus": "",
+              "screenLevel": "",
+              "batteryStatus": "",
+              "batteryLevel": "76",
+              "volumeLevel": "",
+              "bluetoothStatus": "",
+              "bluetoothName": "",
+              "wifiStatus": "",
+              "wifiName": "",
+              "gpsStatus": "",
+              "locationSource": "gps",
+              "locationAddress": "北京市朝阳区",
+              "locationLongitude": "116.4074",
+              "locationLatitude": "39.9042",
+              "createdAt": "2026-05-17T13:32:56.644Z"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/devices/me/snapshots",
+      "method": "get",
+      "responses": [
+        {
+          "status": "200",
+          "name": "myDeviceSnapshotsSuccess",
+          "summary": "查询当前用户设备历史成功响应",
+          "value": {
+            "code": 200,
+            "message": "success",
+            "data": [
+              {
+                "id": "1",
+                "userId": "9",
+                "deviceName": "iPhone",
+                "screenStatus": "",
+                "screenLevel": "",
+                "batteryStatus": "",
+                "batteryLevel": "76",
+                "volumeLevel": "",
+                "bluetoothStatus": "",
+                "bluetoothName": "",
+                "wifiStatus": "",
+                "wifiName": "",
+                "gpsStatus": "",
+                "locationSource": "gps",
+                "locationAddress": "北京市朝阳区",
+                "locationLongitude": "116.4074",
+                "locationLatitude": "39.9042",
+                "createdAt": "2026-05-17T13:32:56.644Z"
+              }
+            ],
+            "pagination": {
+              "page": 1,
+              "pageSize": 20,
+              "total": 1,
+              "totalPages": 1,
+              "isLast": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/devices/users/{userId}/snapshots",
+      "method": "get",
+      "responses": [
+        {
+          "status": "200",
+          "name": "friendDeviceSnapshotsSuccess",
+          "summary": "查询好友设备历史成功响应",
+          "value": {
+            "code": 200,
+            "message": "success",
+            "data": [
+              {
+                "id": "1",
+                "userId": "9",
+                "deviceName": "iPhone",
+                "screenStatus": "",
+                "screenLevel": "",
+                "batteryStatus": "",
+                "batteryLevel": "76",
+                "volumeLevel": "",
+                "bluetoothStatus": "",
+                "bluetoothName": "",
+                "wifiStatus": "",
+                "wifiName": "",
+                "gpsStatus": "",
+                "locationSource": "gps",
+                "locationAddress": "北京市朝阳区",
+                "locationLongitude": "116.4074",
+                "locationLatitude": "39.9042",
+                "createdAt": "2026-05-17T13:32:56.644Z"
+              }
+            ],
+            "pagination": {
+              "page": 1,
+              "pageSize": 20,
+              "total": 1,
+              "totalPages": 1,
+              "isLast": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/devices/users/{userId}/snapshots/latest",
+      "method": "get",
+      "responses": [
+        {
+          "status": "200",
+          "name": "friendLatestDeviceSnapshotSuccess",
+          "summary": "查询好友最新设备状态成功响应",
+          "value": {
+            "code": 200,
+            "message": "success",
+            "data": {
+              "id": "1",
+              "userId": "9",
+              "deviceName": "iPhone",
+              "screenStatus": "",
+              "screenLevel": "",
+              "batteryStatus": "",
+              "batteryLevel": "76",
+              "volumeLevel": "",
+              "bluetoothStatus": "",
+              "bluetoothName": "",
+              "wifiStatus": "",
+              "wifiName": "",
+              "gpsStatus": "",
+              "locationSource": "gps",
+              "locationAddress": "北京市朝阳区",
+              "locationLongitude": "116.4074",
+              "locationLatitude": "39.9042",
+              "createdAt": "2026-05-17T13:32:56.644Z"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/devices/users/{userId}/location-request",
+      "method": "post",
+      "responses": [
+        {
+          "status": "201",
+          "name": "requestLocationSuccess",
+          "summary": "请求好友位置成功响应",
+          "value": {
+            "code": 200,
+            "message": "success",
+            "data": "通知发送成功"
           }
         }
       ]

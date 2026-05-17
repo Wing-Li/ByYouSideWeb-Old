@@ -228,6 +228,79 @@ async function main(): Promise<void> {
       expectedStatus: 201,
     },
   );
+  const friendPushUpdateBody = {
+    pushDeviceType: 'ios',
+    pushAliasType: 'push_normal',
+    pushAlias: 'swagger-demo-device',
+  };
+  await request<ApiResponseBody<unknown>>(baseUrl, {
+    method: 'patch',
+    path: '/api/v1/users/me',
+    body: friendPushUpdateBody,
+    token: friendUserToken,
+    expectedStatus: 200,
+  });
+  const deviceSnapshotBody = {
+    deviceName: 'iPhone',
+    batteryLevel: '76',
+    locationSource: 'gps',
+    locationAddress: '北京市朝阳区',
+    locationLongitude: 116.4074,
+    locationLatitude: 39.9042,
+  };
+  const createDeviceSnapshotResponse = await request<ApiResponseBody<unknown>>(
+    baseUrl,
+    {
+      method: 'post',
+      path: '/api/v1/devices/snapshots',
+      body: deviceSnapshotBody,
+      token: friendUserToken,
+      expectedStatus: 201,
+    },
+  );
+  const myLatestDeviceSnapshotResponse = await request<
+    ApiResponseBody<unknown>
+  >(baseUrl, {
+    method: 'get',
+    path: '/api/v1/devices/me/snapshots/latest',
+    token: friendUserToken,
+    expectedStatus: 200,
+  });
+  const myDeviceSnapshotsResponse = await request<ApiResponseBody<unknown>>(
+    baseUrl,
+    {
+      method: 'get',
+      path: '/api/v1/devices/me/snapshots',
+      token: friendUserToken,
+      expectedStatus: 200,
+    },
+  );
+  const friendDeviceSnapshotsResponse = await request<ApiResponseBody<unknown>>(
+    baseUrl,
+    {
+      method: 'get',
+      path: `/api/v1/devices/users/${friendUserId}/snapshots`,
+      token: generatedUserToken,
+      expectedStatus: 200,
+    },
+  );
+  const friendLatestDeviceSnapshotResponse = await request<
+    ApiResponseBody<unknown>
+  >(baseUrl, {
+    method: 'get',
+    path: `/api/v1/devices/users/${friendUserId}/snapshots/latest`,
+    token: generatedUserToken,
+    expectedStatus: 200,
+  });
+  const requestLocationResponse = await request<ApiResponseBody<string>>(
+    baseUrl,
+    {
+      method: 'post',
+      path: `/api/v1/devices/users/${friendUserId}/location-request`,
+      token: generatedUserToken,
+      expectedStatus: 201,
+    },
+  );
   const deleteFriendResponse = await request<ApiResponseBody<string>>(baseUrl, {
     method: 'delete',
     path: `/api/v1/friends/${friendRelationId}`,
@@ -459,6 +532,83 @@ async function main(): Promise<void> {
             name: 'bindBestFriendSuccess',
             summary: '绑定亲密好友成功响应',
             value: redactSensitive(bindBestFriendResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/devices/snapshots',
+        method: 'post',
+        request: {
+          name: 'createDeviceSnapshotRequest',
+          summary: '上报设备状态请求',
+          value: deviceSnapshotBody,
+        },
+        responses: [
+          {
+            status: '201',
+            name: 'createDeviceSnapshotSuccess',
+            summary: '上报设备状态成功响应',
+            value: redactSensitive(createDeviceSnapshotResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/devices/me/snapshots/latest',
+        method: 'get',
+        responses: [
+          {
+            status: '200',
+            name: 'myLatestDeviceSnapshotSuccess',
+            summary: '查询当前用户最新设备状态成功响应',
+            value: redactSensitive(myLatestDeviceSnapshotResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/devices/me/snapshots',
+        method: 'get',
+        responses: [
+          {
+            status: '200',
+            name: 'myDeviceSnapshotsSuccess',
+            summary: '查询当前用户设备历史成功响应',
+            value: redactSensitive(myDeviceSnapshotsResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/devices/users/{userId}/snapshots',
+        method: 'get',
+        responses: [
+          {
+            status: '200',
+            name: 'friendDeviceSnapshotsSuccess',
+            summary: '查询好友设备历史成功响应',
+            value: redactSensitive(friendDeviceSnapshotsResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/devices/users/{userId}/snapshots/latest',
+        method: 'get',
+        responses: [
+          {
+            status: '200',
+            name: 'friendLatestDeviceSnapshotSuccess',
+            summary: '查询好友最新设备状态成功响应',
+            value: redactSensitive(friendLatestDeviceSnapshotResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/devices/users/{userId}/location-request',
+        method: 'post',
+        responses: [
+          {
+            status: '201',
+            name: 'requestLocationSuccess',
+            summary: '请求好友位置成功响应',
+            value: redactSensitive(requestLocationResponse.body),
           },
         ],
       },

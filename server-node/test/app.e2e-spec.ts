@@ -63,11 +63,34 @@ type FakeFriendRelation = {
   receiver: FakeUser;
 };
 
+type FakeDeviceSnapshot = {
+  id: bigint;
+  userId: bigint;
+  deviceName: string;
+  screenStatus: string;
+  screenLevel: string;
+  batteryStatus: string;
+  batteryLevel: string;
+  volumeLevel: string;
+  bluetoothStatus: string;
+  bluetoothName: string;
+  wifiStatus: string;
+  wifiName: string;
+  gpsStatus: string;
+  locationSource: string;
+  locationAddress: string;
+  locationLongitude: Prisma.Decimal;
+  locationLatitude: Prisma.Decimal;
+  createdAt: Date;
+};
+
 class FakePrismaService {
   private nextUserId = 1n;
   private nextFriendRelationId = 1n;
+  private nextDeviceSnapshotId = 1n;
   readonly users: FakeUser[] = [];
   readonly friendRelations: FakeFriendRelation[] = [];
+  readonly deviceSnapshots: FakeDeviceSnapshot[] = [];
 
   user = {
     findUnique: jest.fn(
@@ -281,6 +304,46 @@ class FakePrismaService {
     ),
   };
 
+  deviceSnapshot = {
+    create: jest.fn(
+      ({ data }: { data: Partial<FakeDeviceSnapshot> & { userId: bigint } }) =>
+        this.createDeviceSnapshot(data),
+    ),
+    count: jest.fn(
+      ({ where }: { where: { userId: bigint } }) =>
+        this.deviceSnapshots.filter((item) => item.userId === where.userId)
+          .length,
+    ),
+    findMany: jest.fn(
+      ({
+        where,
+        skip,
+        take,
+      }: {
+        where: { userId: bigint };
+        skip: number;
+        take: number;
+      }) =>
+        this.deviceSnapshots
+          .filter((item) => item.userId === where.userId)
+          .sort(
+            (left, right) =>
+              right.createdAt.getTime() - left.createdAt.getTime(),
+          )
+          .slice(skip, skip + take),
+    ),
+    findFirst: jest.fn(
+      ({ where }: { where: { userId: bigint } }) =>
+        this.deviceSnapshots
+          .filter((item) => item.userId === where.userId)
+          .sort(
+            (left, right) =>
+              right.createdAt.getTime() - left.createdAt.getTime(),
+          )
+          .at(0) ?? null,
+    ),
+  };
+
   memoir = {
     deleteMany: jest.fn(() => ({ count: 0 })),
   };
@@ -329,6 +392,33 @@ class FakePrismaService {
     };
     this.friendRelations.push(relation);
     return relation;
+  }
+
+  private createDeviceSnapshot(
+    data: Partial<FakeDeviceSnapshot> & { userId: bigint },
+  ): FakeDeviceSnapshot {
+    const snapshot: FakeDeviceSnapshot = {
+      id: this.nextDeviceSnapshotId++,
+      userId: data.userId,
+      deviceName: data.deviceName ?? '',
+      screenStatus: data.screenStatus ?? '',
+      screenLevel: data.screenLevel ?? '',
+      batteryStatus: data.batteryStatus ?? '',
+      batteryLevel: data.batteryLevel ?? '',
+      volumeLevel: data.volumeLevel ?? '',
+      bluetoothStatus: data.bluetoothStatus ?? '',
+      bluetoothName: data.bluetoothName ?? '',
+      wifiStatus: data.wifiStatus ?? '',
+      wifiName: data.wifiName ?? '',
+      gpsStatus: data.gpsStatus ?? '',
+      locationSource: data.locationSource ?? '',
+      locationAddress: data.locationAddress ?? '',
+      locationLongitude: data.locationLongitude ?? new Prisma.Decimal(0),
+      locationLatitude: data.locationLatitude ?? new Prisma.Decimal(0),
+      createdAt: new Date('2026-05-17T00:00:00.000Z'),
+    };
+    this.deviceSnapshots.push(snapshot);
+    return snapshot;
   }
 
   private updateFriendRelation(
@@ -668,6 +758,143 @@ describe('Friends (e2e)', () => {
       .set('Authorization', bob.token)
       .expect(200);
     expect(prisma.friendRelations).toHaveLength(0);
+  });
+
+  async function registerUser(
+    username: string,
+    email: string,
+  ): Promise<{ id: string; token: string }> {
+    const response = await request(app.getHttpServer())
+      .post('/api/v1/auth/register')
+      .send({
+        username,
+        password: 'ChangeMe_123456',
+        email,
+      })
+      .expect(201);
+    const body = response.body as {
+      data: { token: string; user: { id: string } };
+    };
+    return {
+      id: body.data.user.id,
+      token: body.data.token,
+    };
+  }
+
+  afterEach(async () => {
+    await app.close();
+  });
+});
+
+describe('Devices (e2e)', () => {
+  let app: INestApplication<App>;
+  let prisma: FakePrismaService;
+
+  beforeEach(async () => {
+    prisma = new FakePrismaService();
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [AppModule],
+    })
+      .overrideProvider(PrismaService)
+      .useValue(prisma)
+      .compile();
+
+    app = moduleFixture.createNestApplication();
+    setupApp(app);
+    setupSwagger(app);
+    await app.init();
+  });
+
+  it('设备上报、最新状态、好友查询和请求位置可以形成主链路', async () => {
+    const alice = await registerUser('alice_01', 'alice.devices@example.com');
+    const bob = await registerUser('bob_01', 'bob.devices@example.com');
+
+    const requestResponse = await request(app.getHttpServer())
+      .post('/api/v1/friends/requests')
+      .set('Authorization', alice.token)
+      .send({ toUserId: bob.id })
+      .expect(201);
+    const requestId = (requestResponse.body as { data: { id: string } }).data
+      .id;
+
+    await request(app.getHttpServer())
+      .post(`/api/v1/friends/requests/${requestId}/accept`)
+      .set('Authorization', bob.token)
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .patch('/api/v1/users/me')
+      .set('Authorization', bob.token)
+      .send({
+        pushDeviceType: 'ios',
+        pushAliasType: 'push_normal',
+        pushAlias: 'bob-device',
+      })
+      .expect(200);
+
+    await request(app.getHttpServer())
+      .post('/api/v1/devices/snapshots')
+      .set('Authorization', bob.token)
+      .send({
+        deviceName: 'iPhone',
+        batteryLevel: '76',
+        locationSource: 'gps',
+        locationAddress: '北京市朝阳区',
+        locationLongitude: 116.4074,
+        locationLatitude: 39.9042,
+      })
+      .expect(201)
+      .expect((response: Response) => {
+        expect(response.body).toMatchObject({
+          code: 200,
+          data: {
+            userId: bob.id,
+            deviceName: 'iPhone',
+            locationAddress: '北京市朝阳区',
+          },
+        });
+      });
+
+    await request(app.getHttpServer())
+      .get('/api/v1/devices/me/snapshots/latest')
+      .set('Authorization', bob.token)
+      .expect(200)
+      .expect((response: Response) => {
+        expect(response.body).toMatchObject({
+          data: {
+            userId: bob.id,
+            batteryLevel: '76',
+          },
+        });
+      });
+
+    await request(app.getHttpServer())
+      .get(`/api/v1/devices/users/${bob.id}/snapshots`)
+      .set('Authorization', alice.token)
+      .expect(200)
+      .expect((response: Response) => {
+        expect(response.body).toMatchObject({
+          code: 200,
+          data: [
+            {
+              userId: bob.id,
+              locationAddress: '北京市朝阳区',
+            },
+          ],
+          pagination: { total: 1 },
+        });
+      });
+
+    await request(app.getHttpServer())
+      .post(`/api/v1/devices/users/${bob.id}/location-request`)
+      .set('Authorization', alice.token)
+      .expect(201)
+      .expect((response: Response) => {
+        expect(response.body).toMatchObject({
+          code: 200,
+          data: '通知发送成功',
+        });
+      });
   });
 
   async function registerUser(

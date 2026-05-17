@@ -21,9 +21,9 @@
 | 迁移作业 Skill | 已完成 | 已创建 `.codex/skills/byyouside-node-migration/`，后续迁移任务应优先使用 |
 | Node 项目初始化 | 已完成 | `server-node/` NestJS 基础骨架、Swagger、统一响应、异常处理、健康检查和基础测试已完成 |
 | 数据模型设计 | 已完成 | Phase 2 已完成第一版 Prisma schema、migration SQL、Neon main/dev 数据库 migration 和 seed；已创建 Neon local 分支用于本地开发 |
-| API 文档编写 | 进行中 | Phase 1 已建立 Swagger/OpenAPI；Phase 3 已补充 Auth/User 接口文档和真实响应示例捕获；Phase 4 已补充 Friends 接口文档和真实响应示例捕获 |
-| 业务模块迁移 | 进行中 | Phase 4 好友关系模块第一版已完成并通过验证 |
-| 测试与验收 | 进行中 | Phase 1 已建立基础验证；Phase 3 已补充 Auth/User 测试；Phase 4 已补充 Friends 单元测试与 e2e 主链路测试 |
+| API 文档编写 | 进行中 | Phase 1 已建立 Swagger/OpenAPI；Phase 3 已补充 Auth/User 接口文档和真实响应示例捕获；Phase 4 已补充 Friends 接口文档和真实响应示例捕获；Phase 5 已补充 Devices 接口文档和真实响应示例捕获 |
+| 业务模块迁移 | 进行中 | Phase 5 设备与位置模块第一版已完成并通过验证 |
+| 测试与验收 | 进行中 | Phase 1 已建立基础验证；Phase 3 已补充 Auth/User 测试；Phase 4 已补充 Friends 单元测试与 e2e 主链路测试；Phase 5 已补充 Devices 单元测试与 e2e 主链路测试 |
 
 ## 已确认决策
 
@@ -293,7 +293,12 @@ server-node/
 | Friends | `GET /api/v1/friends` | `POST /api/friend/getMyFriend` | 已完成 |
 | Friends | `GET /api/v1/friends/requests/incoming` | `POST /api/friend/getRequestMeFriend` | 已完成 |
 | Friends | `POST /api/v1/friends/:id/best` | `POST /api/friend/bindBestFriend` | 已完成 |
-| Devices | 待设计 | `/api/device/*` | 未开始 |
+| Devices | `POST /api/v1/devices/snapshots` | `POST /api/device/add` | 已完成 |
+| Devices | `GET /api/v1/devices/me/snapshots` | `GET /api/device/myInfoList` | 已完成 |
+| Devices | `GET /api/v1/devices/me/snapshots/latest` | `GET /api/device/getMyLast` | 已完成 |
+| Devices | `GET /api/v1/devices/users/:userId/snapshots` | `GET /api/device/getByUserId` | 已完成 |
+| Devices | `GET /api/v1/devices/users/:userId/snapshots/latest` | `GET /api/device/getLastByUserId` | 已完成 |
+| Devices | `POST /api/v1/devices/users/:userId/location-request` | `POST /api/user/requestLocation` | 已完成 |
 | Memoirs | 待设计 | `/api/memoirs/*` | 未开始 |
 | Moments | 待设计 | `/api/moments/*` | 未开始 |
 | VIP | 待设计 | `/api/vip/*` | 未开始 |
@@ -621,7 +626,7 @@ server-node/
 
 ### Phase 5：设备与位置模块
 
-状态：未开始
+状态：已完成
 
 任务：
 
@@ -637,6 +642,16 @@ server-node/
 - 推送 provider 支持 mock/log 和真实调用。
 - 位置相关接口有权限控制。
 - API 文档说明清楚隐私边界。
+
+当前进展：
+
+- 已创建并验证 `docs/migration-plans/phase-05-devices-location.md`。
+- 已实现设备状态上报、当前用户设备历史、当前用户最新设备、指定好友设备历史、指定好友最新设备和请求好友位置接口。
+- 上报设备快照时会同步 `User.lastLocationAddress`、`lastLocationLongitude`、`lastLocationLatitude` 和 `lastLocationAt`。
+- 指定用户设备查询和请求位置已收紧为仅允许已接受好友关系访问；这是相对旧接口的有意隐私保护变化。
+- 已扩展 mock/log `PushService`，请求位置阶段只记录开发推送，真实友盟接入仍留到 Phase 9。
+- 已补充 Devices Swagger DTO、真实响应示例捕获、单元测试和 e2e 主链路测试。
+- 已通过 `npm run format`、`npm run lint`、`npm run test -- --runInBand`、`npm run test:e2e -- --runInBand`、`npm run build` 和 `npm run api:examples`。
 
 ### Phase 6：回忆录与瞬间模块
 
@@ -828,10 +843,10 @@ docs/migration-plans/
 
 ## 下一步建议
 
-下一步建议执行 Phase 5：
+下一步建议执行 Phase 6：
 
-1. 创建或更新 `docs/migration-plans/phase-05-devices-location.md`。
-2. 阅读旧 `DeviceInfoController.kt`、`DeviceInfo.kt`、`DeviceInfoRepository.kt`、`UserInfo.kt` 和 `PushApi.kt`。
-3. 明确设备快照、最近位置和请求位置推送的权限边界。
-4. 实现设备状态上报、当前用户设备历史、指定好友最新设备状态和请求位置推送接口。
+1. 创建或更新 `docs/migration-plans/phase-06-memoirs-moments.md`。
+2. 阅读旧 `MemoirsController.kt`、`Memoirs.kt`、`MemoirsRepository.kt`、`MomentsController.kt`、`Moments.kt`、`MomentsRepository.kt` 和 `FriendRepository.kt`。
+3. 明确回忆录、瞬间与好友关系 ID 的权限边界，以及删除好友后的内容清理策略。
+4. 实现回忆录与瞬间的创建、更新、删除、详情和分页列表接口。
 5. 补齐 Swagger DTO、真实示例捕获、单元测试和 e2e 测试。

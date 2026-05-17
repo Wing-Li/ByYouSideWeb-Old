@@ -21,6 +21,10 @@ export class PushService {
     this.logFriendPush('agreeAddFriend', payload);
   }
 
+  sendRequestLocation(payload: FriendPushPayload): void {
+    this.logFriendPush('requestLocation', payload);
+  }
+
   private logFriendPush(type: string, payload: FriendPushPayload): void {
     if (!payload.pushAlias || !payload.pushAliasType || !payload.deviceType) {
       return;
