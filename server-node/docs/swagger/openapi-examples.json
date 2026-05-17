@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-05-17T12:36:33.787Z",
-  "sourceBaseUrl": "http://localhost:3000",
+  "generatedAt": "2026-05-17T12:58:45.813Z",
+  "sourceBaseUrl": "http://localhost:3010",
   "note": "本文件由 npm run api:examples 通过真实 HTTP 请求生成。token 和密码已脱敏，验证码不会写入文档。",
   "examples": [
     {
@@ -10,9 +10,9 @@
         "name": "registerSuccessRequest",
         "summary": "注册成功请求",
         "value": {
-          "username": "demo_mp9ref67",
+          "username": "demo_mp9s6nyj",
           "password": "<demo-password>",
-          "email": "swagger.demo.mp9ref67@example.com"
+          "email": "swagger.demo.mp9s6nyj@example.com"
         }
       },
       "responses": [
@@ -26,9 +26,9 @@
             "data": {
               "token": "Bearer <captured-jwt-redacted>",
               "user": {
-                "id": "3",
-                "username": "demo_mp9ref67",
-                "email": "swagger.demo.mp9ref67@example.com",
+                "id": "4",
+                "username": "demo_mp9s6nyj",
+                "email": "swagger.demo.mp9s6nyj@example.com",
                 "nickname": "",
                 "avatarUrl": "",
                 "gender": "UNKNOWN",
@@ -50,8 +50,8 @@
                 "pushDeviceType": null,
                 "pushAliasType": null,
                 "pushAlias": null,
-                "createdAt": "2026-05-17T12:36:29.636Z",
-                "updatedAt": "2026-05-17T12:36:29.636Z"
+                "createdAt": "2026-05-17T12:58:26.857Z",
+                "updatedAt": "2026-05-17T12:58:26.857Z"
               }
             }
           }
@@ -83,10 +83,10 @@
                 "id": "2",
                 "username": "yyy101",
                 "email": "yyy101@yy.com",
-                "nickname": "",
+                "nickname": "示例用户",
                 "avatarUrl": "",
                 "gender": "UNKNOWN",
-                "bio": "",
+                "bio": "Swagger 真实示例捕获生成的测试资料。",
                 "birthday": null,
                 "role": "USER",
                 "status": "ACTIVE",
@@ -105,7 +105,7 @@
                 "pushAliasType": null,
                 "pushAlias": null,
                 "createdAt": "2026-05-17T08:10:17.314Z",
-                "updatedAt": "2026-05-17T08:10:17.314Z"
+                "updatedAt": "2026-05-17T12:36:32.702Z"
               }
             }
           }
@@ -137,10 +137,10 @@
               "id": "2",
               "username": "yyy101",
               "email": "yyy101@yy.com",
-              "nickname": "",
+              "nickname": "示例用户",
               "avatarUrl": "",
               "gender": "UNKNOWN",
-              "bio": "",
+              "bio": "Swagger 真实示例捕获生成的测试资料。",
               "birthday": null,
               "role": "USER",
               "status": "ACTIVE",
@@ -159,7 +159,7 @@
               "pushAliasType": null,
               "pushAlias": null,
               "createdAt": "2026-05-17T08:10:17.314Z",
-              "updatedAt": "2026-05-17T08:10:17.314Z"
+              "updatedAt": "2026-05-17T12:36:32.702Z"
             }
           }
         }
@@ -211,7 +211,7 @@
               "pushAliasType": null,
               "pushAlias": null,
               "createdAt": "2026-05-17T08:10:17.314Z",
-              "updatedAt": "2026-05-17T12:36:31.356Z"
+              "updatedAt": "2026-05-17T12:58:29.401Z"
             }
           }
         }
@@ -252,7 +252,7 @@
               "vipExpiresAt": null,
               "vipBindQuotaTotal": 0,
               "vipBindQuotaUsed": 0,
-              "destroyRequestedAt": "2026-05-17T12:36:32.032Z",
+              "destroyRequestedAt": "2026-05-17T12:58:30.069Z",
               "lastLocationAddress": "",
               "lastLocationLongitude": "0",
               "lastLocationLatitude": "0",
@@ -261,7 +261,7 @@
               "pushAliasType": null,
               "pushAlias": null,
               "createdAt": "2026-05-17T08:10:17.314Z",
-              "updatedAt": "2026-05-17T12:36:32.033Z"
+              "updatedAt": "2026-05-17T12:58:30.070Z"
             }
           }
         }
@@ -304,7 +304,7 @@
               "pushAliasType": null,
               "pushAlias": null,
               "createdAt": "2026-05-17T08:10:17.314Z",
-              "updatedAt": "2026-05-17T12:36:32.702Z"
+              "updatedAt": "2026-05-17T12:58:30.734Z"
             }
           }
         }
@@ -317,7 +317,7 @@
         "name": "passwordResetCodeRequest",
         "summary": "发送密码重置验证码请求",
         "value": {
-          "email": "swagger.demo.mp9ref67@example.com"
+          "email": "swagger.demo.mp9s6nyj@example.com"
         }
       },
       "responses": [
@@ -328,7 +328,369 @@
           "value": {
             "code": 200,
             "message": "success",
-            "data": "验证码已发送至：swagger.demo.mp9ref67@example.com"
+            "data": "验证码已发送至：swagger.demo.mp9s6nyj@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/friends/requests",
+      "method": "post",
+      "request": {
+        "name": "friendRequestCreateRequest",
+        "summary": "请求添加好友请求",
+        "value": {
+          "toUserId": "5"
+        }
+      },
+      "responses": [
+        {
+          "status": "201",
+          "name": "friendRequestCreateSuccess",
+          "summary": "请求添加好友成功响应",
+          "value": {
+            "code": 200,
+            "message": "success",
+            "data": {
+              "id": "1",
+              "requesterId": "4",
+              "receiverId": "5",
+              "requesterAlias": "",
+              "receiverAlias": "",
+              "isBestFriend": false,
+              "status": "PENDING",
+              "blockState": "NORMAL",
+              "friend": {
+                "id": "5",
+                "username": "friend_p9s6nyj",
+                "email": "swagger.friend.mp9s6nyj@example.com",
+                "nickname": "",
+                "avatarUrl": "",
+                "gender": "UNKNOWN",
+                "bio": "",
+                "birthday": null,
+                "role": "USER",
+                "status": "ACTIVE",
+                "uploadIntervalMinutes": 120,
+                "vipLevel": 0,
+                "vipSource": null,
+                "vipExpiresAt": null,
+                "vipBindQuotaTotal": 0,
+                "vipBindQuotaUsed": 0,
+                "destroyRequestedAt": null,
+                "lastLocationAddress": "",
+                "lastLocationLongitude": "0",
+                "lastLocationLatitude": "0",
+                "lastLocationAt": null,
+                "pushDeviceType": null,
+                "pushAliasType": null,
+                "pushAlias": null,
+                "createdAt": "2026-05-17T12:58:27.711Z",
+                "updatedAt": "2026-05-17T12:58:27.711Z"
+              },
+              "createdAt": "2026-05-17T12:58:32.938Z",
+              "updatedAt": "2026-05-17T12:58:32.938Z"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/friends/requests/incoming",
+      "method": "get",
+      "responses": [
+        {
+          "status": "200",
+          "name": "incomingFriendRequestsSuccess",
+          "summary": "查询请求我的好友成功响应",
+          "value": {
+            "code": 200,
+            "message": "success",
+            "data": [
+              {
+                "id": "1",
+                "requesterId": "4",
+                "receiverId": "5",
+                "requesterAlias": "",
+                "receiverAlias": "",
+                "isBestFriend": false,
+                "status": "PENDING",
+                "blockState": "NORMAL",
+                "friend": {
+                  "id": "4",
+                  "username": "demo_mp9s6nyj",
+                  "email": "swagger.demo.mp9s6nyj@example.com",
+                  "nickname": "",
+                  "avatarUrl": "",
+                  "gender": "UNKNOWN",
+                  "bio": "",
+                  "birthday": null,
+                  "role": "USER",
+                  "status": "ACTIVE",
+                  "uploadIntervalMinutes": 120,
+                  "vipLevel": 0,
+                  "vipSource": null,
+                  "vipExpiresAt": null,
+                  "vipBindQuotaTotal": 0,
+                  "vipBindQuotaUsed": 0,
+                  "destroyRequestedAt": null,
+                  "lastLocationAddress": "",
+                  "lastLocationLongitude": "0",
+                  "lastLocationLatitude": "0",
+                  "lastLocationAt": null,
+                  "pushDeviceType": null,
+                  "pushAliasType": null,
+                  "pushAlias": null,
+                  "createdAt": "2026-05-17T12:58:26.857Z",
+                  "updatedAt": "2026-05-17T12:58:26.857Z"
+                },
+                "createdAt": "2026-05-17T12:58:32.938Z",
+                "updatedAt": "2026-05-17T12:58:32.938Z"
+              }
+            ],
+            "pagination": {
+              "page": 1,
+              "pageSize": 20,
+              "total": 1,
+              "totalPages": 1,
+              "isLast": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/friends/requests/{id}/accept",
+      "method": "post",
+      "responses": [
+        {
+          "status": "201",
+          "name": "acceptFriendRequestSuccess",
+          "summary": "同意好友请求成功响应",
+          "value": {
+            "code": 200,
+            "message": "success",
+            "data": {
+              "id": "2",
+              "requesterId": "5",
+              "receiverId": "4",
+              "requesterAlias": "",
+              "receiverAlias": "",
+              "isBestFriend": false,
+              "status": "ACCEPTED",
+              "blockState": "NORMAL",
+              "friend": {
+                "id": "4",
+                "username": "demo_mp9s6nyj",
+                "email": "swagger.demo.mp9s6nyj@example.com",
+                "nickname": "",
+                "avatarUrl": "",
+                "gender": "UNKNOWN",
+                "bio": "",
+                "birthday": null,
+                "role": "USER",
+                "status": "ACTIVE",
+                "uploadIntervalMinutes": 120,
+                "vipLevel": 0,
+                "vipSource": null,
+                "vipExpiresAt": null,
+                "vipBindQuotaTotal": 0,
+                "vipBindQuotaUsed": 0,
+                "destroyRequestedAt": null,
+                "lastLocationAddress": "",
+                "lastLocationLongitude": "0",
+                "lastLocationLatitude": "0",
+                "lastLocationAt": null,
+                "pushDeviceType": null,
+                "pushAliasType": null,
+                "pushAlias": null,
+                "createdAt": "2026-05-17T12:58:26.857Z",
+                "updatedAt": "2026-05-17T12:58:26.857Z"
+              },
+              "createdAt": "2026-05-17T12:58:37.209Z",
+              "updatedAt": "2026-05-17T12:58:37.209Z"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/friends",
+      "method": "get",
+      "responses": [
+        {
+          "status": "200",
+          "name": "myFriendsSuccess",
+          "summary": "查询我的好友成功响应",
+          "value": {
+            "code": 200,
+            "message": "success",
+            "data": [
+              {
+                "id": "1",
+                "requesterId": "4",
+                "receiverId": "5",
+                "requesterAlias": "",
+                "receiverAlias": "",
+                "isBestFriend": false,
+                "status": "ACCEPTED",
+                "blockState": "NORMAL",
+                "friend": {
+                  "id": "5",
+                  "username": "friend_p9s6nyj",
+                  "email": "swagger.friend.mp9s6nyj@example.com",
+                  "nickname": "",
+                  "avatarUrl": "",
+                  "gender": "UNKNOWN",
+                  "bio": "",
+                  "birthday": null,
+                  "role": "USER",
+                  "status": "ACTIVE",
+                  "uploadIntervalMinutes": 120,
+                  "vipLevel": 0,
+                  "vipSource": null,
+                  "vipExpiresAt": null,
+                  "vipBindQuotaTotal": 0,
+                  "vipBindQuotaUsed": 0,
+                  "destroyRequestedAt": null,
+                  "lastLocationAddress": "",
+                  "lastLocationLongitude": "0",
+                  "lastLocationLatitude": "0",
+                  "lastLocationAt": null,
+                  "pushDeviceType": null,
+                  "pushAliasType": null,
+                  "pushAlias": null,
+                  "createdAt": "2026-05-17T12:58:27.711Z",
+                  "updatedAt": "2026-05-17T12:58:27.711Z"
+                },
+                "createdAt": "2026-05-17T12:58:32.938Z",
+                "updatedAt": "2026-05-17T12:58:36.771Z"
+              }
+            ],
+            "pagination": {
+              "page": 1,
+              "pageSize": 20,
+              "total": 1,
+              "totalPages": 1,
+              "isLast": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/friends/{id}/alias",
+      "method": "patch",
+      "request": {
+        "name": "updateFriendAliasRequest",
+        "summary": "修改好友备注请求",
+        "value": {
+          "friendAlias": "示例好友"
+        }
+      },
+      "responses": [
+        {
+          "status": "200",
+          "name": "updateFriendAliasSuccess",
+          "summary": "修改好友备注成功响应",
+          "value": {
+            "code": 200,
+            "message": "success",
+            "data": "修改成功"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/friends/{id}/block",
+      "method": "patch",
+      "request": {
+        "name": "updateFriendBlockRequest",
+        "summary": "拉黑好友请求",
+        "value": {
+          "isBlock": true
+        }
+      },
+      "responses": [
+        {
+          "status": "200",
+          "name": "updateFriendBlockSuccess",
+          "summary": "拉黑好友成功响应",
+          "value": {
+            "code": 200,
+            "message": "success",
+            "data": "好友关系建立不易。千万不要因为一些小事，失去一个要好的朋友！"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/friends/{id}/best",
+      "method": "post",
+      "responses": [
+        {
+          "status": "201",
+          "name": "bindBestFriendSuccess",
+          "summary": "绑定亲密好友成功响应",
+          "value": {
+            "code": 200,
+            "message": "success",
+            "data": {
+              "id": "2",
+              "requesterId": "5",
+              "receiverId": "4",
+              "requesterAlias": "示例好友",
+              "receiverAlias": "",
+              "isBestFriend": true,
+              "status": "ACCEPTED",
+              "blockState": "REQUESTER_BLOCKED_RECEIVER",
+              "friend": {
+                "id": "4",
+                "username": "demo_mp9s6nyj",
+                "email": "swagger.demo.mp9s6nyj@example.com",
+                "nickname": "",
+                "avatarUrl": "",
+                "gender": "UNKNOWN",
+                "bio": "",
+                "birthday": null,
+                "role": "USER",
+                "status": "ACTIVE",
+                "uploadIntervalMinutes": 120,
+                "vipLevel": 0,
+                "vipSource": null,
+                "vipExpiresAt": null,
+                "vipBindQuotaTotal": 0,
+                "vipBindQuotaUsed": 0,
+                "destroyRequestedAt": null,
+                "lastLocationAddress": "",
+                "lastLocationLongitude": "0",
+                "lastLocationLatitude": "0",
+                "lastLocationAt": null,
+                "pushDeviceType": null,
+                "pushAliasType": null,
+                "pushAlias": null,
+                "createdAt": "2026-05-17T12:58:26.857Z",
+                "updatedAt": "2026-05-17T12:58:26.857Z"
+              },
+              "createdAt": "2026-05-17T12:58:37.209Z",
+              "updatedAt": "2026-05-17T12:58:42.719Z"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/friends/{id}",
+      "method": "delete",
+      "responses": [
+        {
+          "status": "200",
+          "name": "deleteFriendSuccess",
+          "summary": "删除好友成功响应",
+          "value": {
+            "code": 200,
+            "message": "success",
+            "data": "删除简单，朋友难得。千万不要因为一些小事，失去一个要好的朋友！"
           }
         }
       ]

@@ -1,10 +1,10 @@
-# Node Project Standards
+# Node 项目规范
 
-Use these standards for the new `server-node/` backend.
+新 `server-node/` 后端使用本规范。
 
-## Architecture
+## 架构
 
-Default stack:
+默认技术栈：
 
 - NestJS
 - TypeScript
@@ -13,7 +13,7 @@ Default stack:
 - Swagger/OpenAPI
 - Jest + Supertest
 
-Recommended structure:
+推荐结构：
 
 ```text
 server-node/
@@ -52,102 +52,101 @@ server-node/
   .env.example
 ```
 
-## Module Rules
+## 模块规则
 
-- Keep one business domain per Nest module.
-- Put route definitions in controllers only.
-- Put business rules in services.
-- Put database access behind Prisma service or small repository helpers.
-- Keep DTOs near the module they describe.
-- Keep cross-cutting auth, response, filters, and guards under `common/`.
-- Keep external services under `integrations/`.
+- 一个 Nest module 只承载一个业务领域。
+- 路由定义只放在 controller。
+- 业务规则放在 service。
+- 数据访问通过 Prisma service 或小型 repository helper。
+- DTO 放在对应模块附近。
+- 鉴权、响应、过滤器和 Guard 等横切能力放在 `common/`。
+- 外部服务放在 `integrations/`。
 
-## TypeScript Rules
+## TypeScript 规则
 
-- Enable strict mode.
-- Avoid `any` unless there is a narrow, documented reason.
-- Use DTO classes for input validation.
-- Use explicit return types for public service methods.
-- Use enums for stable business states.
-- Do not use magic strings for roles, statuses, push types, or order sources.
+- 启用 strict 模式。
+- 避免 `any`，除非有明确且很窄的原因。
+- 使用 DTO class 做输入校验。
+- 公开 service 方法使用明确返回类型。
+- 对稳定业务状态使用 enum，不使用魔法字符串。
 
-## Prisma Rules
+## Prisma 规则
 
-- PostgreSQL is the source of truth.
-- Use Prisma migrations for schema changes.
-- Keep database names consistent, preferably `snake_case` through Prisma mapping where helpful.
-- Use `createdAt` and `updatedAt` consistently.
-- Use explicit relations and indexes for frequently queried fields.
-- Do not rely on old H2 schema or old generated IDs.
-- Seed default app config, VIP plans, and admin user.
+- PostgreSQL 是数据源事实标准。
+- 使用 Prisma migrations 管理 schema。
+- 数据库命名保持一致，必要时通过 Prisma mapping 统一为 `snake_case`。
+- 统一使用 `createdAt` 和 `updatedAt`。
+- 常用查询字段使用明确关系和索引。
+- 不依赖旧 H2 schema 或旧生成 ID。
+- seed 默认 App 配置、VIP 套餐和管理员用户。
 
-## Auth Rules
+## 鉴权规则
 
-- Use standard JWT payload fields:
-  - `sub`: user ID
-  - `iat`: issued at
-  - `exp`: expiration
-- Use guards for authenticated routes.
-- Use role guards for admin routes.
-- Do not store JWT secrets in source code.
-- Prefer refresh-token support only if explicitly planned.
+- 使用标准 JWT payload 字段：
+  - `sub`：用户 ID
+  - `iat`：签发时间
+  - `exp`：过期时间
+- 认证接口使用 Guard。
+- 管理接口使用角色 Guard。
+- 不在源码中保存 JWT secret。
+- 只有明确规划后再支持 refresh token。
 
-## Security Rules
+## 安全规则
 
-- Store password hashes only.
-- Prefer hashing verification codes.
-- Do not log passwords, tokens, verification codes, or secrets.
-- Read all secrets from environment variables.
-- Keep `.env.example` complete but fake.
-- Development mock providers must not accidentally send real mail or push.
+- 只存储密码 hash。
+- 验证码优先存储 hash。
+- 不记录密码、token、验证码或密钥日志。
+- 所有密钥从环境变量读取。
+- `.env.example` 保持完整但使用假值。
+- 开发环境 mock provider 不能误发真实邮件或推送。
 
-## External Integration Rules
+## 外部集成规则
 
-Mail:
+邮件：
 
-- Provide a mail service interface.
-- Support dev mock/log mode.
-- Use real SMTP only when explicitly enabled by env.
+- 提供邮件服务接口。
+- 支持开发 mock/log 模式。
+- 只有显式通过环境变量启用时才使用真实 SMTP。
 
-Umeng push:
+友盟推送：
 
-- Provide a push service interface.
-- Keep Android and iOS payload builders isolated.
-- Support dev mock/log mode.
-- Keep push message types typed.
+- 提供推送服务接口。
+- Android 和 iOS payload 构造隔离。
+- 支持开发 mock/log 模式。
+- 推送消息类型应有明确类型。
 
-网易云信 IM:
+网易云信 IM：
 
-- Do not implement.
-- Remove old coupling from VIP and user update flows.
+- 不实现。
+- 从 VIP 和用户更新流程中移除旧耦合。
 
-## Testing Rules
+## 测试规则
 
-Every migrated module should include:
+每个已迁移模块应包含：
 
-- Service unit tests for business rules.
-- E2E tests for important API flows.
-- Validation tests for bad inputs.
-- Permission tests for authenticated/admin routes.
+- 业务规则 service 单元测试。
+- 重要 API 流程 e2e 测试。
+- 错误输入校验测试。
+- 认证和管理员接口权限测试。
 
-Run focused tests after module work. Run broader tests before marking a phase complete.
+模块开发后运行聚焦测试；标记阶段完成前运行更广的检查。
 
-## Documentation Rules
+## 文档规则
 
-- Every public endpoint must appear in Swagger/OpenAPI.
-- Update `docs/NODE_MIGRATION_PLAN.md` when phase status changes.
-- Add module notes when behavior intentionally differs from old code.
-- Keep README files practical and current.
+- 每个公开接口必须出现在 Swagger/OpenAPI 中。
+- 阶段状态变化时更新 `docs/NODE_MIGRATION_PLAN.md`。
+- 有意改变旧行为时添加模块说明。
+- README 保持实用且最新。
 
-## Health Checks
+## 健康检查
 
-Before finishing a meaningful code change, prefer running:
+完成有意义的代码变更前，优先运行：
 
 - formatter
 - linter
 - typecheck
 - unit tests
-- e2e tests for touched module
-- Prisma generate/migrate validation when schema changed
+- 受影响模块的 e2e tests
+- schema 变化时运行 Prisma generate/migrate validation
 
-If a check cannot run, record why.
+如某项检查无法运行，记录原因。

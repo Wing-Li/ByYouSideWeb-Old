@@ -7,7 +7,14 @@ import { AppModule } from './../src/app.module';
 import { setupApp } from './../src/setup-app';
 import { setupSwagger } from './../src/setup-swagger';
 import { PrismaService } from './../src/database/prisma.service';
-import { Gender, Prisma, UserRole, UserStatus } from '@prisma/client';
+import {
+  FriendBlockState,
+  FriendStatus,
+  Gender,
+  Prisma,
+  UserRole,
+  UserStatus,
+} from '@prisma/client';
 
 type FakeUser = {
   id: bigint;
@@ -41,9 +48,26 @@ type FakeUser = {
   updatedAt: Date;
 };
 
+type FakeFriendRelation = {
+  id: bigint;
+  requesterId: bigint;
+  receiverId: bigint;
+  requesterAlias: string;
+  receiverAlias: string;
+  isBestFriend: boolean;
+  status: FriendStatus;
+  blockState: FriendBlockState;
+  createdAt: Date;
+  updatedAt: Date;
+  requester: FakeUser;
+  receiver: FakeUser;
+};
+
 class FakePrismaService {
   private nextUserId = 1n;
+  private nextFriendRelationId = 1n;
   readonly users: FakeUser[] = [];
+  readonly friendRelations: FakeFriendRelation[] = [];
 
   user = {
     findUnique: jest.fn(
@@ -142,10 +166,219 @@ class FakePrismaService {
     update: jest.fn(),
   };
 
-  $transaction = jest.fn((operations: Array<Promise<unknown>>) =>
-    Promise.all(operations),
+  friendRelation = {
+    findUnique: jest.fn(
+      ({
+        where,
+      }: {
+        where: {
+          id?: bigint;
+          requesterId_receiverId?: {
+            requesterId: bigint;
+            receiverId: bigint;
+          };
+        };
+      }) => this.findFriendRelation(where) ?? null,
+    ),
+    create: jest.fn(
+      ({
+        data,
+      }: {
+        data: {
+          requesterId: bigint;
+          receiverId: bigint;
+          status?: FriendStatus;
+        };
+      }) => this.createFriendRelation(data),
+    ),
+    update: jest.fn(
+      ({
+        where,
+        data,
+      }: {
+        where: { id: bigint };
+        data: Partial<FakeFriendRelation>;
+      }) => this.updateFriendRelation(where.id, data),
+    ),
+    upsert: jest.fn(
+      ({
+        where,
+        create,
+        update,
+      }: {
+        where: {
+          requesterId_receiverId: {
+            requesterId: bigint;
+            receiverId: bigint;
+          };
+        };
+        create: {
+          requesterId: bigint;
+          receiverId: bigint;
+          status?: FriendStatus;
+        };
+        update: Partial<FakeFriendRelation>;
+      }) => {
+        const existing = this.findFriendRelation(where);
+        if (existing) {
+          return this.updateFriendRelation(existing.id, update);
+        }
+        return this.createFriendRelation(create);
+      },
+    ),
+    deleteMany: jest.fn(({ where }: { where: { id: { in: bigint[] } } }) => {
+      const before = this.friendRelations.length;
+      for (const id of where.id.in) {
+        const index = this.friendRelations.findIndex((item) => item.id === id);
+        if (index >= 0) {
+          this.friendRelations.splice(index, 1);
+        }
+      }
+      return { count: before - this.friendRelations.length };
+    }),
+    updateMany: jest.fn(
+      ({
+        where,
+        data,
+      }: {
+        where: {
+          requesterId: bigint;
+          status: FriendStatus;
+          isBestFriend: boolean;
+          NOT?: { id: bigint };
+        };
+        data: Partial<FakeFriendRelation>;
+      }) => {
+        let count = 0;
+        for (const relation of this.friendRelations) {
+          if (
+            relation.requesterId === where.requesterId &&
+            relation.status === where.status &&
+            relation.isBestFriend === where.isBestFriend &&
+            relation.id !== where.NOT?.id
+          ) {
+            Object.assign(relation, data);
+            count += 1;
+          }
+        }
+        return { count };
+      },
+    ),
+    count: jest.fn(
+      ({ where }: { where: FriendWhere }) =>
+        this.filterFriendRelations(where).length,
+    ),
+    findMany: jest.fn(
+      ({
+        where,
+        skip,
+        take,
+      }: {
+        where: FriendWhere;
+        skip: number;
+        take: number;
+      }) => this.filterFriendRelations(where).slice(skip, skip + take),
+    ),
+  };
+
+  memoir = {
+    deleteMany: jest.fn(() => ({ count: 0 })),
+  };
+
+  moment = {
+    deleteMany: jest.fn(() => ({ count: 0 })),
+  };
+
+  $transaction = jest.fn(
+    (
+      operationsOrCallback:
+        | Array<Promise<unknown>>
+        | ((tx: FakePrismaService) => Promise<unknown>),
+    ) => {
+      if (typeof operationsOrCallback === 'function') {
+        return operationsOrCallback(this);
+      }
+      return Promise.all(operationsOrCallback);
+    },
   );
+
+  private createFriendRelation(data: {
+    requesterId: bigint;
+    receiverId: bigint;
+    status?: FriendStatus;
+  }): FakeFriendRelation {
+    const now = new Date('2026-05-17T00:00:00.000Z');
+    const requester = this.users.find((user) => user.id === data.requesterId);
+    const receiver = this.users.find((user) => user.id === data.receiverId);
+    if (!requester || !receiver) {
+      throw new Error('user not found');
+    }
+    const relation: FakeFriendRelation = {
+      id: this.nextFriendRelationId++,
+      requesterId: data.requesterId,
+      receiverId: data.receiverId,
+      requesterAlias: '',
+      receiverAlias: '',
+      isBestFriend: false,
+      status: data.status ?? FriendStatus.PENDING,
+      blockState: FriendBlockState.NORMAL,
+      createdAt: now,
+      updatedAt: now,
+      requester,
+      receiver,
+    };
+    this.friendRelations.push(relation);
+    return relation;
+  }
+
+  private updateFriendRelation(
+    id: bigint,
+    data: Partial<FakeFriendRelation>,
+  ): FakeFriendRelation {
+    const relation = this.friendRelations.find((item) => item.id === id);
+    if (!relation) {
+      throw new Error('friend relation not found');
+    }
+    Object.assign(relation, data, {
+      updatedAt: new Date('2026-05-17T00:01:00.000Z'),
+    });
+    return relation;
+  }
+
+  private findFriendRelation(where: {
+    id?: bigint;
+    requesterId_receiverId?: { requesterId: bigint; receiverId: bigint };
+  }): FakeFriendRelation | undefined {
+    return this.friendRelations.find(
+      (relation) =>
+        relation.id === where.id ||
+        (where.requesterId_receiverId !== undefined &&
+          relation.requesterId === where.requesterId_receiverId.requesterId &&
+          relation.receiverId === where.requesterId_receiverId.receiverId),
+    );
+  }
+
+  private filterFriendRelations(where: FriendWhere): FakeFriendRelation[] {
+    return this.friendRelations
+      .filter(
+        (relation) =>
+          (where.requesterId === undefined ||
+            relation.requesterId === where.requesterId) &&
+          (where.receiverId === undefined ||
+            relation.receiverId === where.receiverId) &&
+          where.status.in.includes(relation.status),
+      )
+      .sort(
+        (left, right) => right.updatedAt.getTime() - left.updatedAt.getTime(),
+      );
+  }
 }
+
+type FriendWhere = {
+  requesterId?: bigint;
+  receiverId?: bigint;
+  status: { in: FriendStatus[] };
+};
 
 describe('HealthController (e2e)', () => {
   let app: INestApplication<App>;
@@ -328,6 +561,135 @@ describe('Auth and Users (e2e)', () => {
         });
       });
   });
+
+  afterEach(async () => {
+    await app.close();
+  });
+});
+
+describe('Friends (e2e)', () => {
+  let app: INestApplication<App>;
+  let prisma: FakePrismaService;
+
+  beforeEach(async () => {
+    prisma = new FakePrismaService();
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [AppModule],
+    })
+      .overrideProvider(PrismaService)
+      .useValue(prisma)
+      .compile();
+
+    app = moduleFixture.createNestApplication();
+    setupApp(app);
+    setupSwagger(app);
+    await app.init();
+  });
+
+  it('好友请求、同意、列表、备注、拉黑、绑定亲密好友和删除可以形成闭环', async () => {
+    const alice = await registerUser('alice_01', 'alice@example.com');
+    const bob = await registerUser('bob_01', 'bob@example.com');
+
+    const requestResponse = await request(app.getHttpServer())
+      .post('/api/v1/friends/requests')
+      .set('Authorization', alice.token)
+      .send({ toUserId: bob.id })
+      .expect(201);
+    const requestId = (requestResponse.body as { data: { id: string } }).data
+      .id;
+
+    await request(app.getHttpServer())
+      .get('/api/v1/friends/requests/incoming')
+      .set('Authorization', bob.token)
+      .expect(200)
+      .expect((response: Response) => {
+        expect(response.body).toMatchObject({
+          code: 200,
+          data: [
+            {
+              id: requestId,
+              status: FriendStatus.PENDING,
+              friend: { username: 'alice_01' },
+            },
+          ],
+          pagination: { total: 1 },
+        });
+      });
+
+    const acceptResponse = await request(app.getHttpServer())
+      .post(`/api/v1/friends/requests/${requestId}/accept`)
+      .set('Authorization', bob.token)
+      .expect(201);
+    const bobRelationId = (acceptResponse.body as { data: { id: string } }).data
+      .id;
+
+    await request(app.getHttpServer())
+      .get('/api/v1/friends')
+      .set('Authorization', alice.token)
+      .expect(200)
+      .expect((response: Response) => {
+        expect(response.body).toMatchObject({
+          data: [
+            {
+              status: FriendStatus.ACCEPTED,
+              friend: { username: 'bob_01' },
+            },
+          ],
+        });
+      });
+
+    await request(app.getHttpServer())
+      .patch(`/api/v1/friends/${bobRelationId}/alias`)
+      .set('Authorization', bob.token)
+      .send({ friendAlias: '小艾' })
+      .expect(200)
+      .expect((response: Response) => {
+        expect(response.body).toMatchObject({ code: 200, data: '修改成功' });
+      });
+
+    await request(app.getHttpServer())
+      .patch(`/api/v1/friends/${bobRelationId}/block`)
+      .set('Authorization', bob.token)
+      .send({ isBlock: true })
+      .expect(200);
+
+    await request(app.getHttpServer())
+      .post(`/api/v1/friends/${bobRelationId}/best`)
+      .set('Authorization', bob.token)
+      .expect(201)
+      .expect((response: Response) => {
+        expect(response.body).toMatchObject({
+          data: { isBestFriend: true },
+        });
+      });
+
+    await request(app.getHttpServer())
+      .delete(`/api/v1/friends/${bobRelationId}`)
+      .set('Authorization', bob.token)
+      .expect(200);
+    expect(prisma.friendRelations).toHaveLength(0);
+  });
+
+  async function registerUser(
+    username: string,
+    email: string,
+  ): Promise<{ id: string; token: string }> {
+    const response = await request(app.getHttpServer())
+      .post('/api/v1/auth/register')
+      .send({
+        username,
+        password: 'ChangeMe_123456',
+        email,
+      })
+      .expect(201);
+    const body = response.body as {
+      data: { token: string; user: { id: string } };
+    };
+    return {
+      id: body.data.user.id,
+      token: body.data.token,
+    };
+  }
 
   afterEach(async () => {
     await app.close();

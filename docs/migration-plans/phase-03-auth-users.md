@@ -1,17 +1,17 @@
 # Phase 03 认证与用户模块执行计划
 
-Status: Verified
+状态：已验证
 
-Allowed statuses:
+允许状态：
 
-- Draft
-- In Review
-- Approved For Implementation
-- In Progress
-- Implemented
-- Verified
-- Closed
-- Blocked
+- 草稿
+- 审阅中
+- 批准实现
+- 实现中
+- 已实现
+- 已验证
+- 已关闭
+- 阻塞
 
 ## Goal
 
@@ -235,9 +235,9 @@ Reviewer notes:
 
 | Date | Status | Notes |
 | --- | --- | --- |
-| 2026-05-17 | In Progress | 阅读迁移文档、旧用户/认证代码与项目规范后创建计划 |
-| 2026-05-17 | Implemented | 实现 Auth/User DTO、标准 JWT、JWT guard、当前用户 decorator、mock/log 邮件 provider、AuthController/AuthService、UsersController/UsersService |
-| 2026-05-17 | Verified | format、lint、unit test、e2e test、build、Swagger JSON、健康检查和 seed 管理员登录验证通过 |
+| 2026-05-17 | 实现中 | 阅读迁移文档、旧用户/认证代码与项目规范后创建计划 |
+| 2026-05-17 | 已实现 | 实现 Auth/User DTO、标准 JWT、JWT guard、当前用户 decorator、mock/log 邮件 provider、AuthController/AuthService、UsersController/UsersService |
+| 2026-05-17 | 已验证 | format、lint、unit test、e2e test、build、Swagger JSON、健康检查和 seed 管理员登录验证通过 |
 
 ## Completion Record
 

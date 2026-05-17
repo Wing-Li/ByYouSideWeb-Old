@@ -1,34 +1,34 @@
-# Module Execution Plan Standard
+# 模块执行计划规范
 
-Use this standard before implementing any large ByYouSide migration task.
+在实现任何较大的 ByYouSide 迁移任务前，使用本规范创建或更新执行计划。
 
-## Purpose
+## 目的
 
-Module execution plans prevent context loss during long migrations. They force Codex to read legacy code first, write down the real behavior, review the intended design, then implement in controlled steps.
+模块执行计划用于避免长周期迁移中的上下文丢失。它要求先阅读旧代码，记录真实行为，审阅新设计，再按受控步骤实现。
 
-## When a Plan Is Required
+## 何时必须创建计划
 
-Create or update a plan before coding when the task involves:
+当任务涉及以下内容时，必须在编码前创建或更新计划：
 
-- A full business module, such as auth/users, friends, devices/location, memoirs, moments, VIP, config, announcements, feedback, or versions.
-- A cross-cutting system, such as Prisma schema, auth/JWT, response envelope, exception handling, API docs, seed scripts, tests, mail, or push.
-- More than one module.
-- Database schema changes.
-- Public API design or route changes.
-- Security, permissions, or external integrations.
-- Any task likely to span more than one work session.
+- 完整业务模块，例如认证/用户、好友、设备/位置、回忆录、瞬间、VIP、配置、公告、反馈或版本。
+- 跨模块系统，例如 Prisma schema、认证/JWT、统一响应、异常处理、API 文档、seed 脚本、测试、邮件或推送。
+- 涉及多个模块。
+- 数据库 schema 变化。
+- 公开 API 设计或路由变化。
+- 安全、权限或外部集成。
+- 任何可能跨多个工作会话的任务。
 
-For tiny fixes within an already planned module, update the existing plan rather than creating a new one.
+对于已经有计划的小修小补，更新现有计划，不要另建重复计划。
 
-## File Location
+## 文件位置
 
-Store plans in:
+计划文档放在：
 
 ```text
 docs/migration-plans/
 ```
 
-Suggested names:
+建议命名：
 
 ```text
 docs/migration-plans/phase-01-node-foundation.md
@@ -41,197 +41,197 @@ docs/migration-plans/phase-07-vip.md
 docs/migration-plans/phase-08-config-content-version.md
 ```
 
-## Required Workflow
+## 必需流程
 
-1. **Read legacy code** using `legacy-reading-checklist.md`.
-2. **Create or update the plan** before writing Node code.
-3. **Self-review the plan** against legacy evidence.
-4. **Resolve gaps** by reading more code or asking the user.
-5. **Implement in phases**.
-6. **Update the plan after each meaningful subtask**.
-7. **Close the plan** only after code, docs, tests, and migration status are updated.
+1. 使用 `legacy-reading-checklist.md` 阅读旧代码。
+2. 写 Node 代码前创建或更新计划。
+3. 根据旧代码证据自审计划。
+4. 通过继续读代码或询问用户解决缺口。
+5. 分阶段实现。
+6. 每完成一个有意义的子任务后更新计划。
+7. 只有在代码、文档、测试和迁移状态都更新后，才能关闭计划。
 
-## Review Rules
+## 审阅规则
 
-Before implementation, the plan must answer:
+实现前，计划必须回答：
 
-- What old code was read?
-- What exact behavior was observed?
-- What behavior will intentionally change?
-- What API will App developers use?
-- What data model changes are needed?
-- What tests prove the behavior?
-- What Swagger real examples will be captured?
-- What remains uncertain?
+- 已阅读哪些旧代码？
+- 观察到的旧行为是什么？
+- 哪些行为会有意改变？
+- App 开发者应该使用哪些新 API？
+- 需要哪些数据模型变化？
+- 哪些测试可以证明行为正确？
+- 会捕获哪些 Swagger 真实示例？
+- 仍有什么不确定事项？
 
-If any answer is missing, do not start coding the module.
+如果任一问题没有答案，不要开始实现该模块。
 
-## Template
+## 模板
 
 ```markdown
-# <Module Or Phase Name> Execution Plan
+# <模块或阶段名称> 执行计划
 
-Status: Draft
+状态：草稿
 
-Allowed statuses:
+允许状态：
 
-- Draft
-- In Review
-- Approved For Implementation
-- In Progress
-- Implemented
-- Verified
-- Closed
-- Blocked
+- 草稿
+- 审阅中
+- 批准实现
+- 实现中
+- 已实现
+- 已验证
+- 已关闭
+- 阻塞
 
-## Goal
+## 目标
 
-Describe the module or feature being migrated and the intended outcome.
+说明要迁移的模块或功能，以及预期结果。
 
-## Scope
+## 范围
 
-In scope:
-
-- 
-
-Out of scope:
+范围内：
 
 - 
 
-## Legacy Evidence
+范围外：
 
-Files read:
+- 
+
+## 旧代码证据
+
+已阅读文件：
 
 - `src/main/kotlin/...`
 
-Legacy behavior summary:
+旧行为摘要：
 
-- Routes:
-- Auth/current user:
-- Request fields:
-- Response shape:
-- Validation:
-- Data reads/writes:
-- External side effects:
-- Error codes:
-- Initialization/default data:
+- 路由：
+- 鉴权/当前用户：
+- 请求字段：
+- 响应结构：
+- 校验规则：
+- 数据读写：
+- 外部副作用：
+- 错误码：
+- 初始化/默认数据：
 
-## Intentional Changes
+## 有意变化
 
-List differences from the old backend and why they are acceptable.
+列出和旧后端不同的地方，并说明为什么可以接受。
 
 - 
 
-## New API Design
+## 新 API 设计
 
-Routes:
+路由：
 
-| Method | Path | Auth | Description | Old reference |
+| 方法 | 路径 | 鉴权 | 说明 | 旧接口参考 |
 | --- | --- | --- | --- | --- |
 | | | | | |
 
-Response notes:
+响应说明：
 
 - 
 
-Error codes:
+错误码：
 
 - 
 
-Swagger/OpenAPI requirements:
+Swagger/OpenAPI 要求：
 
 - 
 
-## Data Model Design
+## 数据模型设计
 
-Prisma models or model changes:
-
-- 
-
-Indexes/constraints:
+Prisma model 或 model 变化：
 
 - 
 
-Seed data:
+索引/约束：
 
 - 
 
-## Implementation Tasks
+种子数据：
 
-- [ ] DTOs and validation
-- [ ] Controller routes
-- [ ] Service business logic
+- 
+
+## 实现任务
+
+- [ ] DTO 和校验
+- [ ] Controller 路由
+- [ ] Service 业务逻辑
 - [ ] Prisma schema/migration
-- [ ] Seed updates
-- [ ] Auth/role guards
-- [ ] Swagger/OpenAPI docs
-- [ ] Swagger real example capture
-- [ ] Unit tests
-- [ ] E2E tests
-- [ ] Migration documentation updates
+- [ ] Seed 更新
+- [ ] 鉴权/角色 Guard
+- [ ] Swagger/OpenAPI 文档
+- [ ] Swagger 真实示例捕获
+- [ ] 单元测试
+- [ ] E2E 测试
+- [ ] 迁移文档更新
 
-## Verification Plan
+## 验证计划
 
-Commands to run:
+需要运行的命令：
 
 ```text
 
 ```
 
-Manual checks:
+手动检查：
 
 - 
 
-## Risks And Open Questions
+## 风险与开放问题
 
 - 
 
-## Review Notes
+## 审阅记录
 
-Plan review result:
+计划审阅结果：
 
-- [ ] Legacy behavior fully covered
-- [ ] API docs plan is clear
-- [ ] Data model plan is clear
-- [ ] Tests are adequate
-- [ ] No unresolved blocker remains
+- [ ] 旧行为已完整覆盖
+- [ ] API 文档计划清晰
+- [ ] 数据模型计划清晰
+- [ ] 测试计划足够
+- [ ] 没有未解决的阻塞问题
 
-Reviewer notes:
+审阅备注：
 
 - 
 
-## Progress Log
+## 进度记录
 
-| Date | Status | Notes |
+| 日期 | 状态 | 说明 |
 | --- | --- | --- |
-| YYYY-MM-DD | Draft | Initial plan |
+| YYYY-MM-DD | 草稿 | 创建初始计划 |
 
-## Completion Record
+## 完成记录
 
-Completed code:
-
-- 
-
-Completed docs:
+已完成代码：
 
 - 
 
-Verification results:
+已完成文档：
 
 - 
 
-Known follow-ups:
+验证结果：
+
+- 
+
+已知后续：
 
 - 
 ```
 
-## Status Rules
+## 状态规则
 
-- Use `Draft` while gathering legacy evidence.
-- Use `In Review` while checking the plan against old code and project standards.
-- Use `Approved For Implementation` only when no blocking uncertainty remains.
-- Use `In Progress` during implementation.
-- Use `Implemented` when code is written but verification is not complete.
-- Use `Verified` when tests/checks have passed.
-- Use `Closed` when the migration plan, API docs, and global migration status are all updated.
-- Use `Blocked` when user input or a technical decision is required.
+- 收集旧代码证据时使用 `草稿`。
+- 对照旧代码和项目规范检查计划时使用 `审阅中`。
+- 没有阻塞性不确定问题时使用 `批准实现`。
+- 实现过程中使用 `实现中`。
+- 代码已写完但尚未完成验证时使用 `已实现`。
+- 测试和检查通过后使用 `已验证`。
+- 迁移计划、API 文档和总迁移状态都更新后使用 `已关闭`。
+- 需要用户输入或技术决策时使用 `阻塞`。

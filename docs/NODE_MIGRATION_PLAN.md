@@ -21,9 +21,9 @@
 | 迁移作业 Skill | 已完成 | 已创建 `.codex/skills/byyouside-node-migration/`，后续迁移任务应优先使用 |
 | Node 项目初始化 | 已完成 | `server-node/` NestJS 基础骨架、Swagger、统一响应、异常处理、健康检查和基础测试已完成 |
 | 数据模型设计 | 已完成 | Phase 2 已完成第一版 Prisma schema、migration SQL、Neon main/dev 数据库 migration 和 seed；已创建 Neon local 分支用于本地开发 |
-| API 文档编写 | 进行中 | Phase 1 已建立 Swagger/OpenAPI；Phase 3 已补充 Auth/User 接口文档和真实响应示例捕获 |
-| 业务模块迁移 | 进行中 | Phase 3 认证与用户模块第一版已完成并通过验证 |
-| 测试与验收 | 进行中 | Phase 1 已建立基础验证；Phase 3 已补充 Auth/User 单元测试与 e2e 主链路测试 |
+| API 文档编写 | 进行中 | Phase 1 已建立 Swagger/OpenAPI；Phase 3 已补充 Auth/User 接口文档和真实响应示例捕获；Phase 4 已补充 Friends 接口文档和真实响应示例捕获 |
+| 业务模块迁移 | 进行中 | Phase 4 好友关系模块第一版已完成并通过验证 |
+| 测试与验收 | 进行中 | Phase 1 已建立基础验证；Phase 3 已补充 Auth/User 测试；Phase 4 已补充 Friends 单元测试与 e2e 主链路测试 |
 
 ## 已确认决策
 
@@ -284,7 +284,15 @@ server-node/
 | Auth | `POST /api/v1/auth/password-reset/confirm` | `POST /api/user/resetPassVerifyCode` | 已完成 |
 | Users | `GET /api/v1/users/me` | `POST /api/user/getMyInfo` | 已完成 |
 | Users | `PATCH /api/v1/users/me` | `POST /api/user/update` | 已完成 |
-| Friends | 待设计 | `/api/friend/*` | 未开始 |
+| Friends | `POST /api/v1/friends/requests` | `POST /api/friend/request` | 已完成 |
+| Friends | `POST /api/v1/friends/requests/:id/accept` | `POST /api/friend/agreeRequest` | 已完成 |
+| Friends | `POST /api/v1/friends/requests/:id/reject` | `POST /api/friend/rejectRequest` | 已完成 |
+| Friends | `DELETE /api/v1/friends/:id` | `POST /api/friend/delete` | 已完成 |
+| Friends | `PATCH /api/v1/friends/:id/block` | `POST /api/friend/block` | 已完成 |
+| Friends | `PATCH /api/v1/friends/:id/alias` | `POST /api/friend/update` | 已完成 |
+| Friends | `GET /api/v1/friends` | `POST /api/friend/getMyFriend` | 已完成 |
+| Friends | `GET /api/v1/friends/requests/incoming` | `POST /api/friend/getRequestMeFriend` | 已完成 |
+| Friends | `POST /api/v1/friends/:id/best` | `POST /api/friend/bindBestFriend` | 已完成 |
 | Devices | 待设计 | `/api/device/*` | 未开始 |
 | Memoirs | 待设计 | `/api/memoirs/*` | 未开始 |
 | Moments | 待设计 | `/api/moments/*` | 未开始 |
@@ -581,7 +589,7 @@ server-node/
 
 ### Phase 4：好友关系模块
 
-状态：未开始
+状态：已完成
 
 任务：
 
@@ -600,6 +608,16 @@ server-node/
 - 明确新关系模型是单条记录还是双向记录。
 - 所有状态流转有测试。
 - 删除好友时关联内容处理策略明确。
+
+当前进展：
+
+- 已创建并验证 `docs/migration-plans/phase-04-friends.md`。
+- 新系统第一版继续采用双向 `FriendRelation` 记录，保留旧系统对“我的关系 ID”、双方列表、回忆录和瞬间关联清理的业务语义。
+- 已实现请求好友、同意请求、拒绝请求、删除好友、拉黑/取消拉黑、修改备注、查询我的好友、查询请求我的好友和绑定亲密好友接口。
+- 删除好友会删除双方关系记录，并清理双方关系 ID 下的回忆录和瞬间。
+- 已添加 mock/log `PushService`，好友申请和同意请求只记录开发推送，不发送真实友盟消息；真实友盟接入留到 Phase 9。
+- 已补充 Friends Swagger DTO、真实响应示例捕获、单元测试和 e2e 主链路测试。
+- 已通过 `npm run format`、`npm run lint`、`npm run test -- --runInBand`、`npm run test:e2e -- --runInBand`、`npm run build` 和 `npm run api:examples`。
 
 ### Phase 5：设备与位置模块
 
@@ -810,10 +828,10 @@ docs/migration-plans/
 
 ## 下一步建议
 
-下一步建议执行 Phase 4：
+下一步建议执行 Phase 5：
 
-1. 创建或更新 `docs/migration-plans/phase-04-friends.md`。
-2. 阅读旧 `FriendController.kt`、`Friend.kt`、`FriendRepository.kt`、相关回忆录/瞬间仓库和 `PushApi.kt`。
-3. 明确好友关系在新系统中采用单条记录模型还是双向记录模型。
-4. 实现好友申请、同意、拒绝、删除、拉黑、备注、列表和亲密好友绑定接口。
-5. 补齐 Swagger DTO、单元测试和 e2e 测试。
+1. 创建或更新 `docs/migration-plans/phase-05-devices-location.md`。
+2. 阅读旧 `DeviceInfoController.kt`、`DeviceInfo.kt`、`DeviceInfoRepository.kt`、`UserInfo.kt` 和 `PushApi.kt`。
+3. 明确设备快照、最近位置和请求位置推送的权限边界。
+4. 实现设备状态上报、当前用户设备历史、指定好友最新设备状态和请求位置推送接口。
+5. 补齐 Swagger DTO、真实示例捕获、单元测试和 e2e 测试。

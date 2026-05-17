@@ -1,57 +1,57 @@
-# Swagger Real Example Capture Standard
+# Swagger 真实示例捕获规范
 
-Use this standard when adding or changing public APIs in `server-node/`.
+新增或修改 `server-node/` 公开 API 时使用本规范。
 
-## Goal
+## 目标
 
-Swagger UI is the primary API documentation viewer. Request and response examples should come from real local HTTP requests so frontend developers can preview realistic results without manually executing every endpoint.
+Swagger UI 是主要 API 文档入口。请求和响应示例应来自本地真实 HTTP 请求，让前端开发者不必手动执行每个接口，也能预览接近真实的结果。
 
-## Command
+## 命令
 
-Run from `server-node/` after the local service is started:
+本地服务启动后，在 `server-node/` 下运行：
 
 ```bash
 npm run api:examples
 ```
 
-Defaults:
+默认值：
 
 - `API_BASE_URL=http://localhost:3000`
 - `SWAGGER_DEMO_EMAIL=yyy101@yy.com`
 - `SWAGGER_DEMO_PASSWORD=123123123`
 
-The defaults are local/test-only values. They may be overridden with environment variables when needed.
+这些默认值只用于本地/测试。需要时可以用环境变量覆盖。
 
-## Files
+## 文件
 
-- Capture script: `server-node/scripts/capture-api-examples.ts`
-- Generated examples: `server-node/docs/swagger/openapi-examples.json`
-- Swagger loader: `server-node/src/setup-swagger.ts`
+- 捕获脚本：`server-node/scripts/capture-api-examples.ts`
+- 生成示例：`server-node/docs/swagger/openapi-examples.json`
+- Swagger 加载器：`server-node/src/setup-swagger.ts`
 
-The generated JSON may be committed. It must not contain raw tokens, verification codes, database URLs, real service secrets, or production credentials.
+生成的 JSON 可以提交到仓库，但不得包含原始 token、验证码、数据库 URL、真实服务密钥或生产凭据。
 
-## Capture Rules
+## 捕获规则
 
-- Examples must be captured from real HTTP responses.
-- Do not hand-write response examples to imitate real results.
-- Swagger startup only reads the generated JSON and injects examples into OpenAPI. It must not send HTTP requests.
-- Write examples atomically: generate to a temp file, validate safety, then replace the final file.
-- If capture fails, fail loudly and do not leave a partial final example file.
+- 示例必须来自真实 HTTP 响应。
+- 不要手写响应示例冒充真实结果。
+- Swagger 启动时只读取生成的 JSON 并注入 OpenAPI examples，不能发送 HTTP 请求。
+- 原子写入示例：先生成到临时文件，安全校验后再替换最终文件。
+- 捕获失败时应明确失败，不要留下部分生成的最终示例文件。
 
-## Redaction Rules
+## 脱敏规则
 
-- Replace raw JWTs with `Bearer <captured-jwt-redacted>`.
-- Replace request passwords with `<demo-password>`.
-- Never write verification codes to generated examples.
-- Never include `.env`, `DATABASE_URL`, SMTP credentials, push credentials, or production secrets.
+- 将原始 JWT 替换为 `Bearer <captured-jwt-redacted>`。
+- 将请求密码替换为 `<demo-password>`。
+- 绝不把验证码写入生成示例。
+- 绝不包含 `.env`、`DATABASE_URL`、SMTP 凭据、推送凭据或生产密钥。
 
-## Module Migration Requirement
+## 模块迁移要求
 
-Each module execution plan must include an example capture section:
+每个模块执行计划必须包含示例捕获说明：
 
-- Endpoints added to `npm run api:examples`.
-- Success and important failure examples captured.
-- Endpoints intentionally not captured and why.
-- Verification that Swagger UI displays the captured examples.
+- 新增到 `npm run api:examples` 的接口。
+- 已捕获的成功示例和重要失败示例。
+- 有意不捕获的接口及原因。
+- Swagger UI 能展示捕获示例的验证结果。
 
-Do not mark a public API module complete until its Swagger examples are either captured or explicitly documented as deferred.
+公开 API 模块的 Swagger 示例未捕获且未明确说明延后原因时，不得标记该模块完成。

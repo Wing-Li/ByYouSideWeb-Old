@@ -1,12 +1,12 @@
-# Migration Worklog Template
+# 迁移工作记录模板
 
-Use this template when adding module-level notes or updating migration progress.
+添加模块级说明或更新迁移进度时使用本模板。
 
-## Module
+## 模块
 
-Name:
+名称：
 
-Status:
+状态：
 
 - 未开始
 - 进行中
@@ -14,70 +14,70 @@ Status:
 - 暂停
 - 废弃
 
-## Legacy Evidence Read
+## 旧代码证据
 
-Files read:
+已阅读文件：
 
 - `path/to/file.kt`
 
-Important legacy behavior:
+重要旧行为：
 
-- Route:
-- Auth:
-- Request:
-- Response:
-- Validation:
-- Data writes:
-- Side effects:
-- Error codes:
+- 路由：
+- 鉴权：
+- 请求：
+- 响应：
+- 校验：
+- 数据写入：
+- 副作用：
+- 错误码：
 
-## New Design
+## 新设计
 
-New routes:
+新路由：
 
 - `METHOD /path`
 
-Data model changes:
+数据模型变化：
 
 - 
 
-Intentional differences from legacy behavior:
+相对旧行为的有意差异：
 
 - 
 
-Reason:
+原因：
 
 - 
 
-## Implementation Checklist
+## 实现检查清单
 
-- [ ] DTOs
+- [ ] DTO
 - [ ] Controller
 - [ ] Service
 - [ ] Prisma model/migration
-- [ ] Seed data, if needed
-- [ ] Auth/role guard
-- [ ] Swagger/OpenAPI docs
-- [ ] Unit tests
-- [ ] E2E tests
-- [ ] Migration status updated
+- [ ] Seed 数据，如需要
+- [ ] 鉴权/角色 Guard
+- [ ] Swagger/OpenAPI 文档
+- [ ] 单元测试
+- [ ] E2E 测试
+- [ ] 迁移状态已更新
 
-## Verification
+## 验证
 
-Commands run:
+已运行命令：
 
 ```text
 
 ```
 
-Results:
+结果：
 
 - 
 
-Unverified items:
+未验证项：
 
 - 
 
-## Follow-ups
+## 后续事项
 
 - 

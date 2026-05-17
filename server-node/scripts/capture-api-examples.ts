@@ -1,7 +1,7 @@
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 
-type HttpMethod = 'get' | 'post' | 'patch';
+type HttpMethod = 'delete' | 'get' | 'post' | 'patch';
 
 type ApiResponseBody<TData = unknown> = {
   code: number;
@@ -60,6 +60,11 @@ async function main(): Promise<void> {
     password: demoPassword,
     email: `swagger.demo.${generatedSuffix}@example.com`,
   };
+  const generatedFriendUser = {
+    username: `friend_${generatedSuffix.slice(-7)}`,
+    password: demoPassword,
+    email: `swagger.friend.${generatedSuffix}@example.com`,
+  };
 
   await assertSwaggerAvailable(baseUrl);
 
@@ -67,6 +72,14 @@ async function main(): Promise<void> {
     method: 'post',
     path: '/api/v1/auth/register',
     body: generatedUser,
+    expectedStatus: 201,
+  });
+  const friendRegisterResponse = await request<
+    ApiResponseBody<{ token: string; user: { id: string } }>
+  >(baseUrl, {
+    method: 'post',
+    path: '/api/v1/auth/register',
+    body: generatedFriendUser,
     expectedStatus: 201,
   });
   const loginResponse = await request<
@@ -135,6 +148,91 @@ async function main(): Promise<void> {
       email: generatedUser.email,
     },
     expectedStatus: 201,
+  });
+  const generatedUserToken = (
+    registerResponse.body as ApiResponseBody<{ token: string }>
+  ).data.token;
+  const friendUserToken = friendRegisterResponse.body.data.token;
+  const friendUserId = friendRegisterResponse.body.data.user.id;
+  const friendRequestBody = {
+    toUserId: friendUserId,
+  };
+  const friendRequestResponse = await request<ApiResponseBody<{ id: string }>>(
+    baseUrl,
+    {
+      method: 'post',
+      path: '/api/v1/friends/requests',
+      body: friendRequestBody,
+      token: generatedUserToken,
+      expectedStatus: 201,
+    },
+  );
+  const friendRequestId = friendRequestResponse.body.data.id;
+  const incomingRequestsResponse = await request<ApiResponseBody<unknown>>(
+    baseUrl,
+    {
+      method: 'get',
+      path: '/api/v1/friends/requests/incoming',
+      token: friendUserToken,
+      expectedStatus: 200,
+    },
+  );
+  const acceptFriendResponse = await request<ApiResponseBody<{ id: string }>>(
+    baseUrl,
+    {
+      method: 'post',
+      path: `/api/v1/friends/requests/${friendRequestId}/accept`,
+      token: friendUserToken,
+      expectedStatus: 201,
+    },
+  );
+  const friendRelationId = acceptFriendResponse.body.data.id;
+  const myFriendsResponse = await request<ApiResponseBody<unknown>>(baseUrl, {
+    method: 'get',
+    path: '/api/v1/friends',
+    token: generatedUserToken,
+    expectedStatus: 200,
+  });
+  const updateFriendAliasBody = {
+    friendAlias: '示例好友',
+  };
+  const updateFriendAliasResponse = await request<ApiResponseBody<string>>(
+    baseUrl,
+    {
+      method: 'patch',
+      path: `/api/v1/friends/${friendRelationId}/alias`,
+      body: updateFriendAliasBody,
+      token: friendUserToken,
+      expectedStatus: 200,
+    },
+  );
+  const updateFriendBlockBody = {
+    isBlock: true,
+  };
+  const updateFriendBlockResponse = await request<ApiResponseBody<string>>(
+    baseUrl,
+    {
+      method: 'patch',
+      path: `/api/v1/friends/${friendRelationId}/block`,
+      body: updateFriendBlockBody,
+      token: friendUserToken,
+      expectedStatus: 200,
+    },
+  );
+  const bindBestFriendResponse = await request<ApiResponseBody<unknown>>(
+    baseUrl,
+    {
+      method: 'post',
+      path: `/api/v1/friends/${friendRelationId}/best`,
+      token: friendUserToken,
+      expectedStatus: 201,
+    },
+  );
+  const deleteFriendResponse = await request<ApiResponseBody<string>>(baseUrl, {
+    method: 'delete',
+    path: `/api/v1/friends/${friendRelationId}`,
+    token: friendUserToken,
+    expectedStatus: 200,
   });
 
   const examplesFile: CapturedExamplesFile = {
@@ -262,6 +360,117 @@ async function main(): Promise<void> {
             name: 'passwordResetCodeSuccess',
             summary: '验证码发送成功响应',
             value: redactSensitive(resetCodeResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/friends/requests',
+        method: 'post',
+        request: {
+          name: 'friendRequestCreateRequest',
+          summary: '请求添加好友请求',
+          value: friendRequestBody,
+        },
+        responses: [
+          {
+            status: '201',
+            name: 'friendRequestCreateSuccess',
+            summary: '请求添加好友成功响应',
+            value: redactSensitive(friendRequestResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/friends/requests/incoming',
+        method: 'get',
+        responses: [
+          {
+            status: '200',
+            name: 'incomingFriendRequestsSuccess',
+            summary: '查询请求我的好友成功响应',
+            value: redactSensitive(incomingRequestsResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/friends/requests/{id}/accept',
+        method: 'post',
+        responses: [
+          {
+            status: '201',
+            name: 'acceptFriendRequestSuccess',
+            summary: '同意好友请求成功响应',
+            value: redactSensitive(acceptFriendResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/friends',
+        method: 'get',
+        responses: [
+          {
+            status: '200',
+            name: 'myFriendsSuccess',
+            summary: '查询我的好友成功响应',
+            value: redactSensitive(myFriendsResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/friends/{id}/alias',
+        method: 'patch',
+        request: {
+          name: 'updateFriendAliasRequest',
+          summary: '修改好友备注请求',
+          value: updateFriendAliasBody,
+        },
+        responses: [
+          {
+            status: '200',
+            name: 'updateFriendAliasSuccess',
+            summary: '修改好友备注成功响应',
+            value: redactSensitive(updateFriendAliasResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/friends/{id}/block',
+        method: 'patch',
+        request: {
+          name: 'updateFriendBlockRequest',
+          summary: '拉黑好友请求',
+          value: updateFriendBlockBody,
+        },
+        responses: [
+          {
+            status: '200',
+            name: 'updateFriendBlockSuccess',
+            summary: '拉黑好友成功响应',
+            value: redactSensitive(updateFriendBlockResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/friends/{id}/best',
+        method: 'post',
+        responses: [
+          {
+            status: '201',
+            name: 'bindBestFriendSuccess',
+            summary: '绑定亲密好友成功响应',
+            value: redactSensitive(bindBestFriendResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/friends/{id}',
+        method: 'delete',
+        responses: [
+          {
+            status: '200',
+            name: 'deleteFriendSuccess',
+            summary: '删除好友成功响应',
+            value: redactSensitive(deleteFriendResponse.body),
           },
         ],
       },
