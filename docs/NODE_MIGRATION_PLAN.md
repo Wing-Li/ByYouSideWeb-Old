@@ -21,9 +21,9 @@
 | 迁移作业 Skill | 已完成 | 已创建 `.codex/skills/byyouside-node-migration/`，后续迁移任务应优先使用 |
 | Node 项目初始化 | 已完成 | `server-node/` NestJS 基础骨架、Swagger、统一响应、异常处理、健康检查和基础测试已完成 |
 | 数据模型设计 | 已完成 | Phase 2 已完成第一版 Prisma schema、migration SQL、Neon main/dev 数据库 migration 和 seed；已创建 Neon local 分支用于本地开发 |
-| API 文档编写 | 进行中 | Phase 1 已建立 Swagger/OpenAPI，后续模块需持续补充接口文档 |
-| 业务模块迁移 | 未开始 | 待分阶段实施 |
-| 测试与验收 | 进行中 | Phase 1 已建立 unit/e2e/build/lint 基础验证 |
+| API 文档编写 | 进行中 | Phase 1 已建立 Swagger/OpenAPI；Phase 3 已补充 Auth/User 接口文档 |
+| 业务模块迁移 | 进行中 | Phase 3 认证与用户模块第一版已完成并通过验证 |
+| 测试与验收 | 进行中 | Phase 1 已建立基础验证；Phase 3 已补充 Auth/User 单元测试与 e2e 主链路测试 |
 
 ## 已确认决策
 
@@ -267,12 +267,12 @@ server-node/
 
 | 新模块 | 新接口 | 旧接口参考 | 状态 |
 | --- | --- | --- | --- |
-| Auth | `POST /auth/register` | `POST /api/user/register` | 未开始 |
-| Auth | `POST /auth/login` | `POST /api/user/login` | 未开始 |
-| Auth | `POST /auth/password-reset/code` | `POST /api/user/resetPassSendEmailCode` | 未开始 |
-| Auth | `POST /auth/password-reset/confirm` | `POST /api/user/resetPassVerifyCode` | 未开始 |
-| Users | `GET /users/me` | `POST /api/user/getMyInfo` | 未开始 |
-| Users | `PATCH /users/me` | `POST /api/user/update` | 未开始 |
+| Auth | `POST /api/v1/auth/register` | `POST /api/user/register` | 已完成 |
+| Auth | `POST /api/v1/auth/login` | `POST /api/user/login` | 已完成 |
+| Auth | `POST /api/v1/auth/password-reset/code` | `POST /api/user/resetPassSendEmailCode` | 已完成 |
+| Auth | `POST /api/v1/auth/password-reset/confirm` | `POST /api/user/resetPassVerifyCode` | 已完成 |
+| Users | `GET /api/v1/users/me` | `POST /api/user/getMyInfo` | 已完成 |
+| Users | `PATCH /api/v1/users/me` | `POST /api/user/update` | 已完成 |
 | Friends | 待设计 | `/api/friend/*` | 未开始 |
 | Devices | 待设计 | `/api/device/*` | 未开始 |
 | Memoirs | 待设计 | `/api/memoirs/*` | 未开始 |
@@ -538,7 +538,7 @@ server-node/
 
 ### Phase 3：认证与用户模块
 
-状态：未开始
+状态：已完成
 
 任务：
 
@@ -556,6 +556,17 @@ server-node/
 - API 文档完整。
 - 单元测试和 e2e 测试覆盖主要成功/失败场景。
 - 密码 hash、验证码 hash、JWT 过期逻辑正确。
+
+当前进展：
+
+- 已创建并验证 `docs/migration-plans/phase-03-auth-users.md`。
+- 已实现 Auth/User DTO、Swagger 文档、标准 JWT 签发与校验、JWT guard、当前用户 decorator、mock/log 邮件 provider。
+- 已实现注册、登录、密码重置验证码发送、密码重置确认、获取当前用户、更新当前用户、申请注销和取消注销接口。
+- 新系统使用标准 JWT payload `sub/iat/exp`，不兼容旧 token。
+- 验证码写入 `VerificationCode` 并只保存 hash。
+- 用户更新不再同步网易云信 IM。
+- 已通过 `npm run format`、`npm run lint`、`npm run test`、`npm run test:e2e` 和 `npm run build`。
+- 已验证 Swagger JSON 包含 Auth/User 新接口，且本地 seed 管理员账号可以登录。
 
 ### Phase 4：好友关系模块
 
@@ -788,10 +799,10 @@ docs/migration-plans/
 
 ## 下一步建议
 
-下一步建议执行 Phase 3：
+下一步建议执行 Phase 4：
 
-1. 创建或更新 `docs/migration-plans/phase-03-auth-users.md`。
-2. 阅读旧 `UserController.kt`、`UserInfo.kt`、`UserInfoRepository.kt`、`JwtUtils.kt`、`EmailUtils.kt` 和相关工具类。
-3. 基于 Neon `local/dev` 数据库实现注册、登录、JWT 鉴权、当前用户信息和用户资料更新。
-4. 完成 Swagger DTO、单元测试和 e2e 测试。
-5. 验证 seed 管理员账号可登录。
+1. 创建或更新 `docs/migration-plans/phase-04-friends.md`。
+2. 阅读旧 `FriendController.kt`、`Friend.kt`、`FriendRepository.kt`、相关回忆录/瞬间仓库和 `PushApi.kt`。
+3. 明确好友关系在新系统中采用单条记录模型还是双向记录模型。
+4. 实现好友申请、同意、拒绝、删除、拉黑、备注、列表和亲密好友绑定接口。
+5. 补齐 Swagger DTO、单元测试和 e2e 测试。
