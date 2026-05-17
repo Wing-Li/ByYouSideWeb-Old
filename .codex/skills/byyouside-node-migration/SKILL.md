@@ -51,11 +51,23 @@ For each module or endpoint:
 
 If any step cannot be completed, leave the module marked incomplete with a clear reason.
 
+## Swagger Real Examples
+
+Public API migration must keep Swagger examples useful for frontend development.
+
+- When adding or changing public API endpoints, update the real HTTP example capture script.
+- Examples shown in Swagger must come from `npm run api:examples` real requests, not hand-written invented response bodies.
+- The generated example file is read by Swagger at startup; Swagger startup must not send requests or mutate data.
+- Each module execution plan must record which endpoints are covered by the example capture script.
+- Do not write raw JWTs, verification codes, database URLs, SMTP secrets, push secrets, or production credentials into captured examples.
+- Redact sensitive fields while preserving the response shape.
+
 ## When to Read References
 
 - Read `references/legacy-reading-checklist.md` before migrating a module or endpoint.
 - Read `references/node-project-standards.md` before creating or changing Node project structure, module boundaries, Prisma schema, config, auth, tests, or external integrations.
 - Read `references/api-documentation-standard.md` before designing or editing API routes, DTOs, Swagger docs, or response/error formats.
+- Read `references/swagger-example-capture-standard.md` before adding or changing public API routes that should appear in Swagger.
 - Read `references/module-plan-standard.md` before starting a large module or cross-cutting task.
 - Use `references/migration-worklog-template.md` when adding a module-level migration note or updating completion evidence.
 

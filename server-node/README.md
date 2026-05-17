@@ -154,6 +154,39 @@ npm run start:prod
 - Swagger UI：`http://localhost:3000/api/docs`
 - OpenAPI JSON：`http://localhost:3000/api/docs-json`
 
+## Swagger 真实示例生成
+
+Swagger UI 是当前接口文档入口。接口示例通过显式脚本捕获真实 HTTP 响应生成，服务启动时只读取生成文件，不会自动请求接口或修改数据。
+
+生成前先启动本地服务：
+
+```bash
+npm run build
+npm run start:prod
+```
+
+然后在另一个终端执行：
+
+```bash
+npm run api:examples
+```
+
+默认配置：
+
+- `API_BASE_URL=http://localhost:3000`
+- `SWAGGER_DEMO_EMAIL=yyy101@yy.com`
+- `SWAGGER_DEMO_PASSWORD=123123123`
+
+生成文件：
+
+```text
+docs/swagger/openapi-examples.json
+```
+
+该文件会被 `src/setup-swagger.ts` 注入到 `/api/docs` 和 `/api/docs-json`。生成脚本会脱敏 JWT 和密码，并阻止验证码、数据库连接串、真实密钥等敏感内容进入示例文件。
+
+后续每迁移一个公开 API 模块，都应同步扩展 `scripts/capture-api-examples.ts` 的捕获范围。
+
 ## 发布测试环境
 
 发布到线上测试环境时建议按以下顺序执行：

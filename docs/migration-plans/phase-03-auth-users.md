@@ -278,3 +278,10 @@ Known follow-ups:
 - Phase 5 迁移 `requestLocation` 和设备推送。
 - Phase 9 接入真实邮件 provider。
 - 可继续补充密码重置确认流程的更细粒度 e2e 测试。
+
+## Swagger 真实示例捕获
+
+- 已要求通过 `npm run api:examples` 真实请求本地服务生成 Swagger 示例。
+- Phase 3 第一版捕获注册、登录、登录密码错误、获取当前用户、更新当前用户、申请注销、取消注销和发送密码重置验证码。
+- `password-reset/confirm` 成功示例暂不捕获，因为验证码不应进入文档或仓库。
+- 生成示例必须脱敏 JWT 和密码，并禁止写入验证码、数据库连接串或真实服务密钥。

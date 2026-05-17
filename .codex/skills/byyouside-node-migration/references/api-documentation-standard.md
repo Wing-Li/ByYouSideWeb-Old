@@ -21,6 +21,8 @@ Document:
 - Example failure response.
 - Important side effects.
 
+For public APIs, request and response examples should be captured from real local HTTP requests using `npm run api:examples`. Do not invent response examples when the capture script can produce them.
+
 ## Response Standard
 
 Standard success:
@@ -113,5 +115,6 @@ Before marking an API complete:
 - Confirm documented DTO fields match runtime DTOs.
 - Confirm auth requirements match guards.
 - Confirm examples are valid.
+- Confirm Swagger examples were generated from real HTTP capture, or document why capture is deferred.
 - Confirm old-to-new mapping is recorded.
 - Confirm tests cover at least one success and one failure path.

@@ -61,6 +61,7 @@ Before implementation, the plan must answer:
 - What API will App developers use?
 - What data model changes are needed?
 - What tests prove the behavior?
+- What Swagger real examples will be captured?
 - What remains uncertain?
 
 If any answer is missing, do not start coding the module.
@@ -164,6 +165,7 @@ Seed data:
 - [ ] Seed updates
 - [ ] Auth/role guards
 - [ ] Swagger/OpenAPI docs
+- [ ] Swagger real example capture
 - [ ] Unit tests
 - [ ] E2E tests
 - [ ] Migration documentation updates

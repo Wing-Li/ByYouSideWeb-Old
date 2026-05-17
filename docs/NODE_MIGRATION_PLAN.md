@@ -21,7 +21,7 @@
 | 迁移作业 Skill | 已完成 | 已创建 `.codex/skills/byyouside-node-migration/`，后续迁移任务应优先使用 |
 | Node 项目初始化 | 已完成 | `server-node/` NestJS 基础骨架、Swagger、统一响应、异常处理、健康检查和基础测试已完成 |
 | 数据模型设计 | 已完成 | Phase 2 已完成第一版 Prisma schema、migration SQL、Neon main/dev 数据库 migration 和 seed；已创建 Neon local 分支用于本地开发 |
-| API 文档编写 | 进行中 | Phase 1 已建立 Swagger/OpenAPI；Phase 3 已补充 Auth/User 接口文档 |
+| API 文档编写 | 进行中 | Phase 1 已建立 Swagger/OpenAPI；Phase 3 已补充 Auth/User 接口文档和真实响应示例捕获 |
 | 业务模块迁移 | 进行中 | Phase 3 认证与用户模块第一版已完成并通过验证 |
 | 测试与验收 | 进行中 | Phase 1 已建立基础验证；Phase 3 已补充 Auth/User 单元测试与 e2e 主链路测试 |
 
@@ -132,6 +132,17 @@ server-node/
 - 开发环境默认使用 mock/log 模式，避免误发邮件和推送。
 - 生产环境通过 `.env` 启用真实服务。
 - 所有密钥从环境变量读取，不提交真实密钥。
+
+### 9. Swagger 真实接口示例策略
+
+新后端继续使用 Swagger UI 作为接口文档入口。
+
+- 示例生成使用显式命令 `npm run api:examples`。
+- 示例必须来自本地服务真实 HTTP 请求，不使用凭空编写的响应数据冒充真实结果。
+- Swagger 启动时只读取 `server-node/docs/swagger/openapi-examples.json` 并注入 OpenAPI examples，不自动请求接口、不自动更新示例。
+- 生成文件可以提交到仓库，供前端直接浏览最近一次捕获的真实示例。
+- JWT、验证码、数据库连接串、真实服务密钥必须脱敏或禁止写入生成文件。
+- 后续每个公开 API 模块迁移时，都必须把新增接口纳入 `api:examples` 捕获范围，或在模块计划中说明暂不捕获的原因。
 
 ## 目标架构
 
