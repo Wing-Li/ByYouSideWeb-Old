@@ -14,6 +14,8 @@ import {
   Prisma,
   UserRole,
   UserStatus,
+  VipOrderSource,
+  VipPlanStatus,
 } from '@prisma/client';
 
 type FakeUser = {
@@ -31,7 +33,7 @@ type FakeUser = {
   disabledDays: number;
   uploadIntervalMinutes: number;
   vipLevel: number;
-  vipSource: null;
+  vipSource: VipOrderSource | null;
   vipExpiresAt: Date | null;
   vipBindQuotaTotal: number;
   vipBindQuotaUsed: number;
@@ -107,17 +109,45 @@ type FakeMoment = {
   author: FakeUser;
 };
 
+type FakeVipPlan = {
+  id: bigint;
+  name: string;
+  description: string;
+  level: number;
+  durationMonths: number;
+  price: Prisma.Decimal;
+  productCode: string;
+  status: VipPlanStatus;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+type FakeVipOrder = {
+  id: bigint;
+  userId: bigint;
+  planId: bigint;
+  source: VipOrderSource;
+  bindFromUserId: bigint | null;
+  amount: Prisma.Decimal;
+  createdAt: Date;
+  plan: FakeVipPlan;
+};
+
 class FakePrismaService {
   private nextUserId = 1n;
   private nextFriendRelationId = 1n;
   private nextDeviceSnapshotId = 1n;
   private nextMemoirId = 1n;
   private nextMomentId = 1n;
+  private nextVipPlanId = 1n;
+  private nextVipOrderId = 1n;
   readonly users: FakeUser[] = [];
   readonly friendRelations: FakeFriendRelation[] = [];
   readonly deviceSnapshots: FakeDeviceSnapshot[] = [];
   readonly memoirs: FakeMemoir[] = [];
   readonly moments: FakeMoment[] = [];
+  readonly vipPlans: FakeVipPlan[] = [];
+  readonly vipOrders: FakeVipOrder[] = [];
 
   user = {
     findUnique: jest.fn(
@@ -177,7 +207,7 @@ class FakePrismaService {
         disabledDays: data.disabledDays ?? 0,
         uploadIntervalMinutes: data.uploadIntervalMinutes ?? 120,
         vipLevel: data.vipLevel ?? 0,
-        vipSource: null,
+        vipSource: data.vipSource ?? null,
         vipExpiresAt: null,
         vipBindQuotaTotal: data.vipBindQuotaTotal ?? 0,
         vipBindQuotaUsed: data.vipBindQuotaUsed ?? 0,
@@ -526,6 +556,78 @@ class FakePrismaService {
     ),
   };
 
+  vipPlan = {
+    findMany: jest.fn(() =>
+      [...this.vipPlans].sort((left, right) =>
+        left.durationMonths === right.durationMonths
+          ? Number(left.id - right.id)
+          : left.durationMonths - right.durationMonths,
+      ),
+    ),
+    findUnique: jest.fn(
+      ({ where }: { where: { id?: bigint; productCode?: string } }) =>
+        this.vipPlans.find(
+          (plan) =>
+            (where.id !== undefined && plan.id === where.id) ||
+            (where.productCode !== undefined &&
+              plan.productCode === where.productCode),
+        ) ?? null,
+    ),
+    create: jest.fn(({ data }: { data: Partial<FakeVipPlan> }) =>
+      this.createVipPlan(data),
+    ),
+    update: jest.fn(
+      ({
+        where,
+        data,
+      }: {
+        where: { id: bigint };
+        data: Partial<FakeVipPlan>;
+      }) => this.updateVipPlan(where.id, data),
+    ),
+  };
+
+  vipOrder = {
+    create: jest.fn(
+      ({
+        data,
+      }: {
+        data: {
+          userId: bigint;
+          planId: bigint;
+          source: VipOrderSource;
+          bindFromUserId?: bigint | null;
+          amount: Prisma.Decimal;
+        };
+      }) => this.createVipOrder(data),
+    ),
+    findFirst: jest.fn(
+      ({ where }: { where: { userId: bigint } }) =>
+        this.vipOrders
+          .filter((order) => order.userId === where.userId)
+          .sort(
+            (left, right) =>
+              right.createdAt.getTime() - left.createdAt.getTime(),
+          )
+          .at(0) ?? null,
+    ),
+    count: jest.fn(
+      ({ where }: { where: { userId?: bigint } }) =>
+        this.filterVipOrders(where).length,
+    ),
+    findMany: jest.fn(
+      ({
+        where,
+        skip,
+        take,
+      }: {
+        where: { userId?: bigint };
+        skip: number;
+        take: number;
+      }) => this.filterVipOrders(where).slice(skip, skip + take),
+    ),
+  };
+
   $transaction = jest.fn(
     (
       operationsOrCallback:
@@ -673,6 +775,72 @@ class FakePrismaService {
       updatedAt: new Date('2026-05-17T00:01:00.000Z'),
     });
     return moment;
+  }
+
+  private createVipPlan(data: Partial<FakeVipPlan>): FakeVipPlan {
+    const now = new Date('2026-05-17T00:00:00.000Z');
+    const plan: FakeVipPlan = {
+      id: this.nextVipPlanId++,
+      name: data.name ?? '双人包月',
+      description: data.description ?? '',
+      level: data.level ?? 1,
+      durationMonths: data.durationMonths ?? 1,
+      price: data.price ?? new Prisma.Decimal('28.80'),
+      productCode:
+        data.productCode ??
+        `com.lyl.byyourside.vip.month.duet.${this.nextVipPlanId.toString()}`,
+      status: data.status ?? VipPlanStatus.DUET,
+      createdAt: now,
+      updatedAt: now,
+    };
+    this.vipPlans.push(plan);
+    return plan;
+  }
+
+  private updateVipPlan(id: bigint, data: Partial<FakeVipPlan>): FakeVipPlan {
+    const plan = this.vipPlans.find((item) => item.id === id);
+    if (!plan) {
+      throw new Error('vip plan not found');
+    }
+    Object.assign(plan, data, {
+      updatedAt: new Date('2026-05-17T00:01:00.000Z'),
+    });
+    return plan;
+  }
+
+  private createVipOrder(data: {
+    userId: bigint;
+    planId: bigint;
+    source: VipOrderSource;
+    bindFromUserId?: bigint | null;
+    amount: Prisma.Decimal;
+  }): FakeVipOrder {
+    const plan = this.vipPlans.find((item) => item.id === data.planId);
+    if (!plan) {
+      throw new Error('vip plan not found');
+    }
+    const order: FakeVipOrder = {
+      id: this.nextVipOrderId++,
+      userId: data.userId,
+      planId: data.planId,
+      source: data.source,
+      bindFromUserId: data.bindFromUserId ?? null,
+      amount: data.amount,
+      createdAt: new Date('2026-05-17T00:00:00.000Z'),
+      plan,
+    };
+    this.vipOrders.push(order);
+    return order;
+  }
+
+  private filterVipOrders(where: { userId?: bigint }): FakeVipOrder[] {
+    return this.vipOrders
+      .filter(
+        (order) => where.userId === undefined || order.userId === where.userId,
+      )
+      .sort(
+        (left, right) => right.createdAt.getTime() - left.createdAt.getTime(),
+      );
   }
 
   private updateFriendRelation(
@@ -1324,6 +1492,191 @@ describe('Memoirs and Moments (e2e)', () => {
       .delete(`/api/v1/memoirs/${memoirId}`)
       .set('Authorization', bob.token)
       .expect(200);
+  });
+
+  async function registerUser(
+    username: string,
+    email: string,
+  ): Promise<{ id: string; token: string }> {
+    const response = await request(app.getHttpServer())
+      .post('/api/v1/auth/register')
+      .send({
+        username,
+        password: 'ChangeMe_123456',
+        email,
+      })
+      .expect(201);
+    const body = response.body as {
+      data: { token: string; user: { id: string } };
+    };
+    return {
+      id: body.data.user.id,
+      token: body.data.token,
+    };
+  }
+
+  afterEach(async () => {
+    await app.close();
+  });
+});
+
+describe('VIP (e2e)', () => {
+  let app: INestApplication<App>;
+  let prisma: FakePrismaService;
+
+  beforeEach(async () => {
+    prisma = new FakePrismaService();
+    prisma.vipPlan.create({
+      data: {
+        name: '双人包月',
+        description: '',
+        level: 1,
+        durationMonths: 1,
+        price: new Prisma.Decimal('28.80'),
+        productCode: 'com.lyl.byyourside.vip.month.duet.1',
+        status: VipPlanStatus.DUET,
+      },
+    });
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [AppModule],
+    })
+      .overrideProvider(PrismaService)
+      .useValue(prisma)
+      .compile();
+
+    app = moduleFixture.createNestApplication();
+    setupApp(app);
+    setupSwagger(app);
+    await app.init();
+  });
+
+  it('套餐、开通、订单、绑定和管理员维护可以形成主链路', async () => {
+    const alice = await registerUser('alice_vip', 'alice.vip@example.com');
+    const bob = await registerUser('bob_vip', 'bob.vip@example.com');
+    const admin = await registerUser('admin_vip', 'admin.vip@example.com');
+    const adminUser = prisma.users.find(
+      (user) => user.id.toString() === admin.id,
+    );
+    expect(adminUser).toBeDefined();
+    adminUser!.role = UserRole.ADMIN;
+
+    const plansResponse = await request(app.getHttpServer())
+      .get('/api/v1/vip/plans')
+      .set('Authorization', alice.token)
+      .expect(200);
+    const planId = (plansResponse.body as { data: Array<{ id: string }> })
+      .data[0].id;
+
+    await request(app.getHttpServer())
+      .post('/api/v1/vip/orders')
+      .set('Authorization', alice.token)
+      .send({
+        planId,
+        amount: 28.8,
+        source: VipOrderSource.IOS,
+      })
+      .expect(201)
+      .expect((response: Response) => {
+        expect(response.body).toMatchObject({
+          code: 200,
+          data: {
+            id: alice.id,
+            vipLevel: 1,
+            vipSource: VipOrderSource.IOS,
+            vipBindQuotaTotal: 1,
+            vipBindQuotaUsed: 0,
+          },
+        });
+      });
+
+    await request(app.getHttpServer())
+      .get('/api/v1/vip/orders/me')
+      .set('Authorization', alice.token)
+      .expect(200)
+      .expect((response: Response) => {
+        expect(response.body).toMatchObject({
+          code: 200,
+          data: [
+            {
+              userId: alice.id,
+              source: VipOrderSource.IOS,
+              plan: { id: planId },
+            },
+          ],
+          pagination: { total: 1 },
+        });
+      });
+
+    await request(app.getHttpServer())
+      .post('/api/v1/vip/bindings')
+      .set('Authorization', alice.token)
+      .send({ toUserId: bob.id })
+      .expect(201)
+      .expect((response: Response) => {
+        expect(response.body).toMatchObject({
+          code: 200,
+          data: {
+            id: alice.id,
+            vipBindQuotaTotal: 1,
+            vipBindQuotaUsed: 1,
+          },
+        });
+      });
+
+    await request(app.getHttpServer())
+      .post('/api/v1/vip/orders')
+      .set('Authorization', bob.token)
+      .send({
+        planId,
+        amount: 28.8,
+        source: VipOrderSource.IOS,
+        toUserId: alice.id,
+      })
+      .expect(403)
+      .expect((response: Response) => {
+        expect(response.body).toMatchObject({
+          code: 17009,
+          message: '普通用户不能给他人开通 VIP',
+        });
+      });
+
+    const createPlanResponse = await request(app.getHttpServer())
+      .post('/api/v1/vip/plans')
+      .set('Authorization', admin.token)
+      .send({
+        name: '管理员赠送月卡',
+        description: '测试用',
+        level: 1,
+        durationMonths: 1,
+        price: 0,
+        productCode: 'admin.gift.month.1',
+        status: VipPlanStatus.ACTIVE,
+      })
+      .expect(201);
+    const adminPlanId = (createPlanResponse.body as { data: { id: string } })
+      .data.id;
+
+    await request(app.getHttpServer())
+      .patch(`/api/v1/vip/plans/${adminPlanId}`)
+      .set('Authorization', admin.token)
+      .send({ description: '管理员测试赠送' })
+      .expect(200)
+      .expect((response: Response) => {
+        expect(response.body).toMatchObject({
+          data: { description: '管理员测试赠送' },
+        });
+      });
+
+    await request(app.getHttpServer())
+      .get('/api/v1/vip/orders')
+      .set('Authorization', admin.token)
+      .expect(200)
+      .expect((response: Response) => {
+        expect(response.body).toMatchObject({
+          code: 200,
+          pagination: { total: 2 },
+        });
+      });
   });
 
   async function registerUser(

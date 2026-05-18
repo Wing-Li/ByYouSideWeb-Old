@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-18T13:53:04.861Z",
+  "generatedAt": "2026-05-18T14:24:42.991Z",
   "sourceBaseUrl": "http://localhost:3001",
   "note": "本文件由 npm run api:examples 通过真实 HTTP 请求生成。token 和密码已脱敏，验证码不会写入文档。",
   "examples": [
@@ -10,9 +10,9 @@
         "name": "registerSuccessRequest",
         "summary": "注册成功请求",
         "value": {
-          "username": "demo_mpb9jxro",
+          "username": "demo_mpbaok91",
           "password": "<demo-password>",
-          "email": "swagger.demo.mpb9jxro@example.com"
+          "email": "swagger.demo.mpbaok91@example.com"
         }
       },
       "responses": [
@@ -26,9 +26,9 @@
             "data": {
               "token": "Bearer <captured-jwt-redacted>",
               "user": {
-                "id": "12",
-                "username": "demo_mpb9jxro",
-                "email": "swagger.demo.mpb9jxro@example.com",
+                "id": "14",
+                "username": "demo_mpbaok91",
+                "email": "swagger.demo.mpbaok91@example.com",
                 "nickname": "",
                 "avatarUrl": "",
                 "gender": "UNKNOWN",
@@ -50,8 +50,8 @@
                 "pushDeviceType": null,
                 "pushAliasType": null,
                 "pushAlias": null,
-                "createdAt": "2026-05-18T13:52:25.264Z",
-                "updatedAt": "2026-05-18T13:52:25.264Z"
+                "createdAt": "2026-05-18T14:24:01.233Z",
+                "updatedAt": "2026-05-18T14:24:01.233Z"
               }
             }
           }
@@ -105,7 +105,7 @@
                 "pushAliasType": null,
                 "pushAlias": null,
                 "createdAt": "2026-05-17T08:10:17.314Z",
-                "updatedAt": "2026-05-18T13:49:44.990Z"
+                "updatedAt": "2026-05-18T13:52:29.330Z"
               }
             }
           }
@@ -159,7 +159,7 @@
               "pushAliasType": null,
               "pushAlias": null,
               "createdAt": "2026-05-17T08:10:17.314Z",
-              "updatedAt": "2026-05-18T13:49:44.990Z"
+              "updatedAt": "2026-05-18T13:52:29.330Z"
             }
           }
         }
@@ -211,7 +211,7 @@
               "pushAliasType": null,
               "pushAlias": null,
               "createdAt": "2026-05-17T08:10:17.314Z",
-              "updatedAt": "2026-05-18T13:52:27.923Z"
+              "updatedAt": "2026-05-18T14:24:03.833Z"
             }
           }
         }
@@ -252,7 +252,7 @@
               "vipExpiresAt": null,
               "vipBindQuotaTotal": 0,
               "vipBindQuotaUsed": 0,
-              "destroyRequestedAt": "2026-05-18T13:52:28.623Z",
+              "destroyRequestedAt": "2026-05-18T14:24:04.511Z",
               "lastLocationAddress": "",
               "lastLocationLongitude": "0",
               "lastLocationLatitude": "0",
@@ -261,7 +261,7 @@
               "pushAliasType": null,
               "pushAlias": null,
               "createdAt": "2026-05-17T08:10:17.314Z",
-              "updatedAt": "2026-05-18T13:52:28.625Z"
+              "updatedAt": "2026-05-18T14:24:04.512Z"
             }
           }
         }
@@ -304,7 +304,7 @@
               "pushAliasType": null,
               "pushAlias": null,
               "createdAt": "2026-05-17T08:10:17.314Z",
-              "updatedAt": "2026-05-18T13:52:29.330Z"
+              "updatedAt": "2026-05-18T14:24:05.188Z"
             }
           }
         }
@@ -317,7 +317,7 @@
         "name": "passwordResetCodeRequest",
         "summary": "发送密码重置验证码请求",
         "value": {
-          "email": "swagger.demo.mpb9jxro@example.com"
+          "email": "swagger.demo.mpbaok91@example.com"
         }
       },
       "responses": [
@@ -328,7 +328,7 @@
           "value": {
             "code": 200,
             "message": "success",
-            "data": "验证码已发送至：swagger.demo.mpb9jxro@example.com"
+            "data": "验证码已发送至：swagger.demo.mpbaok91@example.com"
           }
         }
       ]
@@ -340,7 +340,7 @@
         "name": "friendRequestCreateRequest",
         "summary": "请求添加好友请求",
         "value": {
-          "toUserId": "13"
+          "toUserId": "15"
         }
       },
       "responses": [
@@ -352,18 +352,18 @@
             "code": 200,
             "message": "success",
             "data": {
-              "id": "9",
-              "requesterId": "12",
-              "receiverId": "13",
+              "id": "11",
+              "requesterId": "14",
+              "receiverId": "15",
               "requesterAlias": "",
               "receiverAlias": "",
               "isBestFriend": false,
               "status": "PENDING",
               "blockState": "NORMAL",
               "friend": {
-                "id": "13",
-                "username": "friend_pb9jxro",
-                "email": "swagger.friend.mpb9jxro@example.com",
+                "id": "15",
+                "username": "friend_pbaok91",
+                "email": "swagger.friend.mpbaok91@example.com",
                 "nickname": "",
                 "avatarUrl": "",
                 "gender": "UNKNOWN",
@@ -385,11 +385,11 @@
                 "pushDeviceType": null,
                 "pushAliasType": null,
                 "pushAlias": null,
-                "createdAt": "2026-05-18T13:52:26.152Z",
-                "updatedAt": "2026-05-18T13:52:26.152Z"
+                "createdAt": "2026-05-18T14:24:02.114Z",
+                "updatedAt": "2026-05-18T14:24:02.114Z"
               },
-              "createdAt": "2026-05-18T13:52:31.623Z",
-              "updatedAt": "2026-05-18T13:52:31.623Z"
+              "createdAt": "2026-05-18T14:24:07.424Z",
+              "updatedAt": "2026-05-18T14:24:07.424Z"
             }
           }
         }
@@ -408,18 +408,18 @@
             "message": "success",
             "data": [
               {
-                "id": "9",
-                "requesterId": "12",
-                "receiverId": "13",
+                "id": "11",
+                "requesterId": "14",
+                "receiverId": "15",
                 "requesterAlias": "",
                 "receiverAlias": "",
                 "isBestFriend": false,
                 "status": "PENDING",
                 "blockState": "NORMAL",
                 "friend": {
-                  "id": "12",
-                  "username": "demo_mpb9jxro",
-                  "email": "swagger.demo.mpb9jxro@example.com",
+                  "id": "14",
+                  "username": "demo_mpbaok91",
+                  "email": "swagger.demo.mpbaok91@example.com",
                   "nickname": "",
                   "avatarUrl": "",
                   "gender": "UNKNOWN",
@@ -441,11 +441,11 @@
                   "pushDeviceType": null,
                   "pushAliasType": null,
                   "pushAlias": null,
-                  "createdAt": "2026-05-18T13:52:25.264Z",
-                  "updatedAt": "2026-05-18T13:52:25.264Z"
+                  "createdAt": "2026-05-18T14:24:01.233Z",
+                  "updatedAt": "2026-05-18T14:24:01.233Z"
                 },
-                "createdAt": "2026-05-18T13:52:31.623Z",
-                "updatedAt": "2026-05-18T13:52:31.623Z"
+                "createdAt": "2026-05-18T14:24:07.424Z",
+                "updatedAt": "2026-05-18T14:24:07.424Z"
               }
             ],
             "pagination": {
@@ -471,18 +471,18 @@
             "code": 200,
             "message": "success",
             "data": {
-              "id": "10",
-              "requesterId": "13",
-              "receiverId": "12",
+              "id": "12",
+              "requesterId": "15",
+              "receiverId": "14",
               "requesterAlias": "",
               "receiverAlias": "",
               "isBestFriend": false,
               "status": "ACCEPTED",
               "blockState": "NORMAL",
               "friend": {
-                "id": "12",
-                "username": "demo_mpb9jxro",
-                "email": "swagger.demo.mpb9jxro@example.com",
+                "id": "14",
+                "username": "demo_mpbaok91",
+                "email": "swagger.demo.mpbaok91@example.com",
                 "nickname": "",
                 "avatarUrl": "",
                 "gender": "UNKNOWN",
@@ -504,11 +504,11 @@
                 "pushDeviceType": null,
                 "pushAliasType": null,
                 "pushAlias": null,
-                "createdAt": "2026-05-18T13:52:25.264Z",
-                "updatedAt": "2026-05-18T13:52:25.264Z"
+                "createdAt": "2026-05-18T14:24:01.233Z",
+                "updatedAt": "2026-05-18T14:24:01.233Z"
               },
-              "createdAt": "2026-05-18T13:52:36.115Z",
-              "updatedAt": "2026-05-18T13:52:36.115Z"
+              "createdAt": "2026-05-18T14:24:11.802Z",
+              "updatedAt": "2026-05-18T14:24:11.802Z"
             }
           }
         }
@@ -527,18 +527,18 @@
             "message": "success",
             "data": [
               {
-                "id": "9",
-                "requesterId": "12",
-                "receiverId": "13",
+                "id": "11",
+                "requesterId": "14",
+                "receiverId": "15",
                 "requesterAlias": "",
                 "receiverAlias": "",
                 "isBestFriend": false,
                 "status": "ACCEPTED",
                 "blockState": "NORMAL",
                 "friend": {
-                  "id": "13",
-                  "username": "friend_pb9jxro",
-                  "email": "swagger.friend.mpb9jxro@example.com",
+                  "id": "15",
+                  "username": "friend_pbaok91",
+                  "email": "swagger.friend.mpbaok91@example.com",
                   "nickname": "",
                   "avatarUrl": "",
                   "gender": "UNKNOWN",
@@ -560,11 +560,11 @@
                   "pushDeviceType": null,
                   "pushAliasType": null,
                   "pushAlias": null,
-                  "createdAt": "2026-05-18T13:52:26.152Z",
-                  "updatedAt": "2026-05-18T13:52:26.152Z"
+                  "createdAt": "2026-05-18T14:24:02.114Z",
+                  "updatedAt": "2026-05-18T14:24:02.114Z"
                 },
-                "createdAt": "2026-05-18T13:52:31.623Z",
-                "updatedAt": "2026-05-18T13:52:35.652Z"
+                "createdAt": "2026-05-18T14:24:07.424Z",
+                "updatedAt": "2026-05-18T14:24:11.356Z"
               }
             ],
             "pagination": {
@@ -636,18 +636,18 @@
             "code": 200,
             "message": "success",
             "data": {
-              "id": "10",
-              "requesterId": "13",
-              "receiverId": "12",
+              "id": "12",
+              "requesterId": "15",
+              "receiverId": "14",
               "requesterAlias": "示例好友",
               "receiverAlias": "",
               "isBestFriend": true,
               "status": "ACCEPTED",
               "blockState": "REQUESTER_BLOCKED_RECEIVER",
               "friend": {
-                "id": "12",
-                "username": "demo_mpb9jxro",
-                "email": "swagger.demo.mpb9jxro@example.com",
+                "id": "14",
+                "username": "demo_mpbaok91",
+                "email": "swagger.demo.mpbaok91@example.com",
                 "nickname": "",
                 "avatarUrl": "",
                 "gender": "UNKNOWN",
@@ -669,11 +669,11 @@
                 "pushDeviceType": null,
                 "pushAliasType": null,
                 "pushAlias": null,
-                "createdAt": "2026-05-18T13:52:25.264Z",
-                "updatedAt": "2026-05-18T13:52:25.264Z"
+                "createdAt": "2026-05-18T14:24:01.233Z",
+                "updatedAt": "2026-05-18T14:24:01.233Z"
               },
-              "createdAt": "2026-05-18T13:52:36.115Z",
-              "updatedAt": "2026-05-18T13:52:43.193Z"
+              "createdAt": "2026-05-18T14:24:11.802Z",
+              "updatedAt": "2026-05-18T14:24:17.407Z"
             }
           }
         }
@@ -703,8 +703,8 @@
             "code": 200,
             "message": "success",
             "data": {
-              "id": "3",
-              "userId": "13",
+              "id": "4",
+              "userId": "15",
               "deviceName": "iPhone",
               "screenStatus": "",
               "screenLevel": "",
@@ -720,7 +720,7 @@
               "locationAddress": "北京市朝阳区",
               "locationLongitude": "116.4074",
               "locationLatitude": "39.9042",
-              "createdAt": "2026-05-18T13:52:45.525Z"
+              "createdAt": "2026-05-18T14:24:19.646Z"
             }
           }
         }
@@ -738,8 +738,8 @@
             "code": 200,
             "message": "success",
             "data": {
-              "id": "3",
-              "userId": "13",
+              "id": "4",
+              "userId": "15",
               "deviceName": "iPhone",
               "screenStatus": "",
               "screenLevel": "",
@@ -755,7 +755,7 @@
               "locationAddress": "北京市朝阳区",
               "locationLongitude": "116.4074",
               "locationLatitude": "39.9042",
-              "createdAt": "2026-05-18T13:52:45.525Z"
+              "createdAt": "2026-05-18T14:24:19.646Z"
             }
           }
         }
@@ -774,8 +774,8 @@
             "message": "success",
             "data": [
               {
-                "id": "3",
-                "userId": "13",
+                "id": "4",
+                "userId": "15",
                 "deviceName": "iPhone",
                 "screenStatus": "",
                 "screenLevel": "",
@@ -791,7 +791,7 @@
                 "locationAddress": "北京市朝阳区",
                 "locationLongitude": "116.4074",
                 "locationLatitude": "39.9042",
-                "createdAt": "2026-05-18T13:52:45.525Z"
+                "createdAt": "2026-05-18T14:24:19.646Z"
               }
             ],
             "pagination": {
@@ -818,8 +818,8 @@
             "message": "success",
             "data": [
               {
-                "id": "3",
-                "userId": "13",
+                "id": "4",
+                "userId": "15",
                 "deviceName": "iPhone",
                 "screenStatus": "",
                 "screenLevel": "",
@@ -835,7 +835,7 @@
                 "locationAddress": "北京市朝阳区",
                 "locationLongitude": "116.4074",
                 "locationLatitude": "39.9042",
-                "createdAt": "2026-05-18T13:52:45.525Z"
+                "createdAt": "2026-05-18T14:24:19.646Z"
               }
             ],
             "pagination": {
@@ -861,8 +861,8 @@
             "code": 200,
             "message": "success",
             "data": {
-              "id": "3",
-              "userId": "13",
+              "id": "4",
+              "userId": "15",
               "deviceName": "iPhone",
               "screenStatus": "",
               "screenLevel": "",
@@ -878,7 +878,7 @@
               "locationAddress": "北京市朝阳区",
               "locationLongitude": "116.4074",
               "locationLatitude": "39.9042",
-              "createdAt": "2026-05-18T13:52:45.525Z"
+              "createdAt": "2026-05-18T14:24:19.646Z"
             }
           }
         }
@@ -901,13 +901,296 @@
       ]
     },
     {
+      "path": "/api/v1/vip/plans",
+      "method": "get",
+      "responses": [
+        {
+          "status": "200",
+          "name": "vipPlansSuccess",
+          "summary": "查询 VIP 套餐成功响应",
+          "value": {
+            "code": 200,
+            "message": "success",
+            "data": [
+              {
+                "id": "1",
+                "name": "连续包月",
+                "description": "",
+                "level": 1,
+                "durationMonths": 1,
+                "price": "18.8",
+                "productCode": "com.lyl.byyourside.vip.month.1",
+                "status": "ACTIVE",
+                "createdAt": "2026-05-17T04:39:01.123Z",
+                "updatedAt": "2026-05-17T04:39:01.123Z"
+              },
+              {
+                "id": "2",
+                "name": "连续包季",
+                "description": "",
+                "level": 1,
+                "durationMonths": 3,
+                "price": "46",
+                "productCode": "com.lyl.byyourside.vip.month.3",
+                "status": "ACTIVE",
+                "createdAt": "2026-05-17T04:39:01.362Z",
+                "updatedAt": "2026-05-17T04:39:01.362Z"
+              },
+              {
+                "id": "3",
+                "name": "连续半年",
+                "description": "",
+                "level": 1,
+                "durationMonths": 6,
+                "price": "84",
+                "productCode": "com.lyl.byyourside.vip.month.6",
+                "status": "ACTIVE",
+                "createdAt": "2026-05-17T04:39:01.598Z",
+                "updatedAt": "2026-05-17T04:39:01.598Z"
+              },
+              {
+                "id": "4",
+                "name": "连续包年",
+                "description": "",
+                "level": 1,
+                "durationMonths": 12,
+                "price": "158",
+                "productCode": "com.lyl.byyourside.vip.month.12",
+                "status": "ACTIVE",
+                "createdAt": "2026-05-17T04:39:01.833Z",
+                "updatedAt": "2026-05-17T04:39:01.833Z"
+              },
+              {
+                "id": "5",
+                "name": "连续包年",
+                "description": "免费体验三天",
+                "level": 1,
+                "durationMonths": 13,
+                "price": "158",
+                "productCode": "com.lyl.byyourside.vip.month.12.3dfree",
+                "status": "ACTIVE",
+                "createdAt": "2026-05-17T04:39:02.068Z",
+                "updatedAt": "2026-05-17T04:39:02.068Z"
+              },
+              {
+                "id": "6",
+                "name": "双人包月",
+                "description": "",
+                "level": 1,
+                "durationMonths": 1,
+                "price": "28.8",
+                "productCode": "com.lyl.byyourside.vip.month.duet.1",
+                "status": "DUET",
+                "createdAt": "2026-05-17T04:39:02.304Z",
+                "updatedAt": "2026-05-17T04:39:02.304Z"
+              },
+              {
+                "id": "7",
+                "name": "双人包季",
+                "description": "",
+                "level": 1,
+                "durationMonths": 3,
+                "price": "69",
+                "productCode": "com.lyl.byyourside.vip.month.duet.3",
+                "status": "DUET",
+                "createdAt": "2026-05-17T04:39:02.541Z",
+                "updatedAt": "2026-05-17T04:39:02.541Z"
+              },
+              {
+                "id": "8",
+                "name": "双人半年",
+                "description": "",
+                "level": 1,
+                "durationMonths": 6,
+                "price": "128",
+                "productCode": "com.lyl.byyourside.vip.month.duet.6",
+                "status": "DUET",
+                "createdAt": "2026-05-17T04:39:02.778Z",
+                "updatedAt": "2026-05-17T04:39:02.778Z"
+              },
+              {
+                "id": "9",
+                "name": "双人包年",
+                "description": "巨划算",
+                "level": 1,
+                "durationMonths": 12,
+                "price": "239",
+                "productCode": "com.lyl.byyourside.vip.month.duet.12",
+                "status": "DUET",
+                "createdAt": "2026-05-17T04:39:03.014Z",
+                "updatedAt": "2026-05-17T04:39:03.014Z"
+              },
+              {
+                "id": "10",
+                "name": "双人包年",
+                "description": "免费体验三天",
+                "level": 1,
+                "durationMonths": 13,
+                "price": "239",
+                "productCode": "com.lyl.byyourside.vip.month.duet.12.3dfree",
+                "status": "DUET",
+                "createdAt": "2026-05-17T04:39:03.249Z",
+                "updatedAt": "2026-05-17T04:39:03.249Z"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/vip/orders",
+      "method": "post",
+      "request": {
+        "name": "createVipOrderRequest",
+        "summary": "开通 VIP 请求",
+        "value": {
+          "planId": "6",
+          "amount": 28.8,
+          "source": "IOS"
+        }
+      },
+      "responses": [
+        {
+          "status": "201",
+          "name": "createVipOrderSuccess",
+          "summary": "开通 VIP 成功响应",
+          "value": {
+            "code": 200,
+            "message": "success",
+            "data": {
+              "id": "14",
+              "username": "demo_mpbaok91",
+              "email": "swagger.demo.mpbaok91@example.com",
+              "nickname": "",
+              "avatarUrl": "",
+              "gender": "UNKNOWN",
+              "bio": "",
+              "birthday": null,
+              "role": "USER",
+              "status": "ACTIVE",
+              "uploadIntervalMinutes": 120,
+              "vipLevel": 1,
+              "vipSource": "IOS",
+              "vipExpiresAt": "2026-06-18T14:24:25.278Z",
+              "vipBindQuotaTotal": 1,
+              "vipBindQuotaUsed": 0,
+              "destroyRequestedAt": null,
+              "lastLocationAddress": "",
+              "lastLocationLongitude": "0",
+              "lastLocationLatitude": "0",
+              "lastLocationAt": null,
+              "pushDeviceType": null,
+              "pushAliasType": null,
+              "pushAlias": null,
+              "createdAt": "2026-05-18T14:24:01.233Z",
+              "updatedAt": "2026-05-18T14:24:25.281Z"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/vip/orders/me",
+      "method": "get",
+      "responses": [
+        {
+          "status": "200",
+          "name": "myVipOrdersSuccess",
+          "summary": "查询我的 VIP 订单成功响应",
+          "value": {
+            "code": 200,
+            "message": "success",
+            "data": [
+              {
+                "id": "1",
+                "userId": "14",
+                "plan": {
+                  "id": "6",
+                  "name": "双人包月",
+                  "description": "",
+                  "level": 1,
+                  "durationMonths": 1,
+                  "price": "28.8",
+                  "productCode": "com.lyl.byyourside.vip.month.duet.1",
+                  "status": "DUET",
+                  "createdAt": "2026-05-17T04:39:02.304Z",
+                  "updatedAt": "2026-05-17T04:39:02.304Z"
+                },
+                "source": "IOS",
+                "bindFromUserId": null,
+                "amount": "28.8",
+                "createdAt": "2026-05-18T14:24:25.042Z"
+              }
+            ],
+            "pagination": {
+              "page": 1,
+              "pageSize": 20,
+              "total": 1,
+              "totalPages": 1,
+              "isLast": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/vip/bindings",
+      "method": "post",
+      "request": {
+        "name": "bindVipRequest",
+        "summary": "绑定双人会员名额请求",
+        "value": {
+          "toUserId": "15"
+        }
+      },
+      "responses": [
+        {
+          "status": "201",
+          "name": "bindVipSuccess",
+          "summary": "绑定双人会员名额成功响应",
+          "value": {
+            "code": 200,
+            "message": "success",
+            "data": {
+              "id": "14",
+              "username": "demo_mpbaok91",
+              "email": "swagger.demo.mpbaok91@example.com",
+              "nickname": "",
+              "avatarUrl": "",
+              "gender": "UNKNOWN",
+              "bio": "",
+              "birthday": null,
+              "role": "USER",
+              "status": "ACTIVE",
+              "uploadIntervalMinutes": 120,
+              "vipLevel": 1,
+              "vipSource": "IOS",
+              "vipExpiresAt": "2026-06-18T14:24:25.278Z",
+              "vipBindQuotaTotal": 1,
+              "vipBindQuotaUsed": 1,
+              "destroyRequestedAt": null,
+              "lastLocationAddress": "",
+              "lastLocationLongitude": "0",
+              "lastLocationLatitude": "0",
+              "lastLocationAt": null,
+              "pushDeviceType": null,
+              "pushAliasType": null,
+              "pushAlias": null,
+              "createdAt": "2026-05-18T14:24:01.233Z",
+              "updatedAt": "2026-05-18T14:24:27.978Z"
+            }
+          }
+        }
+      ]
+    },
+    {
       "path": "/api/v1/memoirs",
       "method": "post",
       "request": {
         "name": "createMemoirRequest",
         "summary": "创建回忆录请求",
         "value": {
-          "friendRelationId": "10",
+          "friendRelationId": "12",
           "title": "第一次一起看海",
           "content": "那天风很大，但我们都笑得很开心。",
           "happenedAt": "2026-05-18T12:00:00.000Z"
@@ -922,13 +1205,13 @@
             "code": 200,
             "message": "success",
             "data": {
-              "id": "2",
-              "friendRelationId": "10",
-              "authorId": "13",
+              "id": "3",
+              "friendRelationId": "12",
+              "authorId": "15",
               "author": {
-                "id": "13",
-                "username": "friend_pb9jxro",
-                "email": "swagger.friend.mpb9jxro@example.com",
+                "id": "15",
+                "username": "friend_pbaok91",
+                "email": "swagger.friend.mpbaok91@example.com",
                 "nickname": "",
                 "avatarUrl": "",
                 "gender": "UNKNOWN",
@@ -937,27 +1220,27 @@
                 "role": "USER",
                 "status": "ACTIVE",
                 "uploadIntervalMinutes": 120,
-                "vipLevel": 0,
-                "vipSource": null,
-                "vipExpiresAt": null,
+                "vipLevel": 1,
+                "vipSource": "BIND",
+                "vipExpiresAt": "2026-06-18T14:24:27.753Z",
                 "vipBindQuotaTotal": 0,
                 "vipBindQuotaUsed": 0,
                 "destroyRequestedAt": null,
                 "lastLocationAddress": "北京市朝阳区",
                 "lastLocationLongitude": "116.4074",
                 "lastLocationLatitude": "39.9042",
-                "lastLocationAt": "2026-05-18T13:52:45.525Z",
+                "lastLocationAt": "2026-05-18T14:24:19.646Z",
                 "pushDeviceType": "ios",
                 "pushAliasType": "push_normal",
                 "pushAlias": "swagger-demo-device",
-                "createdAt": "2026-05-18T13:52:26.152Z",
-                "updatedAt": "2026-05-18T13:52:45.761Z"
+                "createdAt": "2026-05-18T14:24:02.114Z",
+                "updatedAt": "2026-05-18T14:24:27.754Z"
               },
               "title": "第一次一起看海",
               "content": "那天风很大，但我们都笑得很开心。",
               "happenedAt": "2026-05-18T12:00:00.000Z",
-              "createdAt": "2026-05-18T13:52:50.432Z",
-              "updatedAt": "2026-05-18T13:52:50.432Z"
+              "createdAt": "2026-05-18T14:24:29.102Z",
+              "updatedAt": "2026-05-18T14:24:29.102Z"
             }
           }
         }
@@ -975,13 +1258,13 @@
             "code": 200,
             "message": "success",
             "data": {
-              "id": "2",
-              "friendRelationId": "10",
-              "authorId": "13",
+              "id": "3",
+              "friendRelationId": "12",
+              "authorId": "15",
               "author": {
-                "id": "13",
-                "username": "friend_pb9jxro",
-                "email": "swagger.friend.mpb9jxro@example.com",
+                "id": "15",
+                "username": "friend_pbaok91",
+                "email": "swagger.friend.mpbaok91@example.com",
                 "nickname": "",
                 "avatarUrl": "",
                 "gender": "UNKNOWN",
@@ -990,27 +1273,27 @@
                 "role": "USER",
                 "status": "ACTIVE",
                 "uploadIntervalMinutes": 120,
-                "vipLevel": 0,
-                "vipSource": null,
-                "vipExpiresAt": null,
+                "vipLevel": 1,
+                "vipSource": "BIND",
+                "vipExpiresAt": "2026-06-18T14:24:27.753Z",
                 "vipBindQuotaTotal": 0,
                 "vipBindQuotaUsed": 0,
                 "destroyRequestedAt": null,
                 "lastLocationAddress": "北京市朝阳区",
                 "lastLocationLongitude": "116.4074",
                 "lastLocationLatitude": "39.9042",
-                "lastLocationAt": "2026-05-18T13:52:45.525Z",
+                "lastLocationAt": "2026-05-18T14:24:19.646Z",
                 "pushDeviceType": "ios",
                 "pushAliasType": "push_normal",
                 "pushAlias": "swagger-demo-device",
-                "createdAt": "2026-05-18T13:52:26.152Z",
-                "updatedAt": "2026-05-18T13:52:45.761Z"
+                "createdAt": "2026-05-18T14:24:02.114Z",
+                "updatedAt": "2026-05-18T14:24:27.754Z"
               },
               "title": "第一次一起看海",
               "content": "那天风很大，但我们都笑得很开心。",
               "happenedAt": "2026-05-18T12:00:00.000Z",
-              "createdAt": "2026-05-18T13:52:50.432Z",
-              "updatedAt": "2026-05-18T13:52:50.432Z"
+              "createdAt": "2026-05-18T14:24:29.102Z",
+              "updatedAt": "2026-05-18T14:24:29.102Z"
             }
           }
         }
@@ -1029,13 +1312,13 @@
             "message": "success",
             "data": [
               {
-                "id": "2",
-                "friendRelationId": "10",
-                "authorId": "13",
+                "id": "3",
+                "friendRelationId": "12",
+                "authorId": "15",
                 "author": {
-                  "id": "13",
-                  "username": "friend_pb9jxro",
-                  "email": "swagger.friend.mpb9jxro@example.com",
+                  "id": "15",
+                  "username": "friend_pbaok91",
+                  "email": "swagger.friend.mpbaok91@example.com",
                   "nickname": "",
                   "avatarUrl": "",
                   "gender": "UNKNOWN",
@@ -1044,27 +1327,27 @@
                   "role": "USER",
                   "status": "ACTIVE",
                   "uploadIntervalMinutes": 120,
-                  "vipLevel": 0,
-                  "vipSource": null,
-                  "vipExpiresAt": null,
+                  "vipLevel": 1,
+                  "vipSource": "BIND",
+                  "vipExpiresAt": "2026-06-18T14:24:27.753Z",
                   "vipBindQuotaTotal": 0,
                   "vipBindQuotaUsed": 0,
                   "destroyRequestedAt": null,
                   "lastLocationAddress": "北京市朝阳区",
                   "lastLocationLongitude": "116.4074",
                   "lastLocationLatitude": "39.9042",
-                  "lastLocationAt": "2026-05-18T13:52:45.525Z",
+                  "lastLocationAt": "2026-05-18T14:24:19.646Z",
                   "pushDeviceType": "ios",
                   "pushAliasType": "push_normal",
                   "pushAlias": "swagger-demo-device",
-                  "createdAt": "2026-05-18T13:52:26.152Z",
-                  "updatedAt": "2026-05-18T13:52:45.761Z"
+                  "createdAt": "2026-05-18T14:24:02.114Z",
+                  "updatedAt": "2026-05-18T14:24:27.754Z"
                 },
                 "title": "第一次一起看海",
                 "content": "那天风很大，但我们都笑得很开心。",
                 "happenedAt": "2026-05-18T12:00:00.000Z",
-                "createdAt": "2026-05-18T13:52:50.432Z",
-                "updatedAt": "2026-05-18T13:52:50.432Z"
+                "createdAt": "2026-05-18T14:24:29.102Z",
+                "updatedAt": "2026-05-18T14:24:29.102Z"
               }
             ],
             "pagination": {
@@ -1097,13 +1380,13 @@
             "code": 200,
             "message": "success",
             "data": {
-              "id": "2",
-              "friendRelationId": "10",
-              "authorId": "13",
+              "id": "3",
+              "friendRelationId": "12",
+              "authorId": "15",
               "author": {
-                "id": "13",
-                "username": "friend_pb9jxro",
-                "email": "swagger.friend.mpb9jxro@example.com",
+                "id": "15",
+                "username": "friend_pbaok91",
+                "email": "swagger.friend.mpbaok91@example.com",
                 "nickname": "",
                 "avatarUrl": "",
                 "gender": "UNKNOWN",
@@ -1112,27 +1395,27 @@
                 "role": "USER",
                 "status": "ACTIVE",
                 "uploadIntervalMinutes": 120,
-                "vipLevel": 0,
-                "vipSource": null,
-                "vipExpiresAt": null,
+                "vipLevel": 1,
+                "vipSource": "BIND",
+                "vipExpiresAt": "2026-06-18T14:24:27.753Z",
                 "vipBindQuotaTotal": 0,
                 "vipBindQuotaUsed": 0,
                 "destroyRequestedAt": null,
                 "lastLocationAddress": "北京市朝阳区",
                 "lastLocationLongitude": "116.4074",
                 "lastLocationLatitude": "39.9042",
-                "lastLocationAt": "2026-05-18T13:52:45.525Z",
+                "lastLocationAt": "2026-05-18T14:24:19.646Z",
                 "pushDeviceType": "ios",
                 "pushAliasType": "push_normal",
                 "pushAlias": "swagger-demo-device",
-                "createdAt": "2026-05-18T13:52:26.152Z",
-                "updatedAt": "2026-05-18T13:52:45.761Z"
+                "createdAt": "2026-05-18T14:24:02.114Z",
+                "updatedAt": "2026-05-18T14:24:27.754Z"
               },
               "title": "一起看海的那天",
               "content": "那天风很大，但我们都笑得很开心。",
               "happenedAt": "2026-05-18T12:00:00.000Z",
-              "createdAt": "2026-05-18T13:52:50.432Z",
-              "updatedAt": "2026-05-18T13:52:54.394Z"
+              "createdAt": "2026-05-18T14:24:29.102Z",
+              "updatedAt": "2026-05-18T14:24:32.910Z"
             }
           }
         }
@@ -1145,7 +1428,7 @@
         "name": "createMomentRequest",
         "summary": "创建瞬间请求",
         "value": {
-          "friendRelationId": "10",
+          "friendRelationId": "12",
           "content": "今天的晚霞很好看。",
           "happenedAt": "2026-05-18T13:00:00.000Z"
         }
@@ -1159,13 +1442,13 @@
             "code": 200,
             "message": "success",
             "data": {
-              "id": "2",
-              "friendRelationId": "10",
-              "authorId": "13",
+              "id": "3",
+              "friendRelationId": "12",
+              "authorId": "15",
               "author": {
-                "id": "13",
-                "username": "friend_pb9jxro",
-                "email": "swagger.friend.mpb9jxro@example.com",
+                "id": "15",
+                "username": "friend_pbaok91",
+                "email": "swagger.friend.mpbaok91@example.com",
                 "nickname": "",
                 "avatarUrl": "",
                 "gender": "UNKNOWN",
@@ -1174,26 +1457,26 @@
                 "role": "USER",
                 "status": "ACTIVE",
                 "uploadIntervalMinutes": 120,
-                "vipLevel": 0,
-                "vipSource": null,
-                "vipExpiresAt": null,
+                "vipLevel": 1,
+                "vipSource": "BIND",
+                "vipExpiresAt": "2026-06-18T14:24:27.753Z",
                 "vipBindQuotaTotal": 0,
                 "vipBindQuotaUsed": 0,
                 "destroyRequestedAt": null,
                 "lastLocationAddress": "北京市朝阳区",
                 "lastLocationLongitude": "116.4074",
                 "lastLocationLatitude": "39.9042",
-                "lastLocationAt": "2026-05-18T13:52:45.525Z",
+                "lastLocationAt": "2026-05-18T14:24:19.646Z",
                 "pushDeviceType": "ios",
                 "pushAliasType": "push_normal",
                 "pushAlias": "swagger-demo-device",
-                "createdAt": "2026-05-18T13:52:26.152Z",
-                "updatedAt": "2026-05-18T13:52:45.761Z"
+                "createdAt": "2026-05-18T14:24:02.114Z",
+                "updatedAt": "2026-05-18T14:24:27.754Z"
               },
               "content": "今天的晚霞很好看。",
               "happenedAt": "2026-05-18T13:00:00.000Z",
-              "createdAt": "2026-05-18T13:52:56.015Z",
-              "updatedAt": "2026-05-18T13:52:56.015Z"
+              "createdAt": "2026-05-18T14:24:34.473Z",
+              "updatedAt": "2026-05-18T14:24:34.473Z"
             }
           }
         }
@@ -1211,13 +1494,13 @@
             "code": 200,
             "message": "success",
             "data": {
-              "id": "2",
-              "friendRelationId": "10",
-              "authorId": "13",
+              "id": "3",
+              "friendRelationId": "12",
+              "authorId": "15",
               "author": {
-                "id": "13",
-                "username": "friend_pb9jxro",
-                "email": "swagger.friend.mpb9jxro@example.com",
+                "id": "15",
+                "username": "friend_pbaok91",
+                "email": "swagger.friend.mpbaok91@example.com",
                 "nickname": "",
                 "avatarUrl": "",
                 "gender": "UNKNOWN",
@@ -1226,26 +1509,26 @@
                 "role": "USER",
                 "status": "ACTIVE",
                 "uploadIntervalMinutes": 120,
-                "vipLevel": 0,
-                "vipSource": null,
-                "vipExpiresAt": null,
+                "vipLevel": 1,
+                "vipSource": "BIND",
+                "vipExpiresAt": "2026-06-18T14:24:27.753Z",
                 "vipBindQuotaTotal": 0,
                 "vipBindQuotaUsed": 0,
                 "destroyRequestedAt": null,
                 "lastLocationAddress": "北京市朝阳区",
                 "lastLocationLongitude": "116.4074",
                 "lastLocationLatitude": "39.9042",
-                "lastLocationAt": "2026-05-18T13:52:45.525Z",
+                "lastLocationAt": "2026-05-18T14:24:19.646Z",
                 "pushDeviceType": "ios",
                 "pushAliasType": "push_normal",
                 "pushAlias": "swagger-demo-device",
-                "createdAt": "2026-05-18T13:52:26.152Z",
-                "updatedAt": "2026-05-18T13:52:45.761Z"
+                "createdAt": "2026-05-18T14:24:02.114Z",
+                "updatedAt": "2026-05-18T14:24:27.754Z"
               },
               "content": "今天的晚霞很好看。",
               "happenedAt": "2026-05-18T13:00:00.000Z",
-              "createdAt": "2026-05-18T13:52:56.015Z",
-              "updatedAt": "2026-05-18T13:52:56.015Z"
+              "createdAt": "2026-05-18T14:24:34.473Z",
+              "updatedAt": "2026-05-18T14:24:34.473Z"
             }
           }
         }
@@ -1264,13 +1547,13 @@
             "message": "success",
             "data": [
               {
-                "id": "2",
-                "friendRelationId": "10",
-                "authorId": "13",
+                "id": "3",
+                "friendRelationId": "12",
+                "authorId": "15",
                 "author": {
-                  "id": "13",
-                  "username": "friend_pb9jxro",
-                  "email": "swagger.friend.mpb9jxro@example.com",
+                  "id": "15",
+                  "username": "friend_pbaok91",
+                  "email": "swagger.friend.mpbaok91@example.com",
                   "nickname": "",
                   "avatarUrl": "",
                   "gender": "UNKNOWN",
@@ -1279,26 +1562,26 @@
                   "role": "USER",
                   "status": "ACTIVE",
                   "uploadIntervalMinutes": 120,
-                  "vipLevel": 0,
-                  "vipSource": null,
-                  "vipExpiresAt": null,
+                  "vipLevel": 1,
+                  "vipSource": "BIND",
+                  "vipExpiresAt": "2026-06-18T14:24:27.753Z",
                   "vipBindQuotaTotal": 0,
                   "vipBindQuotaUsed": 0,
                   "destroyRequestedAt": null,
                   "lastLocationAddress": "北京市朝阳区",
                   "lastLocationLongitude": "116.4074",
                   "lastLocationLatitude": "39.9042",
-                  "lastLocationAt": "2026-05-18T13:52:45.525Z",
+                  "lastLocationAt": "2026-05-18T14:24:19.646Z",
                   "pushDeviceType": "ios",
                   "pushAliasType": "push_normal",
                   "pushAlias": "swagger-demo-device",
-                  "createdAt": "2026-05-18T13:52:26.152Z",
-                  "updatedAt": "2026-05-18T13:52:45.761Z"
+                  "createdAt": "2026-05-18T14:24:02.114Z",
+                  "updatedAt": "2026-05-18T14:24:27.754Z"
                 },
                 "content": "今天的晚霞很好看。",
                 "happenedAt": "2026-05-18T13:00:00.000Z",
-                "createdAt": "2026-05-18T13:52:56.015Z",
-                "updatedAt": "2026-05-18T13:52:56.015Z"
+                "createdAt": "2026-05-18T14:24:34.473Z",
+                "updatedAt": "2026-05-18T14:24:34.473Z"
               }
             ],
             "pagination": {
@@ -1331,13 +1614,13 @@
             "code": 200,
             "message": "success",
             "data": {
-              "id": "2",
-              "friendRelationId": "10",
-              "authorId": "13",
+              "id": "3",
+              "friendRelationId": "12",
+              "authorId": "15",
               "author": {
-                "id": "13",
-                "username": "friend_pb9jxro",
-                "email": "swagger.friend.mpb9jxro@example.com",
+                "id": "15",
+                "username": "friend_pbaok91",
+                "email": "swagger.friend.mpbaok91@example.com",
                 "nickname": "",
                 "avatarUrl": "",
                 "gender": "UNKNOWN",
@@ -1346,26 +1629,26 @@
                 "role": "USER",
                 "status": "ACTIVE",
                 "uploadIntervalMinutes": 120,
-                "vipLevel": 0,
-                "vipSource": null,
-                "vipExpiresAt": null,
+                "vipLevel": 1,
+                "vipSource": "BIND",
+                "vipExpiresAt": "2026-06-18T14:24:27.753Z",
                 "vipBindQuotaTotal": 0,
                 "vipBindQuotaUsed": 0,
                 "destroyRequestedAt": null,
                 "lastLocationAddress": "北京市朝阳区",
                 "lastLocationLongitude": "116.4074",
                 "lastLocationLatitude": "39.9042",
-                "lastLocationAt": "2026-05-18T13:52:45.525Z",
+                "lastLocationAt": "2026-05-18T14:24:19.646Z",
                 "pushDeviceType": "ios",
                 "pushAliasType": "push_normal",
                 "pushAlias": "swagger-demo-device",
-                "createdAt": "2026-05-18T13:52:26.152Z",
-                "updatedAt": "2026-05-18T13:52:45.761Z"
+                "createdAt": "2026-05-18T14:24:02.114Z",
+                "updatedAt": "2026-05-18T14:24:27.754Z"
               },
               "content": "今天的晚霞很好看，想第一时间分享给你。",
               "happenedAt": "2026-05-18T13:00:00.000Z",
-              "createdAt": "2026-05-18T13:52:56.015Z",
-              "updatedAt": "2026-05-18T13:52:59.965Z"
+              "createdAt": "2026-05-18T14:24:34.473Z",
+              "updatedAt": "2026-05-18T14:24:38.294Z"
             }
           }
         }

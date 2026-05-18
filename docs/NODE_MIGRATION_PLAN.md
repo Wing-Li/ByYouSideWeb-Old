@@ -21,9 +21,9 @@
 | 迁移作业 Skill | 已完成 | 已创建 `.codex/skills/byyouside-node-migration/`，后续迁移任务应优先使用 |
 | Node 项目初始化 | 已完成 | `server-node/` NestJS 基础骨架、Swagger、统一响应、异常处理、健康检查和基础测试已完成 |
 | 数据模型设计 | 已完成 | Phase 2 已完成第一版 Prisma schema、migration SQL、Neon main/dev 数据库 migration 和 seed；已创建 Neon local 分支用于本地开发 |
-| API 文档编写 | 进行中 | Phase 1 已建立 Swagger/OpenAPI；Phase 3 已补充 Auth/User 接口文档和真实响应示例捕获；Phase 4 已补充 Friends 接口文档和真实响应示例捕获；Phase 5 已补充 Devices 接口文档和真实响应示例捕获；Phase 6 已补充 Memoirs/Moments 接口文档和真实响应示例捕获 |
-| 业务模块迁移 | 进行中 | Phase 6 回忆录与瞬间模块第一版已完成并通过验证 |
-| 测试与验收 | 进行中 | Phase 1 已建立基础验证；Phase 3 已补充 Auth/User 测试；Phase 4 已补充 Friends 单元测试与 e2e 主链路测试；Phase 5 已补充 Devices 单元测试与 e2e 主链路测试；Phase 6 已补充 Memoirs/Moments 单元测试与 e2e 主链路测试 |
+| API 文档编写 | 进行中 | Phase 1 已建立 Swagger/OpenAPI；Phase 3 已补充 Auth/User 接口文档和真实响应示例捕获；Phase 4 已补充 Friends 接口文档和真实响应示例捕获；Phase 5 已补充 Devices 接口文档和真实响应示例捕获；Phase 6 已补充 Memoirs/Moments 接口文档和真实响应示例捕获；Phase 7 已补充 VIP 接口文档和真实响应示例捕获 |
+| 业务模块迁移 | 进行中 | Phase 7 VIP 模块第一版已完成并通过验证 |
+| 测试与验收 | 进行中 | Phase 1 已建立基础验证；Phase 3 已补充 Auth/User 测试；Phase 4 已补充 Friends 单元测试与 e2e 主链路测试；Phase 5 已补充 Devices 单元测试与 e2e 主链路测试；Phase 6 已补充 Memoirs/Moments 单元测试与 e2e 主链路测试；Phase 7 已补充 VIP 单元测试与 e2e 主链路测试 |
 
 ## 已确认决策
 
@@ -309,7 +309,13 @@ server-node/
 | Moments | `DELETE /api/v1/moments/:id` | `POST /api/moments/delete` | 已完成 |
 | Moments | `GET /api/v1/moments/:id` | `GET /api/moments/get` | 已完成 |
 | Moments | `GET /api/v1/moments` | `GET /api/moments/list` | 已完成 |
-| VIP | 待设计 | `/api/vip/*` | 未开始 |
+| VIP | `GET /api/v1/vip/plans` | `GET /api/vip/getType` | 已完成 |
+| VIP | `POST /api/v1/vip/plans` | `POST /api/vip/create` | 已完成 |
+| VIP | `PATCH /api/v1/vip/plans/:id` | `POST /api/vip/update` | 已完成 |
+| VIP | `POST /api/v1/vip/orders` | `POST /api/vip/addRecharge` | 已完成 |
+| VIP | `GET /api/v1/vip/orders/me` | `GET /api/vip/getMyRecharge` | 已完成 |
+| VIP | `GET /api/v1/vip/orders` | `GET /api/vip/getRechargeAll`、`GET /api/vip/getRechargeByUserId` | 已完成 |
+| VIP | `POST /api/v1/vip/bindings` | `POST /api/vip/bindVip` | 已完成 |
 | Config | 待设计 | `/api/config/*` | 未开始 |
 | Announcements | 待设计 | `/api/announcement/*` | 未开始 |
 | Feedback | 待设计 | `/api/feedback/*` | 未开始 |
@@ -693,7 +699,7 @@ server-node/
 
 ### Phase 7：VIP 模块
 
-状态：未开始
+状态：已完成
 
 任务：
 
@@ -710,6 +716,20 @@ server-node/
 - 金额、套餐、会员到期时间计算准确。
 - 双人会员名额不可超用。
 - 管理接口需要管理员权限。
+
+当前进展：
+
+- 已创建并验证 `docs/migration-plans/phase-07-vip.md`。
+- 已实现 VIP 套餐查询、管理员创建套餐、管理员更新套餐、开通 VIP、我的订单、管理员订单列表和双人会员绑定接口。
+- 新系统复用 Phase 2 的 `VipPlan`、`VipOrder` 和用户 VIP 字段，本阶段无需新增 migration。
+- 开通 VIP 会创建订单并更新用户 `vipLevel`、`vipSource`、`vipExpiresAt`、`vipBindQuotaTotal` 和 `vipBindQuotaUsed`。
+- 到期时间规则延续旧系统：未过期时从原到期时间累加套餐月数，已过期或无到期时间时从当前时间累加套餐月数。
+- 双人套餐会给购买者 1 个绑定名额；绑定来源开通给目标用户时目标用户无绑定名额，并扣减开通方已使用名额。
+- 普通用户只能给自己开通 VIP；管理员可给指定用户开通或赠送，这是相对旧接口的有意权限收紧。
+- 已移除旧云信 IM 副作用，不创建或同步 `imAccountId`。
+- 已扩展 mock/log `PushService`，绑定 VIP 阶段只记录开发推送，真实友盟接入仍留到 Phase 9。
+- 已补充 VIP Swagger DTO、真实响应示例捕获、单元测试和 e2e 主链路测试。
+- 已通过 `npm run format`、`npm run lint`、`npm run test -- --runInBand`、`npm run test:e2e -- --runInBand`、`npm run build` 和 `npm run api:examples`。
 
 ### Phase 8：配置、公告、反馈、版本
 
@@ -864,10 +884,10 @@ docs/migration-plans/
 
 ## 下一步建议
 
-下一步建议执行 Phase 7：
+下一步建议执行 Phase 8：
 
-1. 创建或更新 `docs/migration-plans/phase-07-vip.md`。
-2. 阅读旧 `VipRechargeController.kt`、`Vip.kt`、`VipRepository.kt`、`VipRecharge.kt`、`VipRechargeRepository.kt` 和 `InitLogic.kt`。
-3. 明确 VIP 套餐、订单、双人会员名额和过期时间计算规则。
-4. 设计并实现 VIP 套餐查询、开通、订单记录和会员绑定接口。
+1. 创建或更新 `docs/migration-plans/phase-08-config-content-version.md`。
+2. 阅读旧 `ConfigInfoController.kt`、`ConfigInfo.kt`、`ConfigInfoRepository.kt`、`AnnouncementController.kt`、`FeedbackController.kt`、`VersionController.kt` 和相关实体/仓库。
+3. 明确 App 启动配置、公告、反馈、版本发布与最新版本查询规则。
+4. 设计并实现公共查询接口和管理员维护接口，明确管理员权限边界。
 5. 补齐 Swagger DTO、真实示例捕获、单元测试和 e2e 测试。

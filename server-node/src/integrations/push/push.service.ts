@@ -25,6 +25,10 @@ export class PushService {
     this.logFriendPush('requestLocation', payload);
   }
 
+  sendBindVip(payload: FriendPushPayload): void {
+    this.logFriendPush('bindVip', payload);
+  }
+
   private logFriendPush(type: string, payload: FriendPushPayload): void {
     if (!payload.pushAlias || !payload.pushAliasType || !payload.deviceType) {
       return;

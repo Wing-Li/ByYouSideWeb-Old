@@ -301,6 +301,51 @@ async function main(): Promise<void> {
       expectedStatus: 201,
     },
   );
+  const vipPlansResponse = await request<
+    ApiResponseBody<Array<{ id: string; status: string; price: string }>>
+  >(baseUrl, {
+    method: 'get',
+    path: '/api/v1/vip/plans',
+    token: generatedUserToken,
+    expectedStatus: 200,
+  });
+  const duetVipPlan =
+    vipPlansResponse.body.data.find((plan) => plan.status === 'DUET') ??
+    vipPlansResponse.body.data[0];
+  if (!duetVipPlan) {
+    throw new Error('无法捕获 VIP 示例：当前数据库没有 VIP 套餐。');
+  }
+  const createVipOrderBody = {
+    planId: duetVipPlan.id,
+    amount: Number(duetVipPlan.price),
+    source: 'IOS',
+  };
+  const createVipOrderResponse = await request<ApiResponseBody<unknown>>(
+    baseUrl,
+    {
+      method: 'post',
+      path: '/api/v1/vip/orders',
+      body: createVipOrderBody,
+      token: generatedUserToken,
+      expectedStatus: 201,
+    },
+  );
+  const myVipOrdersResponse = await request<ApiResponseBody<unknown>>(baseUrl, {
+    method: 'get',
+    path: '/api/v1/vip/orders/me',
+    token: generatedUserToken,
+    expectedStatus: 200,
+  });
+  const bindVipBody = {
+    toUserId: friendUserId,
+  };
+  const bindVipResponse = await request<ApiResponseBody<unknown>>(baseUrl, {
+    method: 'post',
+    path: '/api/v1/vip/bindings',
+    body: bindVipBody,
+    token: generatedUserToken,
+    expectedStatus: 201,
+  });
   const createMemoirBody = {
     friendRelationId,
     title: '第一次一起看海',
@@ -704,6 +749,64 @@ async function main(): Promise<void> {
             name: 'requestLocationSuccess',
             summary: '请求好友位置成功响应',
             value: redactSensitive(requestLocationResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/vip/plans',
+        method: 'get',
+        responses: [
+          {
+            status: '200',
+            name: 'vipPlansSuccess',
+            summary: '查询 VIP 套餐成功响应',
+            value: redactSensitive(vipPlansResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/vip/orders',
+        method: 'post',
+        request: {
+          name: 'createVipOrderRequest',
+          summary: '开通 VIP 请求',
+          value: createVipOrderBody,
+        },
+        responses: [
+          {
+            status: '201',
+            name: 'createVipOrderSuccess',
+            summary: '开通 VIP 成功响应',
+            value: redactSensitive(createVipOrderResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/vip/orders/me',
+        method: 'get',
+        responses: [
+          {
+            status: '200',
+            name: 'myVipOrdersSuccess',
+            summary: '查询我的 VIP 订单成功响应',
+            value: redactSensitive(myVipOrdersResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/vip/bindings',
+        method: 'post',
+        request: {
+          name: 'bindVipRequest',
+          summary: '绑定双人会员名额请求',
+          value: bindVipBody,
+        },
+        responses: [
+          {
+            status: '201',
+            name: 'bindVipSuccess',
+            summary: '绑定双人会员名额成功响应',
+            value: redactSensitive(bindVipResponse.body),
           },
         ],
       },

@@ -14,7 +14,7 @@
 | `phase-04-friends.md` | 未开始 |
 | `phase-05-devices-location.md` | 未开始 |
 | `phase-06-memoirs-moments.md` | 已关闭 |
-| `phase-07-vip.md` | 未开始 |
+| `phase-07-vip.md` | 已关闭 |
 | `phase-08-config-content-version.md` | 未开始 |
 
 计划模板位于：
