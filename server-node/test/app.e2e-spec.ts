@@ -84,13 +84,40 @@ type FakeDeviceSnapshot = {
   createdAt: Date;
 };
 
+type FakeMemoir = {
+  id: bigint;
+  friendRelationId: bigint;
+  authorId: bigint;
+  title: string;
+  content: string;
+  happenedAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
+  author: FakeUser;
+};
+
+type FakeMoment = {
+  id: bigint;
+  friendRelationId: bigint;
+  authorId: bigint;
+  content: string;
+  happenedAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
+  author: FakeUser;
+};
+
 class FakePrismaService {
   private nextUserId = 1n;
   private nextFriendRelationId = 1n;
   private nextDeviceSnapshotId = 1n;
+  private nextMemoirId = 1n;
+  private nextMomentId = 1n;
   readonly users: FakeUser[] = [];
   readonly friendRelations: FakeFriendRelation[] = [];
   readonly deviceSnapshots: FakeDeviceSnapshot[] = [];
+  readonly memoirs: FakeMemoir[] = [];
+  readonly moments: FakeMoment[] = [];
 
   user = {
     findUnique: jest.fn(
@@ -345,11 +372,158 @@ class FakePrismaService {
   };
 
   memoir = {
-    deleteMany: jest.fn(() => ({ count: 0 })),
+    create: jest.fn(
+      ({
+        data,
+      }: {
+        data: {
+          friendRelationId: bigint;
+          authorId: bigint;
+          title: string;
+          content: string;
+          happenedAt: Date;
+        };
+      }) => this.createMemoir(data),
+    ),
+    findUnique: jest.fn(
+      ({ where }: { where: { id: bigint } }) =>
+        this.memoirs.find((item) => item.id === where.id) ?? null,
+    ),
+    update: jest.fn(
+      ({
+        where,
+        data,
+      }: {
+        where: { id: bigint };
+        data: Partial<Pick<FakeMemoir, 'title' | 'content' | 'happenedAt'>>;
+      }) => this.updateMemoir(where.id, data),
+    ),
+    delete: jest.fn(({ where }: { where: { id: bigint } }) => {
+      const index = this.memoirs.findIndex((item) => item.id === where.id);
+      if (index >= 0) {
+        this.memoirs.splice(index, 1);
+      }
+      return {};
+    }),
+    count: jest.fn(
+      ({ where }: { where: { friendRelationId: { in: bigint[] } } }) =>
+        this.memoirs.filter((item) =>
+          where.friendRelationId.in.includes(item.friendRelationId),
+        ).length,
+    ),
+    findMany: jest.fn(
+      ({
+        where,
+        skip,
+        take,
+      }: {
+        where: { friendRelationId: { in: bigint[] } };
+        skip: number;
+        take: number;
+      }) =>
+        this.memoirs
+          .filter((item) =>
+            where.friendRelationId.in.includes(item.friendRelationId),
+          )
+          .sort(
+            (left, right) =>
+              right.happenedAt.getTime() - left.happenedAt.getTime() ||
+              right.createdAt.getTime() - left.createdAt.getTime(),
+          )
+          .slice(skip, skip + take),
+    ),
+    deleteMany: jest.fn(
+      ({ where }: { where: { friendRelationId: { in: bigint[] } } }) => {
+        const before = this.memoirs.length;
+        for (let index = this.memoirs.length - 1; index >= 0; index -= 1) {
+          if (
+            where.friendRelationId.in.includes(
+              this.memoirs[index].friendRelationId,
+            )
+          ) {
+            this.memoirs.splice(index, 1);
+          }
+        }
+        return { count: before - this.memoirs.length };
+      },
+    ),
   };
 
   moment = {
-    deleteMany: jest.fn(() => ({ count: 0 })),
+    create: jest.fn(
+      ({
+        data,
+      }: {
+        data: {
+          friendRelationId: bigint;
+          authorId: bigint;
+          content: string;
+          happenedAt: Date;
+        };
+      }) => this.createMoment(data),
+    ),
+    findUnique: jest.fn(
+      ({ where }: { where: { id: bigint } }) =>
+        this.moments.find((item) => item.id === where.id) ?? null,
+    ),
+    update: jest.fn(
+      ({
+        where,
+        data,
+      }: {
+        where: { id: bigint };
+        data: Partial<Pick<FakeMoment, 'content' | 'happenedAt'>>;
+      }) => this.updateMoment(where.id, data),
+    ),
+    delete: jest.fn(({ where }: { where: { id: bigint } }) => {
+      const index = this.moments.findIndex((item) => item.id === where.id);
+      if (index >= 0) {
+        this.moments.splice(index, 1);
+      }
+      return {};
+    }),
+    count: jest.fn(
+      ({ where }: { where: { friendRelationId: { in: bigint[] } } }) =>
+        this.moments.filter((item) =>
+          where.friendRelationId.in.includes(item.friendRelationId),
+        ).length,
+    ),
+    findMany: jest.fn(
+      ({
+        where,
+        skip,
+        take,
+      }: {
+        where: { friendRelationId: { in: bigint[] } };
+        skip: number;
+        take: number;
+      }) =>
+        this.moments
+          .filter((item) =>
+            where.friendRelationId.in.includes(item.friendRelationId),
+          )
+          .sort(
+            (left, right) =>
+              right.happenedAt.getTime() - left.happenedAt.getTime() ||
+              right.createdAt.getTime() - left.createdAt.getTime(),
+          )
+          .slice(skip, skip + take),
+    ),
+    deleteMany: jest.fn(
+      ({ where }: { where: { friendRelationId: { in: bigint[] } } }) => {
+        const before = this.moments.length;
+        for (let index = this.moments.length - 1; index >= 0; index -= 1) {
+          if (
+            where.friendRelationId.in.includes(
+              this.moments[index].friendRelationId,
+            )
+          ) {
+            this.moments.splice(index, 1);
+          }
+        }
+        return { count: before - this.moments.length };
+      },
+    ),
   };
 
   $transaction = jest.fn(
@@ -419,6 +593,86 @@ class FakePrismaService {
     };
     this.deviceSnapshots.push(snapshot);
     return snapshot;
+  }
+
+  private createMemoir(data: {
+    friendRelationId: bigint;
+    authorId: bigint;
+    title: string;
+    content: string;
+    happenedAt: Date;
+  }): FakeMemoir {
+    const author = this.users.find((user) => user.id === data.authorId);
+    if (!author) {
+      throw new Error('user not found');
+    }
+    const now = new Date('2026-05-17T00:00:00.000Z');
+    const memoir: FakeMemoir = {
+      id: this.nextMemoirId++,
+      friendRelationId: data.friendRelationId,
+      authorId: data.authorId,
+      title: data.title,
+      content: data.content,
+      happenedAt: data.happenedAt,
+      createdAt: now,
+      updatedAt: now,
+      author,
+    };
+    this.memoirs.push(memoir);
+    return memoir;
+  }
+
+  private updateMemoir(
+    id: bigint,
+    data: Partial<Pick<FakeMemoir, 'title' | 'content' | 'happenedAt'>>,
+  ): FakeMemoir {
+    const memoir = this.memoirs.find((item) => item.id === id);
+    if (!memoir) {
+      throw new Error('memoir not found');
+    }
+    Object.assign(memoir, data, {
+      updatedAt: new Date('2026-05-17T00:01:00.000Z'),
+    });
+    return memoir;
+  }
+
+  private createMoment(data: {
+    friendRelationId: bigint;
+    authorId: bigint;
+    content: string;
+    happenedAt: Date;
+  }): FakeMoment {
+    const author = this.users.find((user) => user.id === data.authorId);
+    if (!author) {
+      throw new Error('user not found');
+    }
+    const now = new Date('2026-05-17T00:00:00.000Z');
+    const moment: FakeMoment = {
+      id: this.nextMomentId++,
+      friendRelationId: data.friendRelationId,
+      authorId: data.authorId,
+      content: data.content,
+      happenedAt: data.happenedAt,
+      createdAt: now,
+      updatedAt: now,
+      author,
+    };
+    this.moments.push(moment);
+    return moment;
+  }
+
+  private updateMoment(
+    id: bigint,
+    data: Partial<Pick<FakeMoment, 'content' | 'happenedAt'>>,
+  ): FakeMoment {
+    const moment = this.moments.find((item) => item.id === id);
+    if (!moment) {
+      throw new Error('moment not found');
+    }
+    Object.assign(moment, data, {
+      updatedAt: new Date('2026-05-17T00:01:00.000Z'),
+    });
+    return moment;
   }
 
   private updateFriendRelation(
@@ -895,6 +1149,181 @@ describe('Devices (e2e)', () => {
           data: '通知发送成功',
         });
       });
+  });
+
+  async function registerUser(
+    username: string,
+    email: string,
+  ): Promise<{ id: string; token: string }> {
+    const response = await request(app.getHttpServer())
+      .post('/api/v1/auth/register')
+      .send({
+        username,
+        password: 'ChangeMe_123456',
+        email,
+      })
+      .expect(201);
+    const body = response.body as {
+      data: { token: string; user: { id: string } };
+    };
+    return {
+      id: body.data.user.id,
+      token: body.data.token,
+    };
+  }
+
+  afterEach(async () => {
+    await app.close();
+  });
+});
+
+describe('Memoirs and Moments (e2e)', () => {
+  let app: INestApplication<App>;
+  let prisma: FakePrismaService;
+
+  beforeEach(async () => {
+    prisma = new FakePrismaService();
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [AppModule],
+    })
+      .overrideProvider(PrismaService)
+      .useValue(prisma)
+      .compile();
+
+    app = moduleFixture.createNestApplication();
+    setupApp(app);
+    setupSwagger(app);
+    await app.init();
+  });
+
+  it('回忆录和瞬间可以创建、查询、更新和删除，并限制非作者写操作', async () => {
+    const alice = await registerUser('alice_01', 'alice.content@example.com');
+    const bob = await registerUser('bob_01', 'bob.content@example.com');
+
+    const requestResponse = await request(app.getHttpServer())
+      .post('/api/v1/friends/requests')
+      .set('Authorization', alice.token)
+      .send({ toUserId: bob.id })
+      .expect(201);
+    const requestId = (requestResponse.body as { data: { id: string } }).data
+      .id;
+
+    const acceptResponse = await request(app.getHttpServer())
+      .post(`/api/v1/friends/requests/${requestId}/accept`)
+      .set('Authorization', bob.token)
+      .expect(201);
+    const bobRelationId = (acceptResponse.body as { data: { id: string } }).data
+      .id;
+
+    const memoirResponse = await request(app.getHttpServer())
+      .post('/api/v1/memoirs')
+      .set('Authorization', bob.token)
+      .send({
+        friendRelationId: bobRelationId,
+        title: '第一次一起看海',
+        content: '那天风很大，但我们都笑得很开心。',
+        happenedAt: '2026-05-18T12:00:00.000Z',
+      })
+      .expect(201);
+    const memoirId = (memoirResponse.body as { data: { id: string } }).data.id;
+
+    await request(app.getHttpServer())
+      .patch(`/api/v1/memoirs/${memoirId}`)
+      .set('Authorization', alice.token)
+      .send({ title: '不应该成功' })
+      .expect(403)
+      .expect((response: Response) => {
+        expect(response.body).toMatchObject({
+          code: 15002,
+          message: '此回忆不是您写的，无法修改',
+        });
+      });
+
+    await request(app.getHttpServer())
+      .get(`/api/v1/memoirs/${memoirId}`)
+      .set('Authorization', alice.token)
+      .expect(200)
+      .expect((response: Response) => {
+        expect(response.body).toMatchObject({
+          code: 200,
+          data: {
+            id: memoirId,
+            title: '第一次一起看海',
+            author: { username: 'bob_01' },
+          },
+        });
+      });
+
+    await request(app.getHttpServer())
+      .get('/api/v1/memoirs')
+      .query({ friendRelationId: bobRelationId })
+      .set('Authorization', bob.token)
+      .expect(200)
+      .expect((response: Response) => {
+        expect(response.body).toMatchObject({
+          code: 200,
+          data: [{ id: memoirId }],
+          pagination: { total: 1 },
+        });
+      });
+
+    await request(app.getHttpServer())
+      .patch(`/api/v1/memoirs/${memoirId}`)
+      .set('Authorization', bob.token)
+      .send({ title: '一起看海的那天' })
+      .expect(200)
+      .expect((response: Response) => {
+        expect(response.body).toMatchObject({
+          data: { title: '一起看海的那天' },
+        });
+      });
+
+    const momentResponse = await request(app.getHttpServer())
+      .post('/api/v1/moments')
+      .set('Authorization', bob.token)
+      .send({
+        friendRelationId: bobRelationId,
+        content: '今天的晚霞很好看。',
+        happenedAt: '2026-05-18T13:00:00.000Z',
+      })
+      .expect(201);
+    const momentId = (momentResponse.body as { data: { id: string } }).data.id;
+
+    await request(app.getHttpServer())
+      .get('/api/v1/moments')
+      .query({ friendRelationId: bobRelationId })
+      .set('Authorization', bob.token)
+      .expect(200)
+      .expect((response: Response) => {
+        expect(response.body).toMatchObject({
+          data: [{ id: momentId, content: '今天的晚霞很好看。' }],
+          pagination: { total: 1 },
+        });
+      });
+
+    await request(app.getHttpServer())
+      .delete(`/api/v1/moments/${momentId}`)
+      .set('Authorization', alice.token)
+      .expect(403)
+      .expect((response: Response) => {
+        expect(response.body).toMatchObject({
+          code: 16013,
+          message: '此瞬间不是您写的，无法删除',
+        });
+      });
+
+    await request(app.getHttpServer())
+      .delete(`/api/v1/moments/${momentId}`)
+      .set('Authorization', bob.token)
+      .expect(200)
+      .expect((response: Response) => {
+        expect(response.body).toMatchObject({ code: 200, data: '删除成功' });
+      });
+
+    await request(app.getHttpServer())
+      .delete(`/api/v1/memoirs/${memoirId}`)
+      .set('Authorization', bob.token)
+      .expect(200);
   });
 
   async function registerUser(

@@ -21,9 +21,9 @@
 | 迁移作业 Skill | 已完成 | 已创建 `.codex/skills/byyouside-node-migration/`，后续迁移任务应优先使用 |
 | Node 项目初始化 | 已完成 | `server-node/` NestJS 基础骨架、Swagger、统一响应、异常处理、健康检查和基础测试已完成 |
 | 数据模型设计 | 已完成 | Phase 2 已完成第一版 Prisma schema、migration SQL、Neon main/dev 数据库 migration 和 seed；已创建 Neon local 分支用于本地开发 |
-| API 文档编写 | 进行中 | Phase 1 已建立 Swagger/OpenAPI；Phase 3 已补充 Auth/User 接口文档和真实响应示例捕获；Phase 4 已补充 Friends 接口文档和真实响应示例捕获；Phase 5 已补充 Devices 接口文档和真实响应示例捕获 |
-| 业务模块迁移 | 进行中 | Phase 5 设备与位置模块第一版已完成并通过验证 |
-| 测试与验收 | 进行中 | Phase 1 已建立基础验证；Phase 3 已补充 Auth/User 测试；Phase 4 已补充 Friends 单元测试与 e2e 主链路测试；Phase 5 已补充 Devices 单元测试与 e2e 主链路测试 |
+| API 文档编写 | 进行中 | Phase 1 已建立 Swagger/OpenAPI；Phase 3 已补充 Auth/User 接口文档和真实响应示例捕获；Phase 4 已补充 Friends 接口文档和真实响应示例捕获；Phase 5 已补充 Devices 接口文档和真实响应示例捕获；Phase 6 已补充 Memoirs/Moments 接口文档和真实响应示例捕获 |
+| 业务模块迁移 | 进行中 | Phase 6 回忆录与瞬间模块第一版已完成并通过验证 |
+| 测试与验收 | 进行中 | Phase 1 已建立基础验证；Phase 3 已补充 Auth/User 测试；Phase 4 已补充 Friends 单元测试与 e2e 主链路测试；Phase 5 已补充 Devices 单元测试与 e2e 主链路测试；Phase 6 已补充 Memoirs/Moments 单元测试与 e2e 主链路测试 |
 
 ## 已确认决策
 
@@ -299,8 +299,16 @@ server-node/
 | Devices | `GET /api/v1/devices/users/:userId/snapshots` | `GET /api/device/getByUserId` | 已完成 |
 | Devices | `GET /api/v1/devices/users/:userId/snapshots/latest` | `GET /api/device/getLastByUserId` | 已完成 |
 | Devices | `POST /api/v1/devices/users/:userId/location-request` | `POST /api/user/requestLocation` | 已完成 |
-| Memoirs | 待设计 | `/api/memoirs/*` | 未开始 |
-| Moments | 待设计 | `/api/moments/*` | 未开始 |
+| Memoirs | `POST /api/v1/memoirs` | `POST /api/memoirs/create` | 已完成 |
+| Memoirs | `PATCH /api/v1/memoirs/:id` | `POST /api/memoirs/update` | 已完成 |
+| Memoirs | `DELETE /api/v1/memoirs/:id` | `POST /api/memoirs/delete` | 已完成 |
+| Memoirs | `GET /api/v1/memoirs/:id` | `GET /api/memoirs/get` | 已完成 |
+| Memoirs | `GET /api/v1/memoirs` | `GET /api/memoirs/list` | 已完成 |
+| Moments | `POST /api/v1/moments` | `POST /api/moments/create` | 已完成 |
+| Moments | `PATCH /api/v1/moments/:id` | `POST /api/moments/update` | 已完成 |
+| Moments | `DELETE /api/v1/moments/:id` | `POST /api/moments/delete` | 已完成 |
+| Moments | `GET /api/v1/moments/:id` | `GET /api/moments/get` | 已完成 |
+| Moments | `GET /api/v1/moments` | `GET /api/moments/list` | 已完成 |
 | VIP | 待设计 | `/api/vip/*` | 未开始 |
 | Config | 待设计 | `/api/config/*` | 未开始 |
 | Announcements | 待设计 | `/api/announcement/*` | 未开始 |
@@ -655,7 +663,7 @@ server-node/
 
 ### Phase 6：回忆录与瞬间模块
 
-状态：未开始
+状态：已完成
 
 任务：
 
@@ -669,6 +677,19 @@ server-node/
 - Memoir 和 Moment 逻辑独立但风格一致。
 - 列表查询能正确返回双方内容。
 - 删除好友后的内容处理策略已实现并测试。
+
+当前进展：
+
+- 已创建并验证 `docs/migration-plans/phase-06-memoirs-moments.md`。
+- 已实现回忆录创建、更新、删除、详情和分页列表接口。
+- 已实现瞬间创建、更新、删除、详情和分页列表接口。
+- 新接口继续使用 Phase 4 的双向 `FriendRelation` 模型，列表会同时读取双方好友关系 ID 下的内容。
+- 创建和列表要求使用当前用户拥有的已接受好友关系 ID；详情要求当前用户属于该内容所在的已接受好友关系。
+- 更新和删除已收紧为仅作者本人可操作；这是相对旧更新接口的有意内容安全修正。
+- 详情接口已收紧好友关系成员访问；这是相对旧详情接口的有意越权防护修正。
+- 已复用 Phase 2 的 `Memoir` 和 `Moment` Prisma model，本阶段无需新增 migration。
+- 已补充 Memoirs/Moments Swagger DTO、真实响应示例捕获、单元测试和 e2e 主链路测试。
+- 已通过 `npm run format`、`npm run lint`、`npm run test -- --runInBand`、`npm run test:e2e -- --runInBand`、`npm run build` 和 `npm run api:examples`。
 
 ### Phase 7：VIP 模块
 
@@ -843,10 +864,10 @@ docs/migration-plans/
 
 ## 下一步建议
 
-下一步建议执行 Phase 6：
+下一步建议执行 Phase 7：
 
-1. 创建或更新 `docs/migration-plans/phase-06-memoirs-moments.md`。
-2. 阅读旧 `MemoirsController.kt`、`Memoirs.kt`、`MemoirsRepository.kt`、`MomentsController.kt`、`Moments.kt`、`MomentsRepository.kt` 和 `FriendRepository.kt`。
-3. 明确回忆录、瞬间与好友关系 ID 的权限边界，以及删除好友后的内容清理策略。
-4. 实现回忆录与瞬间的创建、更新、删除、详情和分页列表接口。
+1. 创建或更新 `docs/migration-plans/phase-07-vip.md`。
+2. 阅读旧 `VipRechargeController.kt`、`Vip.kt`、`VipRepository.kt`、`VipRecharge.kt`、`VipRechargeRepository.kt` 和 `InitLogic.kt`。
+3. 明确 VIP 套餐、订单、双人会员名额和过期时间计算规则。
+4. 设计并实现 VIP 套餐查询、开通、订单记录和会员绑定接口。
 5. 补齐 Swagger DTO、真实示例捕获、单元测试和 e2e 测试。

@@ -301,6 +301,101 @@ async function main(): Promise<void> {
       expectedStatus: 201,
     },
   );
+  const createMemoirBody = {
+    friendRelationId,
+    title: '第一次一起看海',
+    content: '那天风很大，但我们都笑得很开心。',
+    happenedAt: '2026-05-18T12:00:00.000Z',
+  };
+  const createMemoirResponse = await request<ApiResponseBody<{ id: string }>>(
+    baseUrl,
+    {
+      method: 'post',
+      path: '/api/v1/memoirs',
+      body: createMemoirBody,
+      token: friendUserToken,
+      expectedStatus: 201,
+    },
+  );
+  const memoirId = createMemoirResponse.body.data.id;
+  const getMemoirResponse = await request<ApiResponseBody<unknown>>(baseUrl, {
+    method: 'get',
+    path: `/api/v1/memoirs/${memoirId}`,
+    token: generatedUserToken,
+    expectedStatus: 200,
+  });
+  const listMemoirsResponse = await request<ApiResponseBody<unknown>>(baseUrl, {
+    method: 'get',
+    path: `/api/v1/memoirs?friendRelationId=${friendRelationId}`,
+    token: friendUserToken,
+    expectedStatus: 200,
+  });
+  const updateMemoirBody = {
+    title: '一起看海的那天',
+  };
+  const updateMemoirResponse = await request<ApiResponseBody<unknown>>(
+    baseUrl,
+    {
+      method: 'patch',
+      path: `/api/v1/memoirs/${memoirId}`,
+      body: updateMemoirBody,
+      token: friendUserToken,
+      expectedStatus: 200,
+    },
+  );
+  const createMomentBody = {
+    friendRelationId,
+    content: '今天的晚霞很好看。',
+    happenedAt: '2026-05-18T13:00:00.000Z',
+  };
+  const createMomentResponse = await request<ApiResponseBody<{ id: string }>>(
+    baseUrl,
+    {
+      method: 'post',
+      path: '/api/v1/moments',
+      body: createMomentBody,
+      token: friendUserToken,
+      expectedStatus: 201,
+    },
+  );
+  const momentId = createMomentResponse.body.data.id;
+  const getMomentResponse = await request<ApiResponseBody<unknown>>(baseUrl, {
+    method: 'get',
+    path: `/api/v1/moments/${momentId}`,
+    token: generatedUserToken,
+    expectedStatus: 200,
+  });
+  const listMomentsResponse = await request<ApiResponseBody<unknown>>(baseUrl, {
+    method: 'get',
+    path: `/api/v1/moments?friendRelationId=${friendRelationId}`,
+    token: friendUserToken,
+    expectedStatus: 200,
+  });
+  const updateMomentBody = {
+    content: '今天的晚霞很好看，想第一时间分享给你。',
+  };
+  const updateMomentResponse = await request<ApiResponseBody<unknown>>(
+    baseUrl,
+    {
+      method: 'patch',
+      path: `/api/v1/moments/${momentId}`,
+      body: updateMomentBody,
+      token: friendUserToken,
+      expectedStatus: 200,
+    },
+  );
+  const deleteMomentResponse = await request<ApiResponseBody<string>>(baseUrl, {
+    method: 'delete',
+    path: `/api/v1/moments/${momentId}`,
+    token: friendUserToken,
+    expectedStatus: 200,
+  });
+  const deleteMemoirResponse = await request<ApiResponseBody<string>>(baseUrl, {
+    method: 'delete',
+    path: `/api/v1/memoirs/${memoirId}`,
+    token: friendUserToken,
+    expectedStatus: 200,
+  });
   const deleteFriendResponse = await request<ApiResponseBody<string>>(baseUrl, {
     method: 'delete',
     path: `/api/v1/friends/${friendRelationId}`,
@@ -609,6 +704,146 @@ async function main(): Promise<void> {
             name: 'requestLocationSuccess',
             summary: '请求好友位置成功响应',
             value: redactSensitive(requestLocationResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/memoirs',
+        method: 'post',
+        request: {
+          name: 'createMemoirRequest',
+          summary: '创建回忆录请求',
+          value: createMemoirBody,
+        },
+        responses: [
+          {
+            status: '201',
+            name: 'createMemoirSuccess',
+            summary: '创建回忆录成功响应',
+            value: redactSensitive(createMemoirResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/memoirs/{id}',
+        method: 'get',
+        responses: [
+          {
+            status: '200',
+            name: 'getMemoirSuccess',
+            summary: '查询回忆录详情成功响应',
+            value: redactSensitive(getMemoirResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/memoirs',
+        method: 'get',
+        responses: [
+          {
+            status: '200',
+            name: 'listMemoirsSuccess',
+            summary: '查询回忆录列表成功响应',
+            value: redactSensitive(listMemoirsResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/memoirs/{id}',
+        method: 'patch',
+        request: {
+          name: 'updateMemoirRequest',
+          summary: '更新回忆录请求',
+          value: updateMemoirBody,
+        },
+        responses: [
+          {
+            status: '200',
+            name: 'updateMemoirSuccess',
+            summary: '更新回忆录成功响应',
+            value: redactSensitive(updateMemoirResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/moments',
+        method: 'post',
+        request: {
+          name: 'createMomentRequest',
+          summary: '创建瞬间请求',
+          value: createMomentBody,
+        },
+        responses: [
+          {
+            status: '201',
+            name: 'createMomentSuccess',
+            summary: '创建瞬间成功响应',
+            value: redactSensitive(createMomentResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/moments/{id}',
+        method: 'get',
+        responses: [
+          {
+            status: '200',
+            name: 'getMomentSuccess',
+            summary: '查询瞬间详情成功响应',
+            value: redactSensitive(getMomentResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/moments',
+        method: 'get',
+        responses: [
+          {
+            status: '200',
+            name: 'listMomentsSuccess',
+            summary: '查询瞬间列表成功响应',
+            value: redactSensitive(listMomentsResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/moments/{id}',
+        method: 'patch',
+        request: {
+          name: 'updateMomentRequest',
+          summary: '更新瞬间请求',
+          value: updateMomentBody,
+        },
+        responses: [
+          {
+            status: '200',
+            name: 'updateMomentSuccess',
+            summary: '更新瞬间成功响应',
+            value: redactSensitive(updateMomentResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/moments/{id}',
+        method: 'delete',
+        responses: [
+          {
+            status: '200',
+            name: 'deleteMomentSuccess',
+            summary: '删除瞬间成功响应',
+            value: redactSensitive(deleteMomentResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/memoirs/{id}',
+        method: 'delete',
+        responses: [
+          {
+            status: '200',
+            name: 'deleteMemoirSuccess',
+            summary: '删除回忆录成功响应',
+            value: redactSensitive(deleteMemoirResponse.body),
           },
         ],
       },

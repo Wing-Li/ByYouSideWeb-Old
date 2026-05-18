@@ -5,6 +5,8 @@ import { AuthModule } from './modules/auth/auth.module';
 import { DevicesModule } from './modules/devices/devices.module';
 import { FriendsModule } from './modules/friends/friends.module';
 import { HealthModule } from './modules/health/health.module';
+import { MemoirsModule } from './modules/memoirs/memoirs.module';
+import { MomentsModule } from './modules/moments/moments.module';
 import { UsersModule } from './modules/users/users.module';
 
 @Module({
@@ -18,6 +20,8 @@ import { UsersModule } from './modules/users/users.module';
     DevicesModule,
     FriendsModule,
     HealthModule,
+    MemoirsModule,
+    MomentsModule,
     UsersModule,
   ],
 })
