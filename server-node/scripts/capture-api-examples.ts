@@ -43,6 +43,8 @@ type RequestOptions = {
 const DEFAULT_BASE_URL = 'http://localhost:3000';
 const DEFAULT_DEMO_EMAIL = 'yyy101@yy.com';
 const DEFAULT_DEMO_PASSWORD = '123123123';
+const DEFAULT_ADMIN_EMAIL = 'admin@example.com';
+const DEFAULT_ADMIN_PASSWORD = 'ChangeMe_123456';
 const OUTPUT_PATH = join('docs', 'swagger', 'openapi-examples.json');
 const REDACTED_TOKEN = 'Bearer <captured-jwt-redacted>';
 const REDACTED_PASSWORD = '<demo-password>';
@@ -54,6 +56,9 @@ async function main(): Promise<void> {
   const demoEmail = process.env.SWAGGER_DEMO_EMAIL ?? DEFAULT_DEMO_EMAIL;
   const demoPassword =
     process.env.SWAGGER_DEMO_PASSWORD ?? DEFAULT_DEMO_PASSWORD;
+  const adminEmail = process.env.SWAGGER_ADMIN_EMAIL ?? DEFAULT_ADMIN_EMAIL;
+  const adminPassword =
+    process.env.SWAGGER_ADMIN_PASSWORD ?? DEFAULT_ADMIN_PASSWORD;
   const generatedSuffix = Date.now().toString(36);
   const generatedUser = {
     username: `demo_${generatedSuffix.slice(-8)}`,
@@ -102,8 +107,20 @@ async function main(): Promise<void> {
     },
     expectedStatus: 400,
   });
+  const adminLoginResponse = await request<
+    ApiResponseBody<{ token: string; user: unknown }>
+  >(baseUrl, {
+    method: 'post',
+    path: '/api/v1/auth/login',
+    body: {
+      usernameOrEmail: adminEmail,
+      password: adminPassword,
+    },
+    expectedStatus: 201,
+  });
 
   const token = loginResponse.body.data.token;
+  const adminToken = adminLoginResponse.body.data.token;
   const meResponse = await request<ApiResponseBody<unknown>>(baseUrl, {
     method: 'get',
     path: '/api/v1/users/me',
@@ -346,6 +363,104 @@ async function main(): Promise<void> {
     token: generatedUserToken,
     expectedStatus: 201,
   });
+  const updateAppConfigBody = {
+    appName: '伴你左右',
+    unCheckMode: true,
+  };
+  const updateAppConfigResponse = await request<ApiResponseBody<unknown>>(
+    baseUrl,
+    {
+      method: 'patch',
+      path: '/api/v1/app-config/app',
+      body: updateAppConfigBody,
+      token: adminToken,
+      expectedStatus: 200,
+    },
+  );
+  const appConfigResponse = await request<ApiResponseBody<unknown>>(baseUrl, {
+    method: 'get',
+    path: '/api/v1/app-config/app',
+    expectedStatus: 200,
+  });
+  const createAnnouncementBody = {
+    title: '系统维护通知',
+    authorName: '管理员',
+    content: '今晚 23:00 进行系统维护。',
+  };
+  const createAnnouncementResponse = await request<
+    ApiResponseBody<{ id: string }>
+  >(baseUrl, {
+    method: 'post',
+    path: '/api/v1/announcements',
+    body: createAnnouncementBody,
+    token: adminToken,
+    expectedStatus: 201,
+  });
+  const listAnnouncementsResponse = await request<ApiResponseBody<unknown>>(
+    baseUrl,
+    {
+      method: 'get',
+      path: '/api/v1/announcements',
+      expectedStatus: 200,
+    },
+  );
+  const latestAnnouncementResponse = await request<ApiResponseBody<unknown>>(
+    baseUrl,
+    {
+      method: 'get',
+      path: '/api/v1/announcements/latest',
+      expectedStatus: 200,
+    },
+  );
+  const createFeedbackBody = {
+    content: '希望增加夜间模式。',
+  };
+  const createFeedbackResponse = await request<ApiResponseBody<string>>(
+    baseUrl,
+    {
+      method: 'post',
+      path: '/api/v1/feedback',
+      body: createFeedbackBody,
+      token: generatedUserToken,
+      expectedStatus: 201,
+    },
+  );
+  const listFeedbackResponse = await request<ApiResponseBody<unknown>>(
+    baseUrl,
+    {
+      method: 'get',
+      path: '/api/v1/feedback',
+      token: adminToken,
+      expectedStatus: 200,
+    },
+  );
+  const createVersionBody = {
+    title: '1.2.0 发布',
+    description: '优化设备状态同步。',
+    androidVersionName: '1.2.0',
+    iosVersionName: '1.2.0',
+    androidDownloadUrl: 'https://example.com/android.apk',
+    iosDownloadUrl: 'https://apps.apple.com/app/id0000000000',
+    forceUpdate: false,
+  };
+  const createVersionResponse = await request<ApiResponseBody<unknown>>(
+    baseUrl,
+    {
+      method: 'post',
+      path: '/api/v1/versions',
+      body: createVersionBody,
+      token: adminToken,
+      expectedStatus: 201,
+    },
+  );
+  const latestVersionResponse = await request<ApiResponseBody<unknown>>(
+    baseUrl,
+    {
+      method: 'get',
+      path: '/api/v1/versions/latest',
+      expectedStatus: 200,
+    },
+  );
   const createMemoirBody = {
     friendRelationId,
     title: '第一次一起看海',
@@ -807,6 +922,134 @@ async function main(): Promise<void> {
             name: 'bindVipSuccess',
             summary: '绑定双人会员名额成功响应',
             value: redactSensitive(bindVipResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/app-config/app',
+        method: 'patch',
+        request: {
+          name: 'updateAppConfigRequest',
+          summary: '更新 App 启动配置请求',
+          value: updateAppConfigBody,
+        },
+        responses: [
+          {
+            status: '200',
+            name: 'updateAppConfigSuccess',
+            summary: '更新 App 启动配置成功响应',
+            value: redactSensitive(updateAppConfigResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/app-config/app',
+        method: 'get',
+        responses: [
+          {
+            status: '200',
+            name: 'appConfigSuccess',
+            summary: '查询 App 启动配置成功响应',
+            value: redactSensitive(appConfigResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/announcements',
+        method: 'post',
+        request: {
+          name: 'createAnnouncementRequest',
+          summary: '创建公告请求',
+          value: createAnnouncementBody,
+        },
+        responses: [
+          {
+            status: '201',
+            name: 'createAnnouncementSuccess',
+            summary: '创建公告成功响应',
+            value: redactSensitive(createAnnouncementResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/announcements',
+        method: 'get',
+        responses: [
+          {
+            status: '200',
+            name: 'listAnnouncementsSuccess',
+            summary: '分页查询公告成功响应',
+            value: redactSensitive(listAnnouncementsResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/announcements/latest',
+        method: 'get',
+        responses: [
+          {
+            status: '200',
+            name: 'latestAnnouncementSuccess',
+            summary: '查询最新公告成功响应',
+            value: redactSensitive(latestAnnouncementResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/feedback',
+        method: 'post',
+        request: {
+          name: 'createFeedbackRequest',
+          summary: '提交意见反馈请求',
+          value: createFeedbackBody,
+        },
+        responses: [
+          {
+            status: '201',
+            name: 'createFeedbackSuccess',
+            summary: '提交意见反馈成功响应',
+            value: redactSensitive(createFeedbackResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/feedback',
+        method: 'get',
+        responses: [
+          {
+            status: '200',
+            name: 'listFeedbackSuccess',
+            summary: '管理员分页查看反馈成功响应',
+            value: redactSensitive(listFeedbackResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/versions',
+        method: 'post',
+        request: {
+          name: 'createVersionRequest',
+          summary: '发布版本请求',
+          value: createVersionBody,
+        },
+        responses: [
+          {
+            status: '201',
+            name: 'createVersionSuccess',
+            summary: '发布版本成功响应',
+            value: redactSensitive(createVersionResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/versions/latest',
+        method: 'get',
+        responses: [
+          {
+            status: '200',
+            name: 'latestVersionSuccess',
+            summary: '查询最新版本成功响应',
+            value: redactSensitive(latestVersionResponse.body),
           },
         ],
       },

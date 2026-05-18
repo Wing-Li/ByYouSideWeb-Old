@@ -21,9 +21,9 @@
 | 迁移作业 Skill | 已完成 | 已创建 `.codex/skills/byyouside-node-migration/`，后续迁移任务应优先使用 |
 | Node 项目初始化 | 已完成 | `server-node/` NestJS 基础骨架、Swagger、统一响应、异常处理、健康检查和基础测试已完成 |
 | 数据模型设计 | 已完成 | Phase 2 已完成第一版 Prisma schema、migration SQL、Neon main/dev 数据库 migration 和 seed；已创建 Neon local 分支用于本地开发 |
-| API 文档编写 | 进行中 | Phase 1 已建立 Swagger/OpenAPI；Phase 3 已补充 Auth/User 接口文档和真实响应示例捕获；Phase 4 已补充 Friends 接口文档和真实响应示例捕获；Phase 5 已补充 Devices 接口文档和真实响应示例捕获；Phase 6 已补充 Memoirs/Moments 接口文档和真实响应示例捕获；Phase 7 已补充 VIP 接口文档和真实响应示例捕获 |
-| 业务模块迁移 | 进行中 | Phase 7 VIP 模块第一版已完成并通过验证 |
-| 测试与验收 | 进行中 | Phase 1 已建立基础验证；Phase 3 已补充 Auth/User 测试；Phase 4 已补充 Friends 单元测试与 e2e 主链路测试；Phase 5 已补充 Devices 单元测试与 e2e 主链路测试；Phase 6 已补充 Memoirs/Moments 单元测试与 e2e 主链路测试；Phase 7 已补充 VIP 单元测试与 e2e 主链路测试 |
+| API 文档编写 | 进行中 | Phase 1 已建立 Swagger/OpenAPI；Phase 3 已补充 Auth/User 接口文档和真实响应示例捕获；Phase 4 已补充 Friends 接口文档和真实响应示例捕获；Phase 5 已补充 Devices 接口文档和真实响应示例捕获；Phase 6 已补充 Memoirs/Moments 接口文档和真实响应示例捕获；Phase 7 已补充 VIP 接口文档和真实响应示例捕获；Phase 8 已补充配置、公告、反馈、版本接口文档和真实响应示例捕获 |
+| 业务模块迁移 | 进行中 | Phase 8 配置、公告、反馈、版本模块第一版已完成并通过验证 |
+| 测试与验收 | 进行中 | Phase 1 已建立基础验证；Phase 3 已补充 Auth/User 测试；Phase 4 已补充 Friends 单元测试与 e2e 主链路测试；Phase 5 已补充 Devices 单元测试与 e2e 主链路测试；Phase 6 已补充 Memoirs/Moments 单元测试与 e2e 主链路测试；Phase 7 已补充 VIP 单元测试与 e2e 主链路测试；Phase 8 已补充配置、公告、反馈、版本单元测试与 e2e 主链路测试 |
 
 ## 已确认决策
 
@@ -316,10 +316,15 @@ server-node/
 | VIP | `GET /api/v1/vip/orders/me` | `GET /api/vip/getMyRecharge` | 已完成 |
 | VIP | `GET /api/v1/vip/orders` | `GET /api/vip/getRechargeAll`、`GET /api/vip/getRechargeByUserId` | 已完成 |
 | VIP | `POST /api/v1/vip/bindings` | `POST /api/vip/bindVip` | 已完成 |
-| Config | 待设计 | `/api/config/*` | 未开始 |
-| Announcements | 待设计 | `/api/announcement/*` | 未开始 |
-| Feedback | 待设计 | `/api/feedback/*` | 未开始 |
-| Versions | 待设计 | `/api/version/*` | 未开始 |
+| Config | `GET /api/v1/app-config/app` | `GET /config/app` | 已完成 |
+| Config | `PATCH /api/v1/app-config/app` | `POST /config/create` | 已完成 |
+| Announcements | `POST /api/v1/announcements` | `POST /announcement/add` | 已完成 |
+| Announcements | `GET /api/v1/announcements` | `GET /announcement/getAll` | 已完成 |
+| Announcements | `GET /api/v1/announcements/latest` | `GET /announcement/getLast` | 已完成 |
+| Feedback | `POST /api/v1/feedback` | `POST /feedback/add` | 已完成 |
+| Feedback | `GET /api/v1/feedback` | `GET /feedback/get` | 已完成 |
+| Versions | `POST /api/v1/versions` | `POST /version/add` | 已完成 |
+| Versions | `GET /api/v1/versions/latest` | `GET /version/getLast` | 已完成 |
 
 ## 初步数据模型规划
 
@@ -733,7 +738,7 @@ server-node/
 
 ### Phase 8：配置、公告、反馈、版本
 
-状态：未开始
+状态：已完成
 
 任务：
 
@@ -748,6 +753,17 @@ server-node/
 - 公共接口和管理接口权限分明。
 - App 启动所需配置可一次性获取。
 - Swagger 文档可直接指导 App 接入。
+
+当前进展：
+
+- 已创建并关闭 `docs/migration-plans/phase-08-config-content-version.md`。
+- 已实现 App 配置查询与管理员更新接口，公开查询会附带 VIP 套餐列表。
+- 已实现公告创建、公告分页列表和最新公告查询。
+- 已实现反馈提交和管理员反馈分页列表。
+- 已实现版本发布和最新版本查询。
+- 公告创建、反馈列表、配置更新和版本发布均收敛为管理员权限；反馈提交需要登录；配置、公告列表、最新公告和最新版本为公开查询。
+- 已补充 Phase 8 Swagger DTO、真实响应示例捕获、单元测试和 e2e 主链路测试。
+- 已通过 `npm run format`、`npm run lint`、`npm run test -- --runInBand`、`npm run test:e2e -- --runInBand`、`npm run build` 和 `npm run api:examples`。
 
 ### Phase 9：外部服务与生产配置
 
@@ -882,12 +898,36 @@ docs/migration-plans/
 - 暂停
 - 废弃
 
+## 2026-05-18 迁移进展补充
+
+Phase 8 配置、公告、反馈、版本模块已完成并通过验证。
+
+已完成内容：
+
+- 创建并关闭 `docs/migration-plans/phase-08-config-content-version.md`。
+- 完成 App 配置接口：`GET /api/v1/app-config/app`、`PATCH /api/v1/app-config/app`。
+- 完成公告接口：`POST /api/v1/announcements`、`GET /api/v1/announcements`、`GET /api/v1/announcements/latest`。
+- 完成反馈接口：`POST /api/v1/feedback`、`GET /api/v1/feedback`。
+- 完成版本接口：`POST /api/v1/versions`、`GET /api/v1/versions/latest`。
+- 公告创建、反馈列表、配置更新和版本发布均收敛为管理员权限；反馈提交需要登录；配置、公告列表、最新公告和最新版本为公开查询。
+- 已把 Phase 8 接口加入 `server-node/scripts/capture-api-examples.ts` 的 Swagger 真实示例捕获范围。
+- 已补齐 Phase 8 单元测试和 e2e 主链路测试。
+
+验证结果：
+
+- `npm run format` 通过。
+- `npm run lint` 通过。
+- `npm run test -- --runInBand` 通过，11 个测试套件、25 个测试通过。
+- `npm run test:e2e -- --runInBand` 通过，1 个测试套件、8 个测试通过。
+- `npm run build` 通过。
+- `npm run api:examples` 通过，并刷新 `server-node/docs/swagger/openapi-examples.json`。
+
 ## 下一步建议
 
-下一步建议执行 Phase 8：
+下一步建议执行 Phase 9：外部服务与生产配置。
 
-1. 创建或更新 `docs/migration-plans/phase-08-config-content-version.md`。
-2. 阅读旧 `ConfigInfoController.kt`、`ConfigInfo.kt`、`ConfigInfoRepository.kt`、`AnnouncementController.kt`、`FeedbackController.kt`、`VersionController.kt` 和相关实体/仓库。
-3. 明确 App 启动配置、公告、反馈、版本发布与最新版本查询规则。
-4. 设计并实现公共查询接口和管理员维护接口，明确管理员权限边界。
-5. 补齐 Swagger DTO、真实示例捕获、单元测试和 e2e 测试。
+1. 补齐真实邮件 provider 与生产 SMTP 配置读取。
+2. 补齐真实友盟推送 provider，保留开发环境 mock/log 模式。
+3. 复查生产环境 `.env.example` 完整性。
+4. 复查日志脱敏，确保密码、验证码、token 和外部服务密钥不会写入日志。
+5. 验证生产配置缺失时的启动和接口错误表现。

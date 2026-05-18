@@ -133,6 +133,44 @@ type FakeVipOrder = {
   plan: FakeVipPlan;
 };
 
+type FakeAppConfig = {
+  id: bigint;
+  environment: string;
+  appName: string;
+  unCheckMode: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+type FakeAnnouncement = {
+  id: bigint;
+  authorId: bigint;
+  title: string;
+  authorName: string;
+  content: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+type FakeFeedback = {
+  id: bigint;
+  userId: bigint;
+  content: string;
+  createdAt: Date;
+};
+
+type FakeAppVersion = {
+  id: bigint;
+  title: string;
+  description: string;
+  androidVersionName: string;
+  iosVersionName: string;
+  androidDownloadUrl: string;
+  iosDownloadUrl: string;
+  forceUpdate: boolean;
+  releasedAt: Date;
+};
+
 class FakePrismaService {
   private nextUserId = 1n;
   private nextFriendRelationId = 1n;
@@ -141,6 +179,10 @@ class FakePrismaService {
   private nextMomentId = 1n;
   private nextVipPlanId = 1n;
   private nextVipOrderId = 1n;
+  private nextAppConfigId = 1n;
+  private nextAnnouncementId = 1n;
+  private nextFeedbackId = 1n;
+  private nextAppVersionId = 1n;
   readonly users: FakeUser[] = [];
   readonly friendRelations: FakeFriendRelation[] = [];
   readonly deviceSnapshots: FakeDeviceSnapshot[] = [];
@@ -148,6 +190,10 @@ class FakePrismaService {
   readonly moments: FakeMoment[] = [];
   readonly vipPlans: FakeVipPlan[] = [];
   readonly vipOrders: FakeVipOrder[] = [];
+  readonly appConfigs: FakeAppConfig[] = [];
+  readonly announcements: FakeAnnouncement[] = [];
+  readonly feedbacks: FakeFeedback[] = [];
+  readonly appVersions: FakeAppVersion[] = [];
 
   user = {
     findUnique: jest.fn(
@@ -628,6 +674,82 @@ class FakePrismaService {
     ),
   };
 
+  appConfig = {
+    findFirst: jest.fn(
+      () =>
+        [...this.appConfigs].sort(
+          (left, right) => right.createdAt.getTime() - left.createdAt.getTime(),
+        )[0] ?? null,
+    ),
+    upsert: jest.fn(
+      ({
+        where,
+        create,
+        update,
+      }: {
+        where: { environment: string };
+        create: Partial<FakeAppConfig> & { environment: string };
+        update: Partial<FakeAppConfig>;
+      }) => {
+        const existing = this.appConfigs.find(
+          (config) => config.environment === where.environment,
+        );
+        if (existing) {
+          Object.assign(existing, update, {
+            updatedAt: new Date('2026-05-17T00:01:00.000Z'),
+          });
+          return existing;
+        }
+        return this.createAppConfig(create);
+      },
+    ),
+  };
+
+  announcement = {
+    create: jest.fn(
+      ({
+        data,
+      }: {
+        data: {
+          authorId: bigint;
+          title: string;
+          authorName: string;
+          content: string;
+        };
+      }) => this.createAnnouncement(data),
+    ),
+    count: jest.fn(() => this.announcements.length),
+    findMany: jest.fn(({ skip, take }: { skip: number; take: number }) =>
+      this.sortedAnnouncements().slice(skip, skip + take),
+    ),
+    findFirst: jest.fn(() => this.sortedAnnouncements()[0] ?? null),
+  };
+
+  feedback = {
+    create: jest.fn(
+      ({
+        data,
+      }: {
+        data: {
+          userId: bigint;
+          content: string;
+        };
+      }) => this.createFeedback(data),
+    ),
+    count: jest.fn(() => this.feedbacks.length),
+    findMany: jest.fn(({ skip, take }: { skip: number; take: number }) =>
+      this.sortedFeedback().slice(skip, skip + take),
+    ),
+  };
+
+  appVersion = {
+    create: jest.fn(
+      ({ data }: { data: Omit<FakeAppVersion, 'id' | 'releasedAt'> }) =>
+        this.createAppVersion(data),
+    ),
+    findFirst: jest.fn(() => this.sortedAppVersions()[0] ?? null),
+  };
+
   $transaction = jest.fn(
     (
       operationsOrCallback:
@@ -841,6 +963,92 @@ class FakePrismaService {
       .sort(
         (left, right) => right.createdAt.getTime() - left.createdAt.getTime(),
       );
+  }
+
+  private createAppConfig(
+    data: Partial<FakeAppConfig> & { environment: string },
+  ): FakeAppConfig {
+    const now = new Date('2026-05-17T00:00:00.000Z');
+    const config: FakeAppConfig = {
+      id: this.nextAppConfigId++,
+      environment: data.environment,
+      appName: data.appName ?? '伴你左右',
+      unCheckMode: data.unCheckMode ?? false,
+      createdAt: now,
+      updatedAt: now,
+    };
+    this.appConfigs.push(config);
+    return config;
+  }
+
+  private createAnnouncement(data: {
+    authorId: bigint;
+    title: string;
+    authorName: string;
+    content: string;
+  }): FakeAnnouncement {
+    const now = new Date('2026-05-17T00:00:00.000Z');
+    const announcement: FakeAnnouncement = {
+      id: this.nextAnnouncementId++,
+      authorId: data.authorId,
+      title: data.title,
+      authorName: data.authorName,
+      content: data.content,
+      createdAt: now,
+      updatedAt: now,
+    };
+    this.announcements.push(announcement);
+    return announcement;
+  }
+
+  private sortedAnnouncements(): FakeAnnouncement[] {
+    return [...this.announcements].sort(
+      (left, right) => right.createdAt.getTime() - left.createdAt.getTime(),
+    );
+  }
+
+  private createFeedback(data: {
+    userId: bigint;
+    content: string;
+  }): FakeFeedback {
+    const feedback: FakeFeedback = {
+      id: this.nextFeedbackId++,
+      userId: data.userId,
+      content: data.content,
+      createdAt: new Date('2026-05-17T00:00:00.000Z'),
+    };
+    this.feedbacks.push(feedback);
+    return feedback;
+  }
+
+  private sortedFeedback(): FakeFeedback[] {
+    return [...this.feedbacks].sort(
+      (left, right) => right.createdAt.getTime() - left.createdAt.getTime(),
+    );
+  }
+
+  private createAppVersion(
+    data: Omit<FakeAppVersion, 'id' | 'releasedAt'>,
+  ): FakeAppVersion {
+    const version: FakeAppVersion = {
+      id: this.nextAppVersionId++,
+      title: data.title,
+      description: data.description,
+      androidVersionName: data.androidVersionName,
+      iosVersionName: data.iosVersionName,
+      androidDownloadUrl: data.androidDownloadUrl,
+      iosDownloadUrl: data.iosDownloadUrl,
+      forceUpdate: data.forceUpdate,
+      releasedAt: new Date('2026-05-17T00:00:00.000Z'),
+    };
+    this.appVersions.push(version);
+    return version;
+  }
+
+  private sortedAppVersions(): FakeAppVersion[] {
+    return [...this.appVersions].sort(
+      (left, right) => right.releasedAt.getTime() - left.releasedAt.getTime(),
+    );
   }
 
   private updateFriendRelation(
@@ -1675,6 +1883,201 @@ describe('VIP (e2e)', () => {
         expect(response.body).toMatchObject({
           code: 200,
           pagination: { total: 2 },
+        });
+      });
+  });
+
+  async function registerUser(
+    username: string,
+    email: string,
+  ): Promise<{ id: string; token: string }> {
+    const response = await request(app.getHttpServer())
+      .post('/api/v1/auth/register')
+      .send({
+        username,
+        password: 'ChangeMe_123456',
+        email,
+      })
+      .expect(201);
+    const body = response.body as {
+      data: { token: string; user: { id: string } };
+    };
+    return {
+      id: body.data.user.id,
+      token: body.data.token,
+    };
+  }
+
+  afterEach(async () => {
+    await app.close();
+  });
+});
+
+describe('配置、公告、反馈和版本 (e2e)', () => {
+  let app: INestApplication<App>;
+  let prisma: FakePrismaService;
+
+  beforeEach(async () => {
+    prisma = new FakePrismaService();
+    prisma.vipPlan.create({
+      data: {
+        name: '连续包月',
+        description: '',
+        level: 1,
+        durationMonths: 1,
+        price: new Prisma.Decimal('18.80'),
+        productCode: 'com.lyl.byyourside.vip.month.1',
+        status: VipPlanStatus.ACTIVE,
+      },
+    });
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [AppModule],
+    })
+      .overrideProvider(PrismaService)
+      .useValue(prisma)
+      .compile();
+
+    app = moduleFixture.createNestApplication();
+    setupApp(app);
+    setupSwagger(app);
+    await app.init();
+  });
+
+  it('App 配置、公告、反馈和版本接口可以形成主链路并限制管理员操作', async () => {
+    const alice = await registerUser(
+      'alice_content',
+      'alice.phase8@example.com',
+    );
+    const admin = await registerUser(
+      'admin_content',
+      'admin.phase8@example.com',
+    );
+    const adminUser = prisma.users.find(
+      (user) => user.id.toString() === admin.id,
+    );
+    expect(adminUser).toBeDefined();
+    adminUser!.role = UserRole.ADMIN;
+
+    await request(app.getHttpServer())
+      .patch('/api/v1/app-config/app')
+      .set('Authorization', alice.token)
+      .send({ appName: '不应成功' })
+      .expect(403);
+
+    await request(app.getHttpServer())
+      .patch('/api/v1/app-config/app')
+      .set('Authorization', admin.token)
+      .send({ appName: '伴你左右测试版', unCheckMode: true })
+      .expect(200)
+      .expect((response: Response) => {
+        expect(response.body).toMatchObject({
+          code: 200,
+          data: {
+            appName: '伴你左右测试版',
+            unCheckMode: true,
+            vipTypeList: [{ name: '连续包月' }],
+          },
+        });
+      });
+
+    await request(app.getHttpServer())
+      .get('/api/v1/app-config/app')
+      .expect(200)
+      .expect((response: Response) => {
+        expect(response.body).toMatchObject({
+          data: {
+            appName: '伴你左右测试版',
+            vipTypeList: [{ productCode: 'com.lyl.byyourside.vip.month.1' }],
+          },
+        });
+      });
+
+    const announcementResponse = await request(app.getHttpServer())
+      .post('/api/v1/announcements')
+      .set('Authorization', admin.token)
+      .send({
+        title: '系统维护通知',
+        authorName: '管理员',
+        content: '今晚 23:00 进行系统维护。',
+      })
+      .expect(201);
+    const announcementId = (
+      announcementResponse.body as { data: { id: string } }
+    ).data.id;
+
+    await request(app.getHttpServer())
+      .get('/api/v1/announcements')
+      .expect(200)
+      .expect((response: Response) => {
+        expect(response.body).toMatchObject({
+          data: [{ id: announcementId, title: '系统维护通知' }],
+          pagination: { total: 1 },
+        });
+      });
+
+    await request(app.getHttpServer())
+      .get('/api/v1/announcements/latest')
+      .expect(200)
+      .expect((response: Response) => {
+        expect(response.body).toMatchObject({
+          data: { id: announcementId, content: '今晚 23:00 进行系统维护。' },
+        });
+      });
+
+    await request(app.getHttpServer())
+      .post('/api/v1/feedback')
+      .set('Authorization', alice.token)
+      .send({ content: '希望增加夜间模式。' })
+      .expect(201)
+      .expect((response: Response) => {
+        expect(response.body).toMatchObject({
+          code: 200,
+          data: '提交成功',
+        });
+      });
+
+    await request(app.getHttpServer())
+      .get('/api/v1/feedback')
+      .set('Authorization', alice.token)
+      .expect(403);
+
+    await request(app.getHttpServer())
+      .get('/api/v1/feedback')
+      .set('Authorization', admin.token)
+      .expect(200)
+      .expect((response: Response) => {
+        expect(response.body).toMatchObject({
+          data: [{ userId: alice.id, content: '希望增加夜间模式。' }],
+          pagination: { total: 1 },
+        });
+      });
+
+    const versionResponse = await request(app.getHttpServer())
+      .post('/api/v1/versions')
+      .set('Authorization', admin.token)
+      .send({
+        title: '1.2.0 发布',
+        description: '优化设备状态同步。',
+        androidVersionName: '1.2.0',
+        iosVersionName: '1.2.0',
+        androidDownloadUrl: 'https://example.com/android.apk',
+        iosDownloadUrl: 'https://apps.apple.com/app/id0000000000',
+        forceUpdate: false,
+      })
+      .expect(201);
+    const versionId = (versionResponse.body as { data: { id: string } }).data
+      .id;
+
+    await request(app.getHttpServer())
+      .get('/api/v1/versions/latest')
+      .expect(200)
+      .expect((response: Response) => {
+        expect(response.body).toMatchObject({
+          data: {
+            id: versionId,
+            androidVersionName: '1.2.0',
+            forceUpdate: false,
+          },
         });
       });
   });
