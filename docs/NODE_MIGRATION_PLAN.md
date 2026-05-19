@@ -16,14 +16,14 @@
 | 数据库策略确认 | 已完成 | 不兼容旧 H2 数据，使用 PostgreSQL 和新规范模型 |
 | 管理员策略确认 | 已完成 | 使用通用、可维护的初始化/种子方式创建管理员 |
 | 网易云信 IM | 已完成 | 从新系统中移除，不再接入 |
-| 邮件和推送 | 已完成 | 保留并正常接入，开发环境支持 mock/log 模式 |
+| 邮件和推送 | 已完成 | 已补齐 SMTP 邮件 provider 与友盟推送 provider，运行环境已从旧项目回填真实 SMTP 与友盟参数，真实密钥只写入本地/部署环境变量 |
 | 迁移实施文档 | 已完成 | 已创建本文档，后续按阶段持续更新 |
 | 迁移作业 Skill | 已完成 | 已创建 `.codex/skills/byyouside-node-migration/`，后续迁移任务应优先使用 |
 | Node 项目初始化 | 已完成 | `server-node/` NestJS 基础骨架、Swagger、统一响应、异常处理、健康检查和基础测试已完成 |
 | 数据模型设计 | 已完成 | Phase 2 已完成第一版 Prisma schema、migration SQL、Neon main/dev 数据库 migration 和 seed；已创建 Neon local 分支用于本地开发 |
-| API 文档编写 | 进行中 | Phase 1 已建立 Swagger/OpenAPI；Phase 3 已补充 Auth/User 接口文档和真实响应示例捕获；Phase 4 已补充 Friends 接口文档和真实响应示例捕获；Phase 5 已补充 Devices 接口文档和真实响应示例捕获；Phase 6 已补充 Memoirs/Moments 接口文档和真实响应示例捕获；Phase 7 已补充 VIP 接口文档和真实响应示例捕获；Phase 8 已补充配置、公告、反馈、版本接口文档和真实响应示例捕获 |
-| 业务模块迁移 | 进行中 | Phase 8 配置、公告、反馈、版本模块第一版已完成并通过验证 |
-| 测试与验收 | 进行中 | Phase 1 已建立基础验证；Phase 3 已补充 Auth/User 测试；Phase 4 已补充 Friends 单元测试与 e2e 主链路测试；Phase 5 已补充 Devices 单元测试与 e2e 主链路测试；Phase 6 已补充 Memoirs/Moments 单元测试与 e2e 主链路测试；Phase 7 已补充 VIP 单元测试与 e2e 主链路测试；Phase 8 已补充配置、公告、反馈、版本单元测试与 e2e 主链路测试 |
+| API 文档编写 | 进行中 | Phase 1 已建立 Swagger/OpenAPI；Phase 3 已补充 Auth/User 接口文档和真实响应示例捕获；Phase 4 已补充 Friends 接口文档和真实响应示例捕获；Phase 5 已补充 Devices 接口文档和真实响应示例捕获；Phase 6 已补充 Memoirs/Moments 接口文档和真实响应示例捕获；Phase 7 已补充 VIP 接口文档和真实响应示例捕获；Phase 8 已补充配置、公告、反馈、版本接口文档和真实响应示例捕获；Phase 9 不新增公开 API |
+| 业务模块迁移 | 进行中 | Phase 9 外部服务与生产配置已完成；初始管理员已在 Neon local/main seed 并通过登录验证 |
+| 测试与验收 | 进行中 | Phase 1 已建立基础验证；Phase 3 已补充 Auth/User 测试；Phase 4 已补充 Friends 单元测试与 e2e 主链路测试；Phase 5 已补充 Devices 单元测试与 e2e 主链路测试；Phase 6 已补充 Memoirs/Moments 单元测试与 e2e 主链路测试；Phase 7 已补充 VIP 单元测试与 e2e 主链路测试；Phase 8 已补充配置、公告、反馈、版本单元测试与 e2e 主链路测试；Phase 9 已补充邮件与友盟推送集成单元测试，并已通过构建后真实启动健康检查 |
 
 ## 已确认决策
 
@@ -767,7 +767,7 @@ server-node/
 
 ### Phase 9：外部服务与生产配置
 
-状态：未开始
+状态：已完成
 
 任务：
 
@@ -782,6 +782,19 @@ server-node/
 - dev 环境不会误发真实邮件/推送。
 - prod 环境配置完整即可启用真实服务。
 - 密钥不进入源码。
+
+当前进展：
+
+- 已创建并关闭 `docs/migration-plans/phase-09-external-services-production-config.md`。
+- 已实现 `MAIL_MODE=log|smtp`，默认 log 模式不发送真实邮件且不记录验证码明文；SMTP 模式从 `SMTP_HOST`、`SMTP_PORT`、`SMTP_SECURE`、`SMTP_USER`、`SMTP_PASS`、`SMTP_FROM` 读取配置。
+- 已实现 `PUSH_MODE=log|umeng`，默认 log 模式不请求友盟且会脱敏设备别名；友盟模式从 `UMENG_*` 环境变量读取 Android/iOS appKey 和 master secret。
+- 友盟推送保留旧系统 `requestLocation`、`requestAddFriend`、`agreeAddFriend`、`bindVip` 四类消息类型，继续使用 `customizedcast`、alias/alias_type、`push_prod` 别名生产模式判断和旧 MD5 签名规则。
+- 已补齐 `server-node/.env.example` 的 SMTP 与友盟配置占位，不包含真实密钥。
+- 已补充 `MailService` 和 `PushService` 单元测试，覆盖 log 模式、配置缺失、SMTP 发送、友盟签名和 payload。
+- 已通过 `npm run format`、`npm run lint`、`npm run test -- --runInBand`、`npm run test:e2e -- --runInBand` 和 `npm run build`。
+- 2026-05-19 已按部署要求复查配置：`server-node/.env` 使用旧 dev 端口 `38080` 和 Neon local；`server-node/.env.production` 使用旧 prod 端口 `38020` 和 Neon main；SMTP、友盟、JWT 均从旧项目真实参数回填到本地忽略环境文件。
+- 已移除数据库、JWT、PORT、seed 和 Swagger 示例捕获中的示例兜底值；缺少真实配置时会明确失败。
+- 已生成初始管理员配置并写入本地忽略环境文件；Neon local 与 main 分支均已执行 seed，并通过登录接口验证 `ADMIN` 角色。
 
 ### Phase 10：验收与切换
 
@@ -922,12 +935,35 @@ Phase 8 配置、公告、反馈、版本模块已完成并通过验证。
 - `npm run build` 通过。
 - `npm run api:examples` 通过，并刷新 `server-node/docs/swagger/openapi-examples.json`。
 
+## 2026-05-18 Phase 9 迁移进展补充
+
+Phase 9 外部服务与生产配置已完成并通过验证。
+
+已完成内容：
+
+- 创建并关闭 `docs/migration-plans/phase-09-external-services-production-config.md`。
+- 完成 SMTP 邮件 provider：`MAIL_MODE=log|smtp`，默认 log 模式不发送真实邮件且不记录验证码明文。
+- 完成友盟推送 provider：`PUSH_MODE=log|umeng`，保留旧系统四类业务推送和 MD5 签名规则，log 模式脱敏设备别名。
+- 补齐 `server-node/.env.example` 的 SMTP 与友盟配置占位，未写入真实密钥。
+- 外部服务调用改为异步等待，避免真实 provider 失败时业务层静默成功。
+- 新增邮件与推送集成单元测试，覆盖 log 模式、配置缺失、SMTP 发送、友盟签名和 payload。
+- 2026-05-19 复查运行环境：真实 SMTP、友盟、JWT、端口、Neon local/main 已写入本地忽略的 `.env` / `.env.production` / `.env.test`；仓库内只保留安全配置模板。
+- 已生成初始管理员配置，写入本地忽略环境文件，并在 Neon local/main 分支完成 seed 与登录验证。
+
+验证结果：
+
+- `npm run format` 通过。
+- `npm run lint` 通过。
+- `npm run test -- --runInBand` 通过，13 个测试套件、31 个测试通过。
+- `npm run test:e2e -- --runInBand` 通过，1 个测试套件、8 个测试通过。
+- `npm run build` 通过。
+
 ## 下一步建议
 
-下一步建议执行 Phase 9：外部服务与生产配置。
+下一步建议执行 Phase 10：验收与切换。
 
-1. 补齐真实邮件 provider 与生产 SMTP 配置读取。
-2. 补齐真实友盟推送 provider，保留开发环境 mock/log 模式。
-3. 复查生产环境 `.env.example` 完整性。
-4. 复查日志脱敏，确保密码、验证码、token 和外部服务密钥不会写入日志。
-5. 验证生产配置缺失时的启动和接口错误表现。
+1. 复查全量 Swagger/OpenAPI 文档与真实示例覆盖。
+2. 跑完整 e2e、构建和 API 示例捕获，确认文档、代码、测试一致。
+3. 梳理 App 接入新 API 的差异清单和手动验收脚本。
+4. 明确生产部署所需环境变量、数据库分支和外部服务密钥交付方式。
+5. 汇总遗留风险，例如真实 SMTP/友盟需要在线上密钥和真实设备 alias 下做最终联调。

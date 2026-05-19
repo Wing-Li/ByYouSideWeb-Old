@@ -1,5 +1,17 @@
 # ByYouSide Node API
 
+## 配置状态（2026-05-19）
+
+当前项目不再依赖代码中的示例兜底配置。运行环境必须通过 `.env`、`.env.production` 或部署平台环境变量提供真实参数。
+
+- 本地开发：`server-node/.env`，已按旧项目 dev 端口 `38080`、Neon local 数据库、旧项目 SMTP、友盟和 JWT 参数整理。
+- 生产运行：`server-node/.env.production`，已按旧项目 prod 端口 `38020`、Neon main 数据库、旧项目 SMTP、友盟和 JWT 参数整理。部署时需要在系统环境中设置 `NODE_ENV=production`。
+- 自动化测试：`server-node/.env.test`，外部服务保持 `MAIL_MODE=log` 和 `PUSH_MODE=log`，避免测试误发真实邮件或推送。
+- 仓库内的 `.env.example` 只作为变量清单和格式模板，不承载真实密钥。
+- 已生成初始管理员配置并写入本地忽略环境文件；Neon local/main 分支均已执行 seed 并通过管理员登录验证。
+
+缺少 `DATABASE_URL`、`JWT_SECRET`、`JWT_EXPIRES_IN_SECONDS`、`PORT`、seed 管理员参数、SMTP 或友盟真实参数时，服务或脚本会明确失败，不再静默使用示例值。
+
 这是 ByYouSide 迁移后的新 Node.js 后端项目。
 
 当前阶段：Phase 2 已完成，已接入 Prisma/PostgreSQL 基础设施、第一版数据模型和 Neon dev 数据库。业务接口尚未迁移。
@@ -44,15 +56,19 @@
 本地开发时可复制 `.env.example` 为 `.env`，测试运行可复制为 `.env.test`。当前项目已在本机配置好真实 Neon dev 连接串，但该文件被 `.gitignore` 忽略。
 
 ```bash
-PORT=3000
+PORT=38080
 NODE_ENV=development
 DATABASE_URL="postgresql://user:password@host/dev?channel_binding=require&sslmode=verify-full"
 ADMIN_USERNAME=admin
-ADMIN_EMAIL=admin@example.com
-ADMIN_PASSWORD=ChangeMe_123456
+ADMIN_EMAIL=<admin-email>
+ADMIN_PASSWORD=<admin-password>
 APP_ENVIRONMENT=dev
 APP_NAME=伴你左右
 APP_UNCHECK_MODE=false
+JWT_SECRET=<jwt-secret>
+JWT_EXPIRES_IN_SECONDS=31536000
+MAIL_MODE=smtp
+PUSH_MODE=umeng
 ```
 
 各环境文件约定：

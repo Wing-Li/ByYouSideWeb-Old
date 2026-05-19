@@ -40,13 +40,12 @@ export class AppConfigService {
     dto: UpdateAppConfigDto,
   ): Promise<AppConfigDto> {
     this.assertAdmin(currentUserRole);
-    const environment =
-      this.configService.get<string>('NODE_ENV') ?? 'development';
+    const environment = this.requireConfig('APP_ENVIRONMENT');
     const config = await this.prisma.appConfig.upsert({
       where: { environment },
       create: {
         environment,
-        appName: dto.appName ?? '伴你左右',
+        appName: dto.appName ?? this.requireConfig('APP_NAME'),
         unCheckMode: dto.unCheckMode ?? false,
       },
       update: {
@@ -70,5 +69,13 @@ export class AppConfigService {
         HttpStatus.FORBIDDEN,
       );
     }
+  }
+
+  private requireConfig(key: string): string {
+    const value = this.configService.get<string>(key)?.trim();
+    if (!value) {
+      throw new Error(`${key} 未配置`);
+    }
+    return value;
   }
 }

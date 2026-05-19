@@ -2,9 +2,7 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import bcrypt from 'bcryptjs';
 import { PrismaClient, UserRole, VipPlanStatus } from '@prisma/client';
 
-const connectionString =
-  process.env.DATABASE_URL ??
-  'postgresql://byyouside:byyouside_password@localhost:5432/byyouside?schema=public';
+const connectionString = requireEnv('DATABASE_URL');
 const prisma = new PrismaClient({
   adapter: new PrismaPg(connectionString),
 });
@@ -103,9 +101,11 @@ const vipPlans = [
 ] as const;
 
 async function main(): Promise<void> {
-  const adminUsername = process.env.ADMIN_USERNAME ?? 'admin';
-  const adminEmail = process.env.ADMIN_EMAIL ?? 'admin@example.com';
-  const adminPassword = process.env.ADMIN_PASSWORD ?? 'ChangeMe_123456';
+  const adminUsername = requireEnv('ADMIN_USERNAME');
+  const adminEmail = requireEnv('ADMIN_EMAIL');
+  const adminPassword = requireEnv('ADMIN_PASSWORD');
+  const appEnvironment = requireEnv('APP_ENVIRONMENT');
+  const appName = requireEnv('APP_NAME');
   const passwordHash = await bcrypt.hash(adminPassword, 12);
 
   await prisma.user.upsert({
@@ -127,15 +127,15 @@ async function main(): Promise<void> {
 
   await prisma.appConfig.upsert({
     where: {
-      environment: process.env.APP_ENVIRONMENT ?? 'development',
+      environment: appEnvironment,
     },
     update: {
-      appName: process.env.APP_NAME ?? '伴你左右',
+      appName,
       unCheckMode: process.env.APP_UNCHECK_MODE === 'true',
     },
     create: {
-      environment: process.env.APP_ENVIRONMENT ?? 'development',
-      appName: process.env.APP_NAME ?? '伴你左右',
+      environment: appEnvironment,
+      appName,
       unCheckMode: process.env.APP_UNCHECK_MODE === 'true',
     },
   });
@@ -158,3 +158,16 @@ main()
     await prisma.$disconnect();
     process.exit(1);
   });
+
+function requireEnv(name: string): string {
+  const value = process.env[name]?.trim();
+  if (!value) {
+    throw new Error(`${name} 未配置，无法执行 seed`);
+  }
+  if (
+    /^<|example\.com|ChangeMe_|replace-with|byyouside_password/i.test(value)
+  ) {
+    throw new Error(`${name} 仍是示例值，无法执行 seed`);
+  }
+  return value;
+}

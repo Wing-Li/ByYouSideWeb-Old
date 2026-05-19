@@ -4,7 +4,8 @@ import { ConfigService } from '@nestjs/config';
 import { COMMON_ERROR_CODES } from '../errors/error-codes';
 import { JwtPayload } from './auth.types';
 
-const DEFAULT_EXPIRES_IN_SECONDS = 60 * 60 * 24 * 30;
+const CONFIG_PLACEHOLDER_PATTERN =
+  /^(<|replace-with|change-me|development-only|example)/i;
 
 @Injectable()
 export class JwtTokenService {
@@ -12,9 +13,7 @@ export class JwtTokenService {
 
   sign(userId: bigint): string {
     const issuedAt = Math.floor(Date.now() / 1000);
-    const expiresIn =
-      Number(this.configService.get<string>('JWT_EXPIRES_IN_SECONDS')) ||
-      DEFAULT_EXPIRES_IN_SECONDS;
+    const expiresIn = this.getExpiresInSeconds();
     const payload: JwtPayload = {
       sub: userId.toString(),
       iat: issuedAt,
@@ -82,10 +81,25 @@ export class JwtTokenService {
   }
 
   private getSecret(): string {
-    return (
-      this.configService.get<string>('JWT_SECRET') ??
-      'development-only-change-me'
-    );
+    const secret = this.configService.get<string>('JWT_SECRET')?.trim();
+    if (!secret || CONFIG_PLACEHOLDER_PATTERN.test(secret)) {
+      throw new Error('JWT_SECRET 未配置为真实可用值');
+    }
+    return secret;
+  }
+
+  private getExpiresInSeconds(): number {
+    const value = this.configService
+      .get<string>('JWT_EXPIRES_IN_SECONDS')
+      ?.trim();
+    if (!value) {
+      throw new Error('JWT_EXPIRES_IN_SECONDS 未配置');
+    }
+    const parsed = Number(value);
+    if (!Number.isSafeInteger(parsed) || parsed <= 0) {
+      throw new Error('JWT_EXPIRES_IN_SECONDS 必须是正整数秒数');
+    }
+    return parsed;
   }
 
   private base64UrlEncode(value: string): string {

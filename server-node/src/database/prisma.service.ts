@@ -5,9 +5,10 @@ import { PrismaClient } from '@prisma/client';
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleDestroy {
   constructor() {
-    const connectionString =
-      process.env.DATABASE_URL ??
-      'postgresql://byyouside:byyouside_password@localhost:5432/byyouside?schema=public';
+    const connectionString = process.env.DATABASE_URL?.trim();
+    if (!connectionString) {
+      throw new Error('DATABASE_URL 未配置，无法启动数据库连接');
+    }
     super({
       adapter: new PrismaPg(connectionString),
     });

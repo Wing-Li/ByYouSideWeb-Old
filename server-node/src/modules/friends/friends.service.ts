@@ -89,7 +89,7 @@ export class FriendsService {
             include: FRIEND_INCLUDE,
           });
 
-    this.pushService.sendRequestAddFriend({
+    await this.pushService.sendRequestAddFriend({
       deviceType: toUser.pushDeviceType,
       pushAlias: toUser.pushAlias,
       pushAliasType: toUser.pushAliasType,
@@ -360,7 +360,7 @@ export class FriendsService {
       }),
     ]);
 
-    this.pushService.sendAgreeAddFriend({
+    await this.pushService.sendAgreeAddFriend({
       deviceType: toUser.pushDeviceType,
       pushAlias: toUser.pushAlias,
       pushAliasType: toUser.pushAliasType,

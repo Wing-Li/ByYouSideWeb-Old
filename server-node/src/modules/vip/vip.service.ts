@@ -202,7 +202,7 @@ export class VipService {
       });
     });
 
-    this.pushService.sendBindVip({
+    await this.pushService.sendBindVip({
       deviceType: targetUser.pushDeviceType,
       pushAlias: targetUser.pushAlias,
       pushAliasType: targetUser.pushAliasType,

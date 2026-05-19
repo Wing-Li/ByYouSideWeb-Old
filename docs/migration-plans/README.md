@@ -16,6 +16,7 @@
 | `phase-06-memoirs-moments.md` | 已关闭 |
 | `phase-07-vip.md` | 已关闭 |
 | `phase-08-config-content-version.md` | 已关闭 |
+| `phase-09-external-services-production-config.md` | 已关闭 |
 
 计划模板位于：
 

@@ -130,7 +130,7 @@ export class AuthService {
       },
     });
 
-    this.mailService.sendPasswordResetCode(user.email, code);
+    await this.mailService.sendPasswordResetCode(user.email, code);
     return `验证码已发送至：${user.email}`;
   }
 

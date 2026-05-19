@@ -108,7 +108,7 @@ export class DevicesService {
       );
     }
 
-    this.pushService.sendRequestLocation({
+    await this.pushService.sendRequestLocation({
       deviceType: targetUser.pushDeviceType,
       pushAlias: targetUser.pushAlias,
       pushAliasType: targetUser.pushAliasType,

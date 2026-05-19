@@ -1,5 +1,6 @@
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
+import { config } from 'dotenv';
 
 type HttpMethod = 'delete' | 'get' | 'post' | 'patch';
 
@@ -40,11 +41,13 @@ type RequestOptions = {
   expectedStatus?: number;
 };
 
-const DEFAULT_BASE_URL = 'http://localhost:3000';
+config({
+  path: [`.env.${process.env.NODE_ENV ?? 'development'}`, '.env'],
+});
+
+const DEFAULT_BASE_URL = `http://localhost:${process.env.PORT ?? 38080}`;
 const DEFAULT_DEMO_EMAIL = 'yyy101@yy.com';
 const DEFAULT_DEMO_PASSWORD = '123123123';
-const DEFAULT_ADMIN_EMAIL = 'admin@example.com';
-const DEFAULT_ADMIN_PASSWORD = 'ChangeMe_123456';
 const OUTPUT_PATH = join('docs', 'swagger', 'openapi-examples.json');
 const REDACTED_TOKEN = 'Bearer <captured-jwt-redacted>';
 const REDACTED_PASSWORD = '<demo-password>';
@@ -56,9 +59,14 @@ async function main(): Promise<void> {
   const demoEmail = process.env.SWAGGER_DEMO_EMAIL ?? DEFAULT_DEMO_EMAIL;
   const demoPassword =
     process.env.SWAGGER_DEMO_PASSWORD ?? DEFAULT_DEMO_PASSWORD;
-  const adminEmail = process.env.SWAGGER_ADMIN_EMAIL ?? DEFAULT_ADMIN_EMAIL;
-  const adminPassword =
-    process.env.SWAGGER_ADMIN_PASSWORD ?? DEFAULT_ADMIN_PASSWORD;
+  const adminEmail = requireRuntimeValue(
+    'SWAGGER_ADMIN_EMAIL',
+    process.env.SWAGGER_ADMIN_EMAIL ?? process.env.ADMIN_EMAIL,
+  );
+  const adminPassword = requireRuntimeValue(
+    'SWAGGER_ADMIN_PASSWORD',
+    process.env.SWAGGER_ADMIN_PASSWORD ?? process.env.ADMIN_PASSWORD,
+  );
   const generatedSuffix = Date.now().toString(36);
   const generatedUser = {
     username: `demo_${generatedSuffix.slice(-8)}`,
@@ -1315,6 +1323,17 @@ async function assertNoSensitiveContent(path: string): Promise<void> {
 
 function normalizeBaseUrl(baseUrl: string): string {
   return baseUrl.replace(/\/+$/, '');
+}
+
+function requireRuntimeValue(name: string, value: string | undefined): string {
+  const normalized = value?.trim();
+  if (
+    !normalized ||
+    /^<|example\.com|ChangeMe_|replace-with/i.test(normalized)
+  ) {
+    throw new Error(`${name} 未配置为真实可用值`);
+  }
+  return normalized;
 }
 
 function getErrorMessage(error: unknown): string {

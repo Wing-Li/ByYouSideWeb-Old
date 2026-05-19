@@ -42,3 +42,5 @@ out/
 /server-node/dist/
 /server-node/coverage/
 /server-node/.env
+/server-node/.env.development
+/server-node/.env.production

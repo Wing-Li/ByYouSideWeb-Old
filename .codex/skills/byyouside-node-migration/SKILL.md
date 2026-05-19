@@ -76,11 +76,24 @@ Public API migration must keep Swagger examples useful for frontend development.
 - Do not claim a module is migrated until code, API documentation, and verification are all complete.
 - Do not start implementing a large module before creating and reviewing its module execution plan.
 - Do not add external service keys, SMTP credentials, JWT secrets, database passwords, or push secrets to source files.
+- Do not leave deploy/runtime configuration as fake examples when real values can be obtained from legacy code, existing untracked `.env` files, deployment notes, or user input.
+- Do not replace required production configuration with placeholders in the real runtime environment. `.env.example` may document variable names with safe placeholders; actual `.env` / deployment variables must use real values or be marked blocked with a concrete question to the user.
 - Do not reintroduce网易云信 IM integration; the new backend intentionally removes it.
 - Do not silently change business rules. If a new API intentionally differs from the old one, document the difference and reason.
 - Do not rely on old H2 data or old token compatibility.
 - Do not leave undocumented endpoints.
 - Do not merge unrelated refactors into a migration task.
+
+## Configuration Reality Rule
+
+When working on configuration, deployment readiness, external integrations, or environment files:
+
+1. Inventory every runtime variable used by code, scripts, Prisma, seed, tests, and docs.
+2. Resolve real values from local untracked env files first, then legacy Spring/Kotlin configuration, then documented project state.
+3. Write real values only to files that are intentionally local and ignored by git, such as `server-node/.env`. Keep tracked examples safe but useful.
+4. If a required real value cannot be found locally, stop and ask the user for that exact value instead of inventing a placeholder.
+5. Validate that the app can boot with the prepared runtime env and that providers fail clearly when required production config is missing.
+6. Record which values came from legacy code and which remain user-provided or blocked in the migration plan without exposing secrets.
 
 ## Node Backend Defaults
 
