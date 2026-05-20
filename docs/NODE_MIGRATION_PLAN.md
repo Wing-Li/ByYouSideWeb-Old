@@ -21,9 +21,10 @@
 | 迁移作业 Skill | 已完成 | 已创建 `.codex/skills/byyouside-node-migration/`，后续迁移任务应优先使用 |
 | Node 项目初始化 | 已完成 | `server-node/` NestJS 基础骨架、Swagger、统一响应、异常处理、健康检查和基础测试已完成 |
 | 数据模型设计 | 已完成 | Phase 2 已完成第一版 Prisma schema、migration SQL、Neon main/dev 数据库 migration 和 seed；已创建 Neon local 分支用于本地开发 |
-| API 文档编写 | 进行中 | Phase 1 已建立 Swagger/OpenAPI；Phase 3 已补充 Auth/User 接口文档和真实响应示例捕获；Phase 4 已补充 Friends 接口文档和真实响应示例捕获；Phase 5 已补充 Devices 接口文档和真实响应示例捕获；Phase 6 已补充 Memoirs/Moments 接口文档和真实响应示例捕获；Phase 7 已补充 VIP 接口文档和真实响应示例捕获；Phase 8 已补充配置、公告、反馈、版本接口文档和真实响应示例捕获；Phase 9 不新增公开 API |
-| 业务模块迁移 | 进行中 | Phase 9 外部服务与生产配置已完成；初始管理员已在 Neon local/main seed 并通过登录验证 |
-| 测试与验收 | 进行中 | Phase 1 已建立基础验证；Phase 3 已补充 Auth/User 测试；Phase 4 已补充 Friends 单元测试与 e2e 主链路测试；Phase 5 已补充 Devices 单元测试与 e2e 主链路测试；Phase 6 已补充 Memoirs/Moments 单元测试与 e2e 主链路测试；Phase 7 已补充 VIP 单元测试与 e2e 主链路测试；Phase 8 已补充配置、公告、反馈、版本单元测试与 e2e 主链路测试；Phase 9 已补充邮件与友盟推送集成单元测试，并已通过构建后真实启动健康检查 |
+| API 文档编写 | 已完成 | Phase 1 已建立 Swagger/OpenAPI；Phase 3-8 已补齐各业务模块接口文档和真实响应示例捕获；Phase 9 不新增公开 API；Phase 10 已补齐全量 50 条 Swagger 路由真实示例并通过敏感内容扫描。后续仅在 App 联调或生产验收发现差异时维护 |
+| 业务模块迁移 | 进行中 | 服务端业务模块、外部服务 provider、生产配置模板和后端验收准备已完成；App 接入、生产部署切换和旧后端停用仍待执行 |
+| 测试与验收 | 进行中 | Phase 1-10 已完成自动化测试、构建、Swagger 示例捕获和覆盖对照；Phase 11 生产就绪计划已创建，等待生产部署信息、SMTP 联调邮箱和真实友盟设备 alias |
+| 生产就绪与切换准备 | 阻塞 | 已创建 `docs/migration-plans/phase-11-production-readiness.md`，当前阻塞于部署平台、域名端口、进程守护、Neon 生产数据库策略、真实 SMTP 收件邮箱、真实友盟设备 alias 和旧后端停用时机 |
 
 ## 已确认决策
 
@@ -609,7 +610,7 @@ server-node/
 - 验证码写入 `VerificationCode` 并只保存 hash。
 - 用户更新不再同步网易云信 IM。
 - 已通过 `npm run format`、`npm run lint`、`npm run test`、`npm run test:e2e` 和 `npm run build`。
-- 已验证 Swagger JSON 包含 Auth/User 新接口，且本地 seed 管理员账号可以登录。
+- 已确认 Swagger JSON 包含 Auth/User 新接口，且本地 seed 管理员账号可以登录。
 
 ### Phase 4：好友关系模块
 
@@ -798,7 +799,7 @@ server-node/
 
 ### Phase 10：验收与切换
 
-状态：未开始
+状态：进行中
 
 任务：
 
@@ -813,6 +814,45 @@ server-node/
 - 新后端可独立支撑 App。
 - 文档、代码、测试一致。
 - 已知风险和未完成项有明确记录。
+
+当前进展：
+
+- 已创建并验证 `docs/migration-plans/phase-10-acceptance-cutover.md`。
+- 已修正 `docs/migration-plans/README.md` 中 Phase 3-5 的过期状态，并加入 Phase 10 计划索引。
+- 已补齐 `server-node/scripts/capture-api-examples.ts` 对健康检查、密码重置确认、好友拒绝、VIP 套餐创建/更新和管理员订单列表的真实 HTTP 示例捕获。
+- 密码重置确认示例通过临时 hash 验证码预置并由真实接口消费，生成文件只保留脱敏验证码占位。
+- 已刷新 `server-node/docs/swagger/openapi-examples.json`，Swagger JSON 对照结果为 50 条路由、50 条示例，缺失 0，额外 0。
+- 已完成示例安全扫描，未发现原始 JWT、验证码、数据库连接串、SMTP 密钥、友盟密钥或演示密码。
+- 已通过 `npm run format`、`npm run lint`、`npm run test -- --runInBand`、`npm run test:e2e -- --runInBand`、`npm run build` 和 `npm run api:examples`。
+- 本阶段仍需 App 客户端按新 API 文档接入并完成关键业务人工验收；生产切换、域名/进程/日志/备份方案和真实 SMTP/友盟在线联调仍待部署阶段完成。
+
+### Phase 11：生产就绪与切换准备
+
+状态：阻塞
+
+任务：
+
+- 整理不涉及 App 改造的服务端上线前待办。
+- 确认生产部署平台、域名、端口、Node.js 版本和进程守护方式。
+- 确认 Neon 生产数据库分支、备份和回滚策略。
+- 确认生产环境变量交付方式，避免真实密钥进入源码。
+- 完成 SMTP 真实发送联调。
+- 完成友盟四类真实设备推送联调。
+- 整理旧 Kotlin/Spring Boot 后端停用检查清单。
+
+完成标准：
+
+- 生产环境变量已完整落地到部署平台或受控忽略文件。
+- 生产环境可构建、启动并通过健康检查。
+- 管理员 seed、App 配置和 VIP 套餐已在生产数据库验证。
+- SMTP 和友盟真实联调结果已记录。
+- 旧后端停用和回滚策略已记录。
+
+当前进展：
+
+- 已创建 `docs/migration-plans/phase-11-production-readiness.md`。
+- 已整理生产环境变量清单、部署运行手册草案、数据库与回滚清单、外部服务联调清单和旧后端停用清单。
+- 当前阻塞于用户提供生产部署目标、域名端口、进程守护方式、Neon 生产数据库策略、真实 SMTP 联调收件邮箱、真实友盟设备 alias 和旧后端停用时机。
 
 ## 测试策略
 
@@ -958,12 +998,52 @@ Phase 9 外部服务与生产配置已完成并通过验证。
 - `npm run test:e2e -- --runInBand` 通过，1 个测试套件、8 个测试通过。
 - `npm run build` 通过。
 
+## 2026-05-20 Phase 10 后端验收进展补充
+
+Phase 10 的服务端验收准备已完成并通过验证，整体 Phase 10 仍保留 App 接入、生产部署和真实外部服务在线联调事项。
+
+已完成内容：
+
+- 创建并验证 `docs/migration-plans/phase-10-acceptance-cutover.md`。
+- 修正 `docs/migration-plans/README.md` 中 Phase 3-5 的过期状态，并加入 Phase 10 计划索引。
+- 补齐 `server-node/scripts/capture-api-examples.ts` 对健康检查、密码重置确认、好友拒绝、VIP 套餐创建/更新和管理员订单列表的真实 HTTP 示例捕获。
+- 刷新 `server-node/docs/swagger/openapi-examples.json`，当前 Swagger JSON 对照结果为 50 条路由、50 条示例，缺失 0，额外 0。
+- 完成示例安全扫描，未发现原始 JWT、验证码、数据库连接串、SMTP 密钥、友盟密钥或演示密码。
+
+验证结果：
+
+- `npm run format` 通过。
+- `npm run lint` 通过。
+- `npm run test -- --runInBand` 通过，13 个测试套件、31 个测试通过。
+- `npm run test:e2e -- --runInBand` 通过，1 个测试套件、8 个测试通过。
+- `npm run build` 通过。
+- `npm run api:examples` 通过。
+
+## 2026-05-21 Phase 11 生产就绪计划补充
+
+已按“不涉及 App 改造”的边界创建生产就绪与切换准备计划。
+
+已完成内容：
+
+- 创建 `docs/migration-plans/phase-11-production-readiness.md`。
+- 在计划中整理需要维护或补充的文档内容：生产环境变量清单、部署运行手册、外部服务联调记录、数据库上线与回滚记录、旧后端停用检查清单。
+- 在计划中列出需要用户确认或提供的信息：部署平台、域名端口、Node.js 版本、进程守护方式、Neon 生产数据库策略、真实 SMTP 联调收件邮箱、真实友盟设备 alias、旧后端停用时机。
+- 将 `API 文档编写` 状态调整为已完成；后续只在 App 联调或生产验收发现差异时继续维护。
+
+当前阻塞：
+
+- 生产部署目标和运行方式未确认。
+- Neon 生产数据库策略和备份/回滚要求未确认。
+- SMTP 真实发送联调收件邮箱未确认。
+- 友盟真实设备 alias 未提供。
+- 旧后端停用日期和回滚窗口未确认。
+
 ## 下一步建议
 
-下一步建议执行 Phase 10：验收与切换。
+下一步建议先解除 Phase 11 的生产就绪阻塞项，再推进 App 接入和最终切换。
 
-1. 复查全量 Swagger/OpenAPI 文档与真实示例覆盖。
-2. 跑完整 e2e、构建和 API 示例捕获，确认文档、代码、测试一致。
-3. 梳理 App 接入新 API 的差异清单和手动验收脚本。
-4. 明确生产部署所需环境变量、数据库分支和外部服务密钥交付方式。
-5. 汇总遗留风险，例如真实 SMTP/友盟需要在线上密钥和真实设备 alias 下做最终联调。
+1. 提供或确认生产部署平台、域名、端口、Node.js 版本和进程守护方式。
+2. 确认 Neon 生产数据库使用策略、备份点和回滚窗口。
+3. 确认生产环境变量注入方式，保证真实密钥只进入部署变量或本地忽略文件。
+4. 提供 SMTP 联调收件邮箱和真实友盟 Android/iOS 设备 alias。
+5. 完成生产环境启动、SMTP/友盟联调和旧后端停用检查后，再推进 App 接入验收和最终切流。

@@ -1,6 +1,9 @@
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { config } from 'dotenv';
+import { PrismaPg } from '@prisma/adapter-pg';
+import bcrypt from 'bcryptjs';
+import { PrismaClient, VerificationPurpose } from '@prisma/client';
 
 type HttpMethod = 'delete' | 'get' | 'post' | 'patch';
 
@@ -51,6 +54,7 @@ const DEFAULT_DEMO_PASSWORD = '123123123';
 const OUTPUT_PATH = join('docs', 'swagger', 'openapi-examples.json');
 const REDACTED_TOKEN = 'Bearer <captured-jwt-redacted>';
 const REDACTED_PASSWORD = '<demo-password>';
+const REDACTED_VERIFY_CODE = '<captured-code-redacted>';
 
 async function main(): Promise<void> {
   const baseUrl = normalizeBaseUrl(
@@ -78,10 +82,27 @@ async function main(): Promise<void> {
     password: demoPassword,
     email: `swagger.friend.${generatedSuffix}@example.com`,
   };
+  const rejectRequesterUser = {
+    username: `rejecta_${generatedSuffix.slice(-6)}`,
+    password: demoPassword,
+    email: `swagger.reject.a.${generatedSuffix}@example.com`,
+  };
+  const rejectReceiverUser = {
+    username: `rejectb_${generatedSuffix.slice(-6)}`,
+    password: demoPassword,
+    email: `swagger.reject.b.${generatedSuffix}@example.com`,
+  };
 
   await assertSwaggerAvailable(baseUrl);
 
-  const registerResponse = await request<ApiResponseBody<unknown>>(baseUrl, {
+  const healthResponse = await request<ApiResponseBody<unknown>>(baseUrl, {
+    method: 'get',
+    path: '/api/v1/health',
+    expectedStatus: 200,
+  });
+  const registerResponse = await request<
+    ApiResponseBody<{ token: string; user: { id: string } }>
+  >(baseUrl, {
     method: 'post',
     path: '/api/v1/auth/register',
     body: generatedUser,
@@ -174,11 +195,41 @@ async function main(): Promise<void> {
     },
     expectedStatus: 201,
   });
-  const generatedUserToken = (
-    registerResponse.body as ApiResponseBody<{ token: string }>
-  ).data.token;
+  const resetConfirmBody = {
+    email: generatedUser.email,
+    verifyCode: '2468',
+    password: demoPassword,
+  };
+  await createPasswordResetCode(
+    generatedUser.email,
+    registerResponse.body.data.user.id,
+    resetConfirmBody.verifyCode,
+  );
+  const resetConfirmResponse = await request<ApiResponseBody<string>>(baseUrl, {
+    method: 'post',
+    path: '/api/v1/auth/password-reset/confirm',
+    body: resetConfirmBody,
+    expectedStatus: 201,
+  });
+  const generatedUserToken = registerResponse.body.data.token;
   const friendUserToken = friendRegisterResponse.body.data.token;
   const friendUserId = friendRegisterResponse.body.data.user.id;
+  const rejectRequesterRegisterResponse = await request<
+    ApiResponseBody<{ token: string; user: { id: string } }>
+  >(baseUrl, {
+    method: 'post',
+    path: '/api/v1/auth/register',
+    body: rejectRequesterUser,
+    expectedStatus: 201,
+  });
+  const rejectReceiverRegisterResponse = await request<
+    ApiResponseBody<{ token: string; user: { id: string } }>
+  >(baseUrl, {
+    method: 'post',
+    path: '/api/v1/auth/register',
+    body: rejectReceiverUser,
+    expectedStatus: 201,
+  });
   const friendRequestBody = {
     toUserId: friendUserId,
   };
@@ -202,6 +253,29 @@ async function main(): Promise<void> {
       expectedStatus: 200,
     },
   );
+  const rejectFriendRequestSeedResponse = await request<
+    ApiResponseBody<{ id: string }>
+  >(baseUrl, {
+    method: 'post',
+    path: '/api/v1/friends/requests',
+    body: {
+      toUserId: rejectReceiverRegisterResponse.body.data.user.id,
+    },
+    token: rejectRequesterRegisterResponse.body.data.token,
+    expectedStatus: 201,
+  });
+  const rejectFriendRequestBody = {
+    isPermanentRefusal: false,
+  };
+  const rejectFriendRequestResponse = await request<
+    ApiResponseBody<{ id: string }>
+  >(baseUrl, {
+    method: 'post',
+    path: `/api/v1/friends/requests/${rejectFriendRequestSeedResponse.body.data.id}/reject`,
+    body: rejectFriendRequestBody,
+    token: rejectReceiverRegisterResponse.body.data.token,
+    expectedStatus: 201,
+  });
   const acceptFriendResponse = await request<ApiResponseBody<{ id: string }>>(
     baseUrl,
     {
@@ -340,6 +414,39 @@ async function main(): Promise<void> {
   if (!duetVipPlan) {
     throw new Error('无法捕获 VIP 示例：当前数据库没有 VIP 套餐。');
   }
+  const createVipPlanBody = {
+    name: 'Swagger 示例单人月卡',
+    description: '由真实接口示例捕获脚本创建。',
+    level: 1,
+    durationMonths: 1,
+    price: 9.9,
+    productCode: `swagger.demo.vip.${generatedSuffix}`,
+    status: 'ACTIVE',
+  };
+  const createVipPlanResponse = await request<ApiResponseBody<{ id: string }>>(
+    baseUrl,
+    {
+      method: 'post',
+      path: '/api/v1/vip/plans',
+      body: createVipPlanBody,
+      token: adminToken,
+      expectedStatus: 201,
+    },
+  );
+  const updateVipPlanBody = {
+    description: '由真实接口示例捕获脚本创建并更新。',
+    price: 10.9,
+  };
+  const updateVipPlanResponse = await request<ApiResponseBody<unknown>>(
+    baseUrl,
+    {
+      method: 'patch',
+      path: `/api/v1/vip/plans/${createVipPlanResponse.body.data.id}`,
+      body: updateVipPlanBody,
+      token: adminToken,
+      expectedStatus: 200,
+    },
+  );
   const createVipOrderBody = {
     planId: duetVipPlan.id,
     amount: Number(duetVipPlan.price),
@@ -361,6 +468,15 @@ async function main(): Promise<void> {
     token: generatedUserToken,
     expectedStatus: 200,
   });
+  const listVipOrdersResponse = await request<ApiResponseBody<unknown>>(
+    baseUrl,
+    {
+      method: 'get',
+      path: '/api/v1/vip/orders',
+      token: adminToken,
+      expectedStatus: 200,
+    },
+  );
   const bindVipBody = {
     toUserId: friendUserId,
   };
@@ -577,6 +693,18 @@ async function main(): Promise<void> {
     note: '本文件由 npm run api:examples 通过真实 HTTP 请求生成。token 和密码已脱敏，验证码不会写入文档。',
     examples: [
       {
+        path: '/api/v1/health',
+        method: 'get',
+        responses: [
+          {
+            status: '200',
+            name: 'healthSuccess',
+            summary: '健康检查成功响应',
+            value: redactSensitive(healthResponse.body),
+          },
+        ],
+      },
+      {
         path: '/api/v1/auth/register',
         method: 'post',
         request: {
@@ -700,6 +828,27 @@ async function main(): Promise<void> {
         ],
       },
       {
+        path: '/api/v1/auth/password-reset/confirm',
+        method: 'post',
+        request: {
+          name: 'passwordResetConfirmRequest',
+          summary: '确认密码重置请求',
+          value: {
+            email: resetConfirmBody.email,
+            verifyCode: REDACTED_VERIFY_CODE,
+            password: REDACTED_PASSWORD,
+          },
+        },
+        responses: [
+          {
+            status: '201',
+            name: 'passwordResetConfirmSuccess',
+            summary: '密码重置成功响应',
+            value: redactSensitive(resetConfirmResponse.body),
+          },
+        ],
+      },
+      {
         path: '/api/v1/friends/requests',
         method: 'post',
         request: {
@@ -725,6 +874,23 @@ async function main(): Promise<void> {
             name: 'incomingFriendRequestsSuccess',
             summary: '查询请求我的好友成功响应',
             value: redactSensitive(incomingRequestsResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/friends/requests/{id}/reject',
+        method: 'post',
+        request: {
+          name: 'rejectFriendRequestRequest',
+          summary: '拒绝好友请求',
+          value: rejectFriendRequestBody,
+        },
+        responses: [
+          {
+            status: '201',
+            name: 'rejectFriendRequestSuccess',
+            summary: '拒绝好友请求成功响应',
+            value: redactSensitive(rejectFriendRequestResponse.body),
           },
         ],
       },
@@ -888,6 +1054,40 @@ async function main(): Promise<void> {
         ],
       },
       {
+        path: '/api/v1/vip/plans',
+        method: 'post',
+        request: {
+          name: 'createVipPlanRequest',
+          summary: '管理员创建 VIP 套餐请求',
+          value: createVipPlanBody,
+        },
+        responses: [
+          {
+            status: '201',
+            name: 'createVipPlanSuccess',
+            summary: '管理员创建 VIP 套餐成功响应',
+            value: redactSensitive(createVipPlanResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/vip/plans/{id}',
+        method: 'patch',
+        request: {
+          name: 'updateVipPlanRequest',
+          summary: '管理员更新 VIP 套餐请求',
+          value: updateVipPlanBody,
+        },
+        responses: [
+          {
+            status: '200',
+            name: 'updateVipPlanSuccess',
+            summary: '管理员更新 VIP 套餐成功响应',
+            value: redactSensitive(updateVipPlanResponse.body),
+          },
+        ],
+      },
+      {
         path: '/api/v1/vip/orders',
         method: 'post',
         request: {
@@ -901,6 +1101,18 @@ async function main(): Promise<void> {
             name: 'createVipOrderSuccess',
             summary: '开通 VIP 成功响应',
             value: redactSensitive(createVipOrderResponse.body),
+          },
+        ],
+      },
+      {
+        path: '/api/v1/vip/orders',
+        method: 'get',
+        responses: [
+          {
+            status: '200',
+            name: 'listVipOrdersSuccess',
+            summary: '管理员查询 VIP 订单成功响应',
+            value: redactSensitive(listVipOrdersResponse.body),
           },
         ],
       },
@@ -1265,6 +1477,33 @@ async function request<TResponse>(
   };
 }
 
+async function createPasswordResetCode(
+  email: string,
+  userId: string,
+  verifyCode: string,
+): Promise<void> {
+  const connectionString = requireRuntimeValue(
+    'DATABASE_URL',
+    process.env.DATABASE_URL,
+  );
+  const prisma = new PrismaClient({
+    adapter: new PrismaPg(connectionString),
+  });
+  try {
+    await prisma.verificationCode.create({
+      data: {
+        userId: BigInt(userId),
+        email,
+        codeHash: await bcrypt.hash(verifyCode, 12),
+        purpose: VerificationPurpose.PASSWORD_RESET,
+        expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+      },
+    });
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
 function parseJson<TValue>(text: string, path: string): TValue {
   try {
     return JSON.parse(text) as TValue;
@@ -1312,6 +1551,7 @@ async function assertNoSensitiveContent(path: string): Promise<void> {
     /postgresql:\/\//i,
     /123123123/,
     /wrong-password/,
+    /2468/,
   ];
   const failedPattern = forbiddenPatterns.find((pattern) =>
     pattern.test(content),

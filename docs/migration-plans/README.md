@@ -6,17 +6,25 @@
 
 当前计划文档：
 
+状态口径：
+
+- `已完成`：该计划范围内的实现、文档、验证和收口记录均已完成。
+- `进行中`：正在执行，仍有本阶段范围内的任务未完成。
+- `阻塞`：需要用户输入、外部环境或上线材料后才能继续。
+
 | 计划 | 状态 |
 | --- | --- |
-| `phase-01-node-foundation.md` | 已关闭 |
-| `phase-02-prisma-schema.md` | 已验证 |
-| `phase-03-auth-users.md` | 未开始 |
-| `phase-04-friends.md` | 未开始 |
-| `phase-05-devices-location.md` | 未开始 |
-| `phase-06-memoirs-moments.md` | 已关闭 |
-| `phase-07-vip.md` | 已关闭 |
-| `phase-08-config-content-version.md` | 已关闭 |
-| `phase-09-external-services-production-config.md` | 已关闭 |
+| `phase-01-node-foundation.md` | 已完成 |
+| `phase-02-prisma-schema.md` | 已完成 |
+| `phase-03-auth-users.md` | 已完成 |
+| `phase-04-friends.md` | 已完成 |
+| `phase-05-devices-location.md` | 已完成 |
+| `phase-06-memoirs-moments.md` | 已完成 |
+| `phase-07-vip.md` | 已完成 |
+| `phase-08-config-content-version.md` | 已完成 |
+| `phase-09-external-services-production-config.md` | 已完成 |
+| `phase-10-acceptance-cutover.md` | 已完成 |
+| `phase-11-production-readiness.md` | 阻塞 |
 
 计划模板位于：
 
