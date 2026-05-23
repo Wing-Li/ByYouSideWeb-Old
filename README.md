@@ -1,3 +1,7 @@
+
+新项目已用 node.js 重写。
+地址：https://github.com/Wing-Li/ByYouSideWeb
+
 ## License
 
     GNU AGPLv3
